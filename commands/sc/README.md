@@ -12,4 +12,4 @@ This directory contains slash commands adapted from the SuperClaude project for 
 
 ## Note
 
-These commands are standalone `.md` files. OpenCode discovers them automatically from the `commands/sc/` directory.
+These commands are standalone `.md` files. OpenCode discovers them automatically from the `~/.opencode/commands/sc/` directory.
