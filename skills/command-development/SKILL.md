@@ -60,7 +60,7 @@ The first example tells Claude what to do. The second tells the user what will h
 - Use for: Team workflows, project-specific tasks
 
 **Personal commands** (available everywhere):
-- Location: `~/.claude/commands/`
+- Location: `~/.opencode/commands/`
 - Scope: Available in all projects
 - Label: Shown as "(user)" in `/help`
 - Use for: Personal workflows, cross-project utilities

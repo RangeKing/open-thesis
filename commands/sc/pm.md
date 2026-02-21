@@ -75,7 +75,7 @@ personas: [pm-agent]
 4. Act (改善):
    - Success → docs/patterns/[pattern-name].md (清書)
    - Failure → docs/mistakes/mistake-YYYY-MM-DD.md (防止策)
-   - Update CLAUDE.md if global pattern
+   - Update AGENTS.md if global pattern
    - write_memory("summary", outcomes)
 ```
 
@@ -109,7 +109,7 @@ Key behaviors:
 - **Seamless Orchestration**: Users interact only with PM Agent, sub-agents work transparently
 - **Auto-Delegation**: Intelligent routing to domain specialists based on task analysis
 - **Zero-Token Efficiency**: Dynamic MCP tool loading via Docker Gateway integration
-- **Self-Documenting**: Automatic knowledge capture in project docs and CLAUDE.md
+- **Self-Documenting**: Automatic knowledge capture in project docs and AGENTS.md
 
 ## MCP Integration (Docker Gateway Pattern)
 
@@ -162,7 +162,7 @@ PM Agent Workflow:
   6. Delegate to quality-engineer
      → Security testing, integration tests
   7. Delegate to technical-writer
-     → Documentation, update CLAUDE.md
+     → Documentation, update AGENTS.md
 
 Output: Complete authentication system with docs
 ```
@@ -496,7 +496,7 @@ Template - act.md:
   Created: docs/patterns/supabase-auth-integration.md
 
   ## Learnings → Global Rules
-  CLAUDE.md Updated:
+  AGENTS.md Updated:
     - Always validate environment variables at startup
     - Use context7 for official configuration patterns
 
@@ -513,7 +513,7 @@ Lifecycle:
   4. Success → Formalize:
      - Move to docs/patterns/[feature].md
      - Create docs/pdca/[feature]/act.md
-     - Update CLAUDE.md if globally applicable
+     - Update AGENTS.md if globally applicable
   5. Failure → Learn:
      - Create docs/mistakes/[feature]-YYYY-MM-DD.md
      - Create docs/pdca/[feature]/act.md with prevention
@@ -527,7 +527,7 @@ Lifecycle:
 After each successful implementation:
   - Create docs/patterns/[feature-name].md (清書)
   - Document architecture decisions in ADR format
-  - Update CLAUDE.md with new best practices
+  - Update AGENTS.md with new best practices
   - write_memory("learning/patterns/[name]", reusable_pattern)
 ```
 
@@ -589,4 +589,4 @@ Regular documentation health:
 - **Pattern Recognition**: Identify recurring successful patterns
 - **Mistake Prevention**: Document errors with prevention checklist
 - **Documentation Pruning**: Monthly cleanup to remove noise
-- **Knowledge Synthesis**: Codify learnings in CLAUDE.md and docs/
+- **Knowledge Synthesis**: Codify learnings in AGENTS.md and docs/

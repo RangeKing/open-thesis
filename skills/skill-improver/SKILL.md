@@ -108,11 +108,11 @@ Order changes by priority within each file.
 
 ### Step 5: Backup and Execute
 
-**Backup location:** `~/.claude/skills/backup/{skill-name}-{timestamp}/`
+**Backup location:** `~/.opencode/skills/backup/{skill-name}-{timestamp}/`
 
 ```bash
 # Use backup script
-~/.claude/skills/skill-improver/scripts/backup-skill.sh <skill-path>
+~/.opencode/skills/skill-improver/scripts/backup-skill.sh <skill-path>
 ```
 
 **Apply changes:**
@@ -130,7 +130,7 @@ Order changes by priority within each file.
 
 ```bash
 # Use verify script
-~/.claude/skills/skill-improver/scripts/verify-update.sh <skill-path>
+~/.opencode/skills/skill-improver/scripts/verify-update.sh <skill-path>
 ```
 
 **Generate update-report-{skill-name}-{timestamp}.md** documenting:
