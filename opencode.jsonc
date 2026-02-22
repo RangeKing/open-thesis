@@ -155,6 +155,11 @@
       "type": "remote",
       "url": "http://127.0.0.1:12306/mcp",
       "enabled": true
+    },
+    "zotero": {
+      "type": "local",
+      "command": ["zotero-mcp", "serve"],
+      "enabled": true
     }
   },
   "permission": {

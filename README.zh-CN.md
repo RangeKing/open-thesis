@@ -23,6 +23,7 @@
 <details>
 <summary>查看更新日志</summary>
 
+- **2026-02-22**: 在 `opencode.jsonc` 中添加 Zotero MCP 服务器 — 开箱即用支持文献管理命令（`/zotero-review`、`/zotero-notes`）
 - **2026-02-21**: OpenCode 迁移 — 将整个配置迁移到 OpenCode 格式：hooks→plugins (TypeScript)、agents→opencode.jsonc、CLAUDE.md→AGENTS.md、新增 permission 规则、保留文件式命令
 - **2026-02-20**: 双语配置 — 将 `CLAUDE.md` 翻译为英文以便国际用户阅读
 - **2026-02-15**: Zotero MCP 集成 — 新增 `/zotero-review` 和 `/zotero-notes` 命令
@@ -48,6 +49,7 @@ Claude Scholar (OpenCode 版) 是一个面向 [OpenCode](https://github.com/sst/
 | [核心工作流](#核心工作流) | 论文写作、代码组织、技能进化 |
 | [功能亮点](#功能亮点) | 技能、命令、代理概览 |
 | [安装指南](#安装选项) | 完整、最小化或选择性安装 |
+| [MCP 配置](#mcp-服务器配置可选) | Zotero MCP 文献管理集成 |
 | [项目规则](#项目规则) | 代码风格和代理编排 |
 
 ## 核心工作流
@@ -324,6 +326,33 @@ cp -r /tmp/claude-scholar/skills/architecture-design ~/.opencode/skills/
 - Git
 - Node.js（用于插件）
 - （可选）uv、Python（用于 Python 开发）
+- （可选）[Zotero](https://www.zotero.org/) + [zotero-mcp-server](https://pypi.org/project/zotero-mcp-server/)（用于文献管理）
+
+### MCP 服务器配置（可选）
+
+如需使用 Zotero 集成的研究工作流，请安装 MCP 服务器：
+
+```bash
+# 安装 Zotero MCP 服务器
+uv tool install zotero-mcp-server
+
+# 在 Zotero 桌面应用中启用本地 API：
+# 编辑 → 设置 → 高级 → 勾选"允许本计算机上的其他应用程序与 Zotero 通信"
+```
+
+Zotero MCP 已在 `opencode.jsonc` 中预配置。如果使用选项 1（完整安装），开箱即用。
+
+选择性安装时，确保 `opencode.jsonc` 包含：
+
+```jsonc
+"mcp": {
+  "zotero": {
+    "type": "local",
+    "command": ["zotero-mcp", "serve"],
+    "enabled": true
+  }
+}
+```
 
 ### 首次运行
 

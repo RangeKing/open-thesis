@@ -23,6 +23,7 @@
 <details>
 <summary>View changelog</summary>
 
+- **2026-02-22**: Added Zotero MCP server to `opencode.jsonc` — enables literature management commands (`/zotero-review`, `/zotero-notes`) out of the box
 - **2026-02-21**: OpenCode migration — ported entire configuration to OpenCode format: hooks→plugins (TypeScript), agents→opencode.jsonc, CLAUDE.md→AGENTS.md, added permission rules, file-based commands preserved
 - **2026-02-20**: Bilingual config — translated `CLAUDE.md` to English for international readability
 - **2026-02-15**: Zotero MCP integration — added `/zotero-review` and `/zotero-notes` commands, updated `research-ideation` skill with Zotero integration guide
@@ -48,6 +49,7 @@ Claude Scholar (OpenCode Edition) is a configuration system for [OpenCode](https
 | [Core Workflows](#core-workflows) | Paper writing, code organization, skill evolution |
 | [What's Included](#whats-included) | Skills, commands, agents overview |
 | [Installation Guide](#installation-options) | Full, minimal, or selective setup |
+| [MCP Setup](#mcp-server-setup-optional) | Zotero MCP for research workflows |
 | [Project Rules](#project-rules) | Coding style and agent orchestration |
 
 ## Core Workflows
@@ -374,6 +376,33 @@ cp -r /tmp/claude-scholar/commands/commit.md ~/.opencode/commands/
 - Git
 - Node.js (for plugins)
 - (Optional) uv, Python (for Python development)
+- (Optional) [Zotero](https://www.zotero.org/) + [zotero-mcp-server](https://pypi.org/project/zotero-mcp-server/) (for literature management)
+
+### MCP Server Setup (Optional)
+
+For Zotero-integrated research workflows, install the MCP server:
+
+```bash
+# Install Zotero MCP server
+uv tool install zotero-mcp-server
+
+# Enable Local API in Zotero desktop app:
+# Edit → Settings → Advanced → Check "Allow other applications on this computer to communicate with Zotero"
+```
+
+The Zotero MCP server is already configured in `opencode.jsonc`. If you installed via Option 1 (Full Installation), it works out of the box.
+
+For selective installations, ensure your `opencode.jsonc` includes:
+
+```jsonc
+"mcp": {
+  "zotero": {
+    "type": "local",
+    "command": ["zotero-mcp", "serve"],
+    "enabled": true
+  }
+}
+```
 
 ### First Run
 
