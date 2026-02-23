@@ -279,15 +279,14 @@ claude-scholar/                  # OpenCode 版
 
 #### 选项 1：完整安装（推荐）
 
+安全合并到已有的 `~/.opencode` 目录，不会覆盖个人数据：
+
 ```bash
-# 克隆 opencode 分支
-git clone -b opencode https://github.com/Galaxy-Dawn/claude-scholar.git ~/.opencode
-
-# 安装插件依赖
-cd ~/.opencode && npm install
-
-# 重启 OpenCode CLI
+git clone -b opencode https://github.com/Galaxy-Dawn/claude-scholar.git /tmp/claude-scholar
+bash /tmp/claude-scholar/scripts/setup.sh
 ```
+
+脚本会将 skills/commands/plugins/scripts/utils 复制到 `~/.opencode`，安装 `opencode.jsonc`（自动备份为 `opencode.jsonc.bak`），并运行 `npm install` 安装插件依赖。
 
 **包含**：所有 32 个技能、50+ 命令、14 个代理、5 个插件和项目规则。
 
@@ -309,6 +308,8 @@ cd ~/.opencode && npm install
 rm -rf /tmp/claude-scholar
 ```
 
+**安装后**：如果你已有 `opencode.jsonc`，请先备份 — 此操作会用完整的 agent/mcp/permission 配置覆盖它。
+
 #### 选项 3：选择性安装
 
 ```bash
@@ -319,6 +320,8 @@ cp /tmp/claude-scholar/opencode.jsonc ~/.opencode/
 cp /tmp/claude-scholar/plugins/*.ts ~/.opencode/plugins/
 cp -r /tmp/claude-scholar/skills/architecture-design ~/.opencode/skills/
 ```
+
+**安装后**：复制前请先备份已有的 `opencode.jsonc`。如果复制了 plugins，需运行 `cd ~/.opencode && npm install`。
 
 ### 系统要求
 

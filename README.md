@@ -320,15 +320,14 @@ claude-scholar/                  # OpenCode edition
 
 #### Option 1: Full Installation (Recommended)
 
+Safe merge into existing `~/.opencode` directory — won't overwrite personal data:
+
 ```bash
-# Clone the opencode branch
-git clone -b opencode https://github.com/Galaxy-Dawn/claude-scholar.git ~/.opencode
-
-# Install plugin dependencies
-cd ~/.opencode && npm install
-
-# Restart OpenCode CLI
+git clone -b opencode https://github.com/Galaxy-Dawn/claude-scholar.git /tmp/claude-scholar
+bash /tmp/claude-scholar/scripts/setup.sh
 ```
+
+The script copies skills/commands/plugins/scripts/utils into `~/.opencode`, installs `opencode.jsonc` (auto-backup to `opencode.jsonc.bak`), and runs `npm install` for plugin dependencies.
 
 **Includes**: All 32 skills, 50+ commands, 14 agents, 5 plugins, and project rules.
 
@@ -337,10 +336,8 @@ cd ~/.opencode && npm install
 Core plugins and essential skills only:
 
 ```bash
-# Clone repository
 git clone -b opencode https://github.com/Galaxy-Dawn/claude-scholar.git /tmp/claude-scholar
 
-# Copy only plugins and core skills
 mkdir -p ~/.opencode/plugins/lib ~/.opencode/skills
 cp /tmp/claude-scholar/plugins/*.ts ~/.opencode/plugins/
 cp /tmp/claude-scholar/plugins/lib/common.ts ~/.opencode/plugins/lib/
@@ -351,12 +348,11 @@ cp -r /tmp/claude-scholar/skills/research-ideation ~/.opencode/skills/
 cp -r /tmp/claude-scholar/skills/results-analysis ~/.opencode/skills/
 cp -r /tmp/claude-scholar/skills/git-workflow ~/.opencode/skills/
 
-# Install dependencies
 cd ~/.opencode && npm install
-
-# Cleanup
 rm -rf /tmp/claude-scholar
 ```
+
+**Post-install**: If you already had `opencode.jsonc`, back it up first — this overwrites it with the full agent/mcp/permission config.
 
 #### Option 3: Selective Installation
 
@@ -369,6 +365,8 @@ cp /tmp/claude-scholar/plugins/*.ts ~/.opencode/plugins/
 cp -r /tmp/claude-scholar/skills/architecture-design ~/.opencode/skills/
 cp -r /tmp/claude-scholar/commands/commit.md ~/.opencode/commands/
 ```
+
+**Post-install**: Back up your existing `opencode.jsonc` before copying. Run `cd ~/.opencode && npm install` if you copied plugins.
 
 ### Requirements
 
