@@ -1,7 +1,5 @@
-# Claude Scholar (OpenCode 版)
-
 <div align="center">
-  <img src="LOGO.jpeg" alt="Claude Scholar Logo" width="100%"/>
+  <img src="LOGO.png" alt="Claude Scholar Logo" width="100%"/>
 
   <p>
     <a href="https://github.com/Galaxy-Dawn/claude-scholar/stargazers"><img src="https://img.shields.io/github/stars/Galaxy-Dawn/claude-scholar?style=flat-square&color=yellow" alt="Stars"/></a>
