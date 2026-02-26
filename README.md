@@ -18,6 +18,7 @@
 
 ## News
 
+- **2026-02-26**: **Zotero MCP Web API mode** — remote access, import papers via DOI/arXiv ID/URL, collection management, item updates, safe deletion; config guides for [Claude Code](./MCP_SETUP.md#claude-code), [Codex CLI](./MCP_SETUP.md#codex-cli), [OpenCode](./MCP_SETUP.md#opencode)
 - **2026-02-25**: Codex CLI branch — added `codex` branch supporting OpenAI Codex CLI with config.toml, 40 skills, 14 agents, and sandbox security
 - **2026-02-23**: Added `setup.sh` installer — safe merge into existing `~/.opencode`, auto-backup `opencode.jsonc`
 - **2026-02-22**: Added Zotero MCP server to `opencode.jsonc` — enables literature management commands (`/zotero-review`, `/zotero-notes`) out of the box
@@ -50,7 +51,7 @@ Claude Scholar (OpenCode Edition) is a configuration system for [OpenCode](https
 | [Core Workflows](#core-workflows) | Paper writing, code organization, skill evolution |
 | [What's Included](#whats-included) | Skills, commands, agents overview |
 | [Installation Guide](#installation-options) | Full, minimal, or selective setup |
-| [MCP Setup](#mcp-server-setup-optional) | Zotero MCP for research workflows |
+| [MCP Setup](#mcp-server-setup) | Zotero MCP for research workflows |
 | [Project Rules](#project-rules) | Coding style and agent orchestration |
 
 ## Core Workflows
@@ -372,22 +373,32 @@ cp -r /tmp/claude-scholar/commands/commit.md ~/.opencode/commands/
 
 - [OpenCode](https://github.com/sst/opencode) CLI
 - Git
-- (Optional) uv, Python (for Python development)
-- (Optional) [Zotero](https://www.zotero.org/) + [zotero-mcp-server](https://pypi.org/project/zotero-mcp-server/) (for literature management)
+- uv, Python (for Python development)
+- [Zotero](https://www.zotero.org/) + [Galaxy-Dawn/zotero-mcp](https://github.com/Galaxy-Dawn/zotero-mcp) (for literature management). See [MCP Setup Guide](./MCP_SETUP.md) for details.
 
-### MCP Server Setup (Optional)
+### MCP Server Setup
 
 For Zotero-integrated research workflows, install the MCP server:
 
 ```bash
-# Install Zotero MCP server
-uv tool install zotero-mcp-server
-
-# Enable Local API in Zotero desktop app:
-# Edit → Settings → Advanced → Check "Allow other applications on this computer to communicate with Zotero"
+# Install Zotero MCP server (Web API mode — no Zotero desktop app required)
+uv tool install git+https://github.com/Galaxy-Dawn/zotero-mcp.git
 ```
 
-The Zotero MCP server is already configured in `opencode.jsonc`. If you installed via Option 1 (Full Installation), it works out of the box.
+Get your API key and library ID from [zotero.org/settings/keys](https://www.zotero.org/settings/keys).
+
+The Zotero MCP server is already configured in `opencode.jsonc`. If you installed via Option 1 (Full Installation), just set the environment variables below.
+
+Add to your `~/.zshrc` (or equivalent shell profile):
+
+```bash
+# Zotero MCP
+export ZOTERO_API_KEY="your-api-key"
+export ZOTERO_LIBRARY_ID="your-library-id"
+export ZOTERO_LIBRARY_TYPE="user"
+export UNPAYWALL_EMAIL="your-email@example.com"
+export UNSAFE_OPERATIONS="all"
+```
 
 For selective installations, ensure your `opencode.jsonc` includes:
 
@@ -400,6 +411,8 @@ For selective installations, ensure your `opencode.jsonc` includes:
   }
 }
 ```
+
+For detailed configuration across all platforms (Claude Code, Codex CLI, OpenCode), see the [MCP Setup Guide](./MCP_SETUP.md).
 
 ### First Run
 
