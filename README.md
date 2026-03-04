@@ -29,6 +29,16 @@
 bash setup.sh
 ```
 
+Windows（PowerShell）：
+
+```powershell
+./setup.ps1
+```
+
+Windows（一键双击）：
+
+- 直接双击 `setup.bat`
+
 安装脚本会：
 
 1. 复制 `skills/commands/agents/rules/hooks/CLAUDE*.md`
@@ -43,6 +53,8 @@ bash setup.sh
 ```text
 open-thesis/
 ├── setup.sh
+├── setup.ps1
+├── setup.bat
 ├── CLAUDE.md
 ├── CLAUDE.zh-CN.md
 ├── settings.json.template

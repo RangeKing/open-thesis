@@ -10,6 +10,16 @@
 bash setup.sh
 ```
 
+Windows（PowerShell）：
+
+```powershell
+./setup.ps1
+```
+
+Windows（一键安装）：
+
+- 双击 `setup.bat`
+
 ## 核心命令
 
 - `/research-init`
