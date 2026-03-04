@@ -166,7 +166,7 @@ function Detect-Existing {
         } elseif (-not [string]::IsNullOrWhiteSpace($ExistingModel)) {
           Write-Info 'Keeping existing model configuration (no explicit model_provider found).'
         } else {
-          Write-Warn 'Could not parse model from existing config.toml, but keeping existing config as requested.'
+          Write-Info 'Keeping existing config.toml as requested (model/provider values were not re-parsed).'
         }
 
         $cfgOverride = Read-Host 'Reconfigure provider/model now? [y/N]'

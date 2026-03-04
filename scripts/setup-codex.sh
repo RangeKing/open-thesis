@@ -112,7 +112,7 @@ detect_existing() {
         elif [ -n "$EXISTING_MODEL" ]; then
           info "Keeping existing model configuration (no explicit model_provider found)."
         else
-          warn "Could not parse model from existing config.toml, but keeping existing config as requested."
+          info "Keeping existing config.toml as requested (model/provider values were not re-parsed)."
         fi
         local cfg_override
         read -rp "Reconfigure provider/model now? [y/N]: " cfg_override
