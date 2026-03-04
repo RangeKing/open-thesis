@@ -21,6 +21,25 @@ Windows（一键安装）：
 - 双击 `setup.bat`
 - 脚本会停留窗口并写入日志 `setup-windows.log`
 
+## Codex CLI 支持
+
+macOS / Linux：
+
+```bash
+bash setup-codex.sh
+```
+
+Windows PowerShell：
+
+```powershell
+./setup-codex.ps1
+```
+
+Windows 一键：
+
+- 双击 `setup-codex.bat`（日志：`setup-codex-windows.log`）
+- 详细文档见 [INSTALL-CODEX.md](./INSTALL-CODEX.md)
+
 ## 核心命令
 
 - `/research-init`

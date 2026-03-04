@@ -37,3 +37,7 @@ plan/
 plans/
 projects/
 temp/
+
+# Local installer logs
+setup-windows.log
+setup-codex-windows.log

@@ -40,6 +40,25 @@ Windows（一键双击）：
 - 直接双击 `setup.bat`
 - 会保留窗口并输出日志到 `setup-windows.log`
 
+### Codex CLI 安装
+
+macOS / Linux:
+
+```bash
+bash setup-codex.sh
+```
+
+Windows PowerShell:
+
+```powershell
+./setup-codex.ps1
+```
+
+Windows 双击：
+
+- 双击 `setup-codex.bat`（日志：`setup-codex-windows.log`）
+- 详细步骤见 [INSTALL-CODEX.md](./INSTALL-CODEX.md)
+
 安装脚本会：
 
 1. 复制 `skills/commands/agents/rules/hooks/CLAUDE*.md`
@@ -56,8 +75,17 @@ open-thesis/
 ├── setup.sh
 ├── setup.ps1
 ├── setup.bat
+├── setup-codex.sh
+├── setup-codex.ps1
+├── setup-codex.bat
+├── AGENTS.md
+├── INSTALL-CODEX.md
 ├── CLAUDE.md
 ├── CLAUDE.zh-CN.md
+├── codex/
+│   ├── config.toml
+│   ├── AGENTS.md
+│   └── agents/
 ├── settings.json.template
 ├── hooks/
 ├── skills/

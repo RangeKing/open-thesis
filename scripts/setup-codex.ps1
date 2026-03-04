@@ -1,0 +1,235 @@
+$ErrorActionPreference = 'Stop'
+
+$CodexHome = if ($env:CODEX_HOME) { $env:CODEX_HOME } else { Join-Path $HOME '.codex' }
+$ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+$RepoRoot = (Resolve-Path (Join-Path $ScriptDir '..')).Path
+
+$SkipProvider = $false
+$SkipAuth = $false
+$ProviderName = ''
+$ProviderUrl = ''
+$Model = ''
+$ApiKey = ''
+
+function Write-Info { param([string]$Message) Write-Host "[INFO] $Message" -ForegroundColor Blue }
+function Write-Warn { param([string]$Message) Write-Host "[WARN] $Message" -ForegroundColor Yellow }
+function Fail { param([string]$Message) Write-Host "[ERROR] $Message" -ForegroundColor Red; exit 1 }
+
+function Check-Deps {
+  if (-not (Get-Command git -ErrorAction SilentlyContinue)) { Fail 'Git is required.' }
+  if (-not (Get-Command codex -ErrorAction SilentlyContinue)) { Write-Warn 'Codex CLI not found. Install: npm i -g @openai/codex' }
+}
+
+function Ensure-Dir([string]$Path) {
+  if (-not (Test-Path $Path)) { New-Item -ItemType Directory -Force -Path $Path | Out-Null }
+}
+
+function Detect-Existing {
+  $configPath = Join-Path $CodexHome 'config.toml'
+  $authPath = Join-Path $CodexHome 'auth.json'
+
+  if (Test-Path $configPath) {
+    Write-Info "Existing config.toml found: $configPath"
+    $keep = Read-Host 'Keep existing provider/model config? [Y/n]'
+    if ($keep -ne 'n' -and $keep -ne 'N') {
+      $global:SkipProvider = $true
+      Write-Info 'Keeping existing provider/model configuration'
+    }
+  }
+
+  if (Test-Path $authPath) {
+    Write-Info "Existing auth.json found: $authPath"
+    $keepAuth = Read-Host 'Keep existing API key? [Y/n]'
+    if ($keepAuth -ne 'n' -and $keepAuth -ne 'N') {
+      $global:SkipAuth = $true
+      Write-Info 'Keeping existing API key'
+    }
+  }
+}
+
+function Choose-Provider {
+  if ($SkipProvider) { return }
+
+  Write-Host ''
+  Write-Host 'Select API provider:'
+  Write-Host '  1) OpenAI (official)'
+  Write-Host '  2) Custom provider'
+
+  $choice = Read-Host 'Enter choice [1-2] (default: 1)'
+  if ([string]::IsNullOrWhiteSpace($choice)) { $choice = '1' }
+
+  switch ($choice) {
+    '1' {
+      $global:ProviderName = 'openai'
+      $global:ProviderUrl = 'https://api.openai.com/v1'
+      $global:Model = 'gpt-5'
+      $inputModel = Read-Host "Model name (default: $Model)"
+      if (-not [string]::IsNullOrWhiteSpace($inputModel)) { $global:Model = $inputModel }
+    }
+    '2' {
+      $global:ProviderName = Read-Host 'Provider name'
+      $global:ProviderUrl = Read-Host 'Base URL'
+      $global:Model = Read-Host 'Model name'
+    }
+    default { Fail "Invalid choice: $choice" }
+  }
+
+  Write-Info "Provider: $ProviderName | URL: $ProviderUrl | Model: $Model"
+}
+
+function Configure-ApiKey {
+  if ($SkipAuth) { return }
+
+  $global:ApiKey = Read-Host 'Enter API key (OPENAI_API_KEY, Enter to skip)'
+  if ([string]::IsNullOrWhiteSpace($ApiKey)) {
+    $global:SkipAuth = $true
+    Write-Warn 'No API key written. Ensure OPENAI_API_KEY exists in your environment.'
+  }
+}
+
+function Add-BlockIfMissing {
+  param(
+    [string]$File,
+    [string]$Pattern,
+    [string]$Block
+  )
+
+  $content = Get-Content -Raw -Path $File
+  if ($content -notmatch $Pattern) {
+    Add-Content -Path $File -Value "`n$Block`n"
+    return $true
+  }
+  return $false
+}
+
+function Merge-OpenThesisSections {
+  param([string]$ConfigPath)
+
+  Copy-Item -Path $ConfigPath -Destination "$ConfigPath.bak" -Force
+  Write-Info 'Backed up config.toml -> config.toml.bak'
+
+  $added = 0
+  if (Add-BlockIfMissing -File $ConfigPath -Pattern '(?m)^developer_instructions\s*=' -Block 'developer_instructions = "用中文回答。thesis_mode=true。严格优先 GB/T 7713.1-2006 与 GB/T 7714-2015。输出优先给结构化 Markdown，并在需要时附 LaTeX(ctex) 版本。"') { $added++ }
+  if (Add-BlockIfMissing -File $ConfigPath -Pattern '(?m)^sandbox_mode\s*=' -Block 'sandbox_mode = "workspace-write"') { $added++ }
+  if (Add-BlockIfMissing -File $ConfigPath -Pattern '(?m)^\[features\]' -Block "[features]`nmulti_agent = true`nmemories = true`nskill_approval = true") { $added++ }
+
+  $mcpBlock = @"
+[mcp_servers.zotero]
+command = "zotero-mcp"
+args = ["serve"]
+enabled = false
+[mcp_servers.zotero.env]
+ZOTERO_API_KEY = "your-api-key"
+ZOTERO_LIBRARY_ID = "your-library-id"
+ZOTERO_LIBRARY_TYPE = "user"
+UNPAYWALL_EMAIL = "your-email@example.com"
+UNSAFE_OPERATIONS = "all"
+ZOTERO_DEFAULT_COLLECTION = "中文学位论文"
+ZOTERO_IMPORT_HINT = "Use DOI first; if DOI is missing, import with CNKI URL"
+"@
+  if (Add-BlockIfMissing -File $ConfigPath -Pattern '(?m)^\[mcp_servers\.zotero\]' -Block $mcpBlock) { $added++ }
+
+  if ($added -gt 0) {
+    Write-Info "Merged $added Open Thesis section(s) into existing config.toml"
+  } else {
+    Write-Info 'Config already has all Open Thesis sections'
+  }
+}
+
+function Generate-Config {
+  $templatePath = Join-Path $RepoRoot 'codex/config.toml'
+  $targetPath = Join-Path $CodexHome 'config.toml'
+  if (-not (Test-Path $templatePath)) { Fail "Template not found: $templatePath" }
+
+  Ensure-Dir $CodexHome
+
+  if ($SkipProvider) {
+    Merge-OpenThesisSections -ConfigPath $targetPath
+    return
+  }
+
+  if (Test-Path $targetPath) {
+    Copy-Item -Path $targetPath -Destination "$targetPath.bak" -Force
+    Write-Info 'Backed up config.toml -> config.toml.bak'
+  }
+
+  $template = Get-Content -Raw -Path $templatePath
+  $template = $template.Replace('__MODEL__', $Model)
+  $template = $template.Replace('__PROVIDER_NAME__', $ProviderName)
+  $template = $template.Replace('__PROVIDER_URL__', $ProviderUrl)
+  Set-Content -Path $targetPath -Value $template -Encoding UTF8
+
+  Write-Info 'Generated config.toml'
+}
+
+function Write-Auth {
+  if ($SkipAuth) { return }
+
+  $authPath = Join-Path $CodexHome 'auth.json'
+  if (Test-Path $authPath) { Copy-Item -Path $authPath -Destination "$authPath.bak" -Force }
+
+  $auth = @{
+    OPENAI_API_KEY = $ApiKey
+  } | ConvertTo-Json -Depth 5
+
+  Set-Content -Path $authPath -Value ($auth + [Environment]::NewLine) -Encoding UTF8
+  Write-Info 'Wrote auth.json'
+}
+
+function Copy-Components {
+  Ensure-Dir $CodexHome
+
+  $srcSkills = Join-Path $RepoRoot 'skills'
+  if (Test-Path $srcSkills) {
+    $dstSkills = Join-Path $CodexHome 'skills'
+    Ensure-Dir $dstSkills
+    Get-ChildItem -LiteralPath $srcSkills -Force | Copy-Item -Destination $dstSkills -Recurse -Force
+    Write-Info 'Synced skills/'
+  }
+
+  $srcAgents = Join-Path $RepoRoot 'codex/agents'
+  if (Test-Path $srcAgents) {
+    $dstAgents = Join-Path $CodexHome 'agents'
+    Ensure-Dir $dstAgents
+    Get-ChildItem -LiteralPath $srcAgents -Force | Copy-Item -Destination $dstAgents -Recurse -Force
+    Write-Info 'Synced codex agents/'
+  }
+
+  $srcInstructions = Join-Path $RepoRoot 'codex/AGENTS.md'
+  if (Test-Path $srcInstructions) {
+    $dstInstructions = Join-Path $CodexHome 'AGENTS.md'
+    if (Test-Path $dstInstructions) { Copy-Item -Path $dstInstructions -Destination "$dstInstructions.bak" -Force }
+    Copy-Item -Path $srcInstructions -Destination $dstInstructions -Force
+    Write-Info "Synced $dstInstructions"
+  }
+}
+
+function Main {
+  Write-Host ''
+  Write-Host '======================================'
+  Write-Host '   Open Thesis Installer (Codex)      '
+  Write-Host '======================================'
+  Write-Host ''
+
+  Check-Deps
+  Write-Info "Source: $RepoRoot"
+  Write-Info "Target: $CodexHome"
+
+  Detect-Existing
+  Choose-Provider
+  Configure-ApiKey
+  Generate-Config
+  Write-Auth
+  Copy-Components
+
+  Write-Host ''
+  Write-Info 'Installation complete.'
+  Write-Host "  Config: $(Join-Path $CodexHome 'config.toml')"
+  Write-Host "  Auth:   $(Join-Path $CodexHome 'auth.json')"
+  Write-Host "  Skills: $(Join-Path $CodexHome 'skills')"
+  Write-Host "  Agents: $(Join-Path $CodexHome 'agents')"
+  Write-Host ''
+  Write-Host "Run 'codex' to start."
+}
+
+Main

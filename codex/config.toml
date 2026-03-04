@@ -1,0 +1,92 @@
+# Open Thesis - Codex CLI Configuration (template)
+# Use scripts/setup-codex.sh or scripts/setup-codex.ps1 to install
+
+model = "__MODEL__"
+model_provider = "__PROVIDER_NAME__"
+model_reasoning_effort = "medium"
+disable_response_storage = true
+
+[model_providers.__PROVIDER_NAME__]
+name = "__PROVIDER_NAME__"
+base_url = "__PROVIDER_URL__"
+wire_api = "responses"
+requires_openai_auth = true
+
+sandbox_mode = "workspace-write"
+
+developer_instructions = "用中文回答。thesis_mode=true。严格优先 GB/T 7713.1-2006 与 GB/T 7714-2015。输出优先给结构化 Markdown，并在需要时附 LaTeX(ctex) 版本。"
+
+[features]
+multi_agent = true
+memories = true
+skill_approval = true
+
+[mcp_servers.zotero]
+command = "zotero-mcp"
+args = ["serve"]
+enabled = false
+[mcp_servers.zotero.env]
+ZOTERO_API_KEY = "your-api-key"
+ZOTERO_LIBRARY_ID = "your-library-id"
+ZOTERO_LIBRARY_TYPE = "user"
+UNPAYWALL_EMAIL = "your-email@example.com"
+UNSAFE_OPERATIONS = "all"
+ZOTERO_DEFAULT_COLLECTION = "中文学位论文"
+ZOTERO_IMPORT_HINT = "Use DOI first; if DOI is missing, import with CNKI URL"
+
+# Agents
+[agents.literature-reviewer]
+description = "Literature search and synthesis for Chinese degree thesis"
+config_file = "~/.codex/agents/literature-reviewer/config.toml"
+
+[agents.data-analyst]
+description = "Automated data analysis and visualization"
+config_file = "~/.codex/agents/data-analyst/config.toml"
+
+[agents.rebuttal-writer]
+description = "Defense rebuttal writing with evidence mapping"
+config_file = "~/.codex/agents/rebuttal-writer/config.toml"
+
+[agents.paper-miner]
+description = "Extract thesis writing patterns and innovation statements"
+config_file = "~/.codex/agents/paper-miner/config.toml"
+
+[agents.kaggle-miner]
+description = "Extract engineering practices from Kaggle solutions"
+config_file = "~/.codex/agents/kaggle-miner/config.toml"
+
+[agents.architect]
+description = "System architecture design"
+config_file = "~/.codex/agents/architect/config.toml"
+
+[agents.bug-analyzer]
+description = "Deep execution flow analysis and root-cause investigation"
+config_file = "~/.codex/agents/bug-analyzer/config.toml"
+
+[agents.build-error-resolver]
+description = "Fix build and type errors with minimal diffs"
+config_file = "~/.codex/agents/build-error-resolver/config.toml"
+
+[agents.code-reviewer]
+description = "Code review for quality, security, and maintainability"
+config_file = "~/.codex/agents/code-reviewer/config.toml"
+
+[agents.dev-planner]
+description = "Implementation planning and task breakdown"
+config_file = "~/.codex/agents/dev-planner/config.toml"
+
+[agents.refactor-cleaner]
+description = "Dead code cleanup and consolidation"
+config_file = "~/.codex/agents/refactor-cleaner/config.toml"
+
+[agents.tdd-guide]
+description = "Test-driven development workflow guidance"
+config_file = "~/.codex/agents/tdd-guide/config.toml"
+
+[agents.ui-sketcher]
+description = "UI blueprint design and interaction specification"
+config_file = "~/.codex/agents/ui-sketcher/config.toml"
+
+[agents.story-generator]
+description = "User story and narrative generation"
+config_file = "~/.codex/agents/story-generator/config.toml"

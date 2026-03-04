@@ -1,0 +1,2 @@
+# Agent config for Codex CLI
+sandbox_mode = "workspace-write"
