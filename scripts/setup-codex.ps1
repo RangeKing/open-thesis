@@ -17,6 +17,7 @@ $ExistingApiKey = ''
 $InstallLogPath = $env:OPEN_THESIS_INSTALL_LOG
 $TranscriptStarted = $false
 $Utf8NoBom = New-Object System.Text.UTF8Encoding($false)
+$SafeDeveloperInstructionsLine = 'developer_instructions = "Respond in Chinese. thesis_mode=true. Prioritize GB/T 7713.1-2006 and GB/T 7714-2015. Prefer structured Markdown and add LaTeX (ctex) when needed."'
 
 function Write-Info { param([string]$Message) Write-Host "[INFO] $Message" -ForegroundColor Blue }
 function Write-Warn { param([string]$Message) Write-Host "[WARN] $Message" -ForegroundColor Yellow }
@@ -340,6 +341,27 @@ function Add-BlockIfMissing {
   return $false
 }
 
+function Ensure-Or-ReplaceLine {
+  param(
+    [string]$File,
+    [string]$Pattern,
+    [string]$Line
+  )
+
+  $content = Read-TextWithBestEffort -Path $File
+  if ($content -match $Pattern) {
+    $updated = [regex]::Replace($content, $Pattern, $Line, [System.Text.RegularExpressions.RegexOptions]::Multiline)
+    if ($updated -ne $content) {
+      Write-Utf8NoBom -Path $File -Content $updated
+      return $true
+    }
+    return $false
+  }
+
+  Append-Utf8NoBom -Path $File -Content ("`n$Line`n")
+  return $true
+}
+
 function Merge-OpenThesisSections {
   param([string]$ConfigPath)
 
@@ -348,7 +370,7 @@ function Merge-OpenThesisSections {
   Normalize-FileToUtf8 -Path $ConfigPath
 
   $added = 0
-  if (Add-BlockIfMissing -File $ConfigPath -Pattern '(?m)^developer_instructions\s*=' -Block 'developer_instructions = "用中文回答。thesis_mode=true。严格优先 GB/T 7713.1-2006 与 GB/T 7714-2015。输出优先给结构化 Markdown，并在需要时附 LaTeX(ctex) 版本。"') { $added++ }
+  if (Ensure-Or-ReplaceLine -File $ConfigPath -Pattern '^\s*developer_instructions\s*=.*$' -Line $SafeDeveloperInstructionsLine) { $added++ }
   if (Add-BlockIfMissing -File $ConfigPath -Pattern '(?m)^sandbox_mode\s*=' -Block 'sandbox_mode = "workspace-write"') { $added++ }
   if (Add-BlockIfMissing -File $ConfigPath -Pattern '(?m)^\[features\]' -Block "[features]`nmulti_agent = true`nmemories = true`nskill_approval = true") { $added++ }
 
@@ -394,7 +416,8 @@ function Generate-Config {
     Write-Info 'Backed up config.toml -> config.toml.bak'
   }
 
-  $template = Get-Content -Raw -Path $templatePath
+  $template = Read-TextWithBestEffort -Path $templatePath
+  $template = [regex]::Replace($template, '^\s*developer_instructions\s*=.*$', $SafeDeveloperInstructionsLine, [System.Text.RegularExpressions.RegexOptions]::Multiline)
   $template = $template.Replace('__MODEL__', $Model)
   $template = $template.Replace('__PROVIDER_NAME__', $ProviderName)
   $template = $template.Replace('__PROVIDER_URL__', $ProviderUrl)

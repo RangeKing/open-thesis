@@ -16,6 +16,7 @@ API_KEY=""
 EXISTING_MODEL=""
 EXISTING_PROVIDER=""
 EXISTING_API_KEY=""
+SAFE_DEVELOPER_INSTRUCTIONS='developer_instructions = "Respond in Chinese. thesis_mode=true. Prioritize GB/T 7713.1-2006 and GB/T 7714-2015. Prefer structured Markdown and add LaTeX (ctex) when needed."'
 
 info()  { echo -e "\033[1;34m[INFO]\033[0m $*"; }
 warn()  { echo -e "\033[1;33m[WARN]\033[0m $*"; }
@@ -74,6 +75,31 @@ extract_toml_value() {
       }
     }
   ' "$file"
+}
+
+ensure_or_replace_line() {
+  local file="$1"
+  local pattern="$2"
+  local line="$3"
+  local tmp
+  tmp="$(mktemp)"
+  awk -v pat="$pattern" -v repl="$line" '
+    BEGIN { done = 0 }
+    {
+      if ($0 ~ pat) {
+        if (done == 0) {
+          print repl
+          done = 1
+        }
+        next
+      }
+      print
+    }
+    END {
+      if (done == 0) print repl
+    }
+  ' "$file" > "$tmp"
+  mv "$tmp" "$file"
 }
 
 detect_existing() {
@@ -237,11 +263,8 @@ merge_open_thesis_sections() {
   cp "$target" "${target}.bak"
   info "Backed up config.toml -> config.toml.bak"
 
-  if ! grep -q '^developer_instructions' "$target" 2>/dev/null; then
-    echo '' >> "$target"
-    echo 'developer_instructions = "用中文回答。thesis_mode=true。严格优先 GB/T 7713.1-2006 与 GB/T 7714-2015。输出优先给结构化 Markdown，并在需要时附 LaTeX(ctex) 版本。"' >> "$target"
-    added=$((added + 1))
-  fi
+  ensure_or_replace_line "$target" '^[[:space:]]*developer_instructions[[:space:]]*=' "$SAFE_DEVELOPER_INSTRUCTIONS"
+  added=$((added + 1))
 
   if ! grep -q '^sandbox_mode' "$target" 2>/dev/null; then
     echo 'sandbox_mode = "workspace-write"' >> "$target"
@@ -307,6 +330,8 @@ generate_config() {
       -e "s|__PROVIDER_NAME__|$PROVIDER_NAME|g" \
       -e "s|__PROVIDER_URL__|$PROVIDER_URL|g" \
       "$template" > "$target"
+
+  ensure_or_replace_line "$target" '^[[:space:]]*developer_instructions[[:space:]]*=' "$SAFE_DEVELOPER_INSTRUCTIONS"
 
   info "Generated config.toml"
 }

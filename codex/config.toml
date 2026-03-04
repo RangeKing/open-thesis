@@ -14,7 +14,7 @@ requires_openai_auth = true
 
 sandbox_mode = "workspace-write"
 
-developer_instructions = "用中文回答。thesis_mode=true。严格优先 GB/T 7713.1-2006 与 GB/T 7714-2015。输出优先给结构化 Markdown，并在需要时附 LaTeX(ctex) 版本。"
+developer_instructions = "Respond in Chinese. thesis_mode=true. Prioritize GB/T 7713.1-2006 and GB/T 7714-2015. Prefer structured Markdown and add LaTeX (ctex) when needed."
 
 [features]
 multi_agent = true
