@@ -38,6 +38,7 @@ Windows（PowerShell）：
 Windows（一键双击）：
 
 - 直接双击 `setup.bat`
+- 会保留窗口并输出日志到 `setup-windows.log`
 
 安装脚本会：
 

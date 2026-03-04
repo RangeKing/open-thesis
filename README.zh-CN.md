@@ -19,6 +19,7 @@ Windows（PowerShell）：
 Windows（一键安装）：
 
 - 双击 `setup.bat`
+- 脚本会停留窗口并写入日志 `setup-windows.log`
 
 ## 核心命令
 
