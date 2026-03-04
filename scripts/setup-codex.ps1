@@ -69,6 +69,63 @@ function Ensure-Dir([string]$Path) {
   if (-not (Test-Path $Path)) { New-Item -ItemType Directory -Force -Path $Path | Out-Null }
 }
 
+function Get-TomlValue {
+  param(
+    [string]$Path,
+    [string]$Key
+  )
+
+  if (-not (Test-Path $Path)) { return '' }
+
+  $content = Get-Content -Raw -Path $Path
+  if ([string]::IsNullOrWhiteSpace($content)) { return '' }
+
+  # Handle UTF-8 BOM and CRLF safely.
+  $content = $content -replace "^\uFEFF", ''
+  $lines = $content -split "`n"
+  $keyPattern = '^\s*' + [regex]::Escape($Key) + '\s*=\s*(.+?)\s*$'
+
+  foreach ($rawLine in $lines) {
+    $line = $rawLine.TrimEnd("`r")
+    if ([string]::IsNullOrWhiteSpace($line)) { continue }
+
+    # Remove inline comments outside quotes.
+    $sb = [System.Text.StringBuilder]::new()
+    $inDouble = $false
+    $inSingle = $false
+    foreach ($ch in $line.ToCharArray()) {
+      if ($ch -eq '"' -and -not $inSingle) {
+        $inDouble = -not $inDouble
+        [void]$sb.Append($ch)
+        continue
+      }
+      if ($ch -eq "'" -and -not $inDouble) {
+        $inSingle = -not $inSingle
+        [void]$sb.Append($ch)
+        continue
+      }
+      if ($ch -eq '#' -and -not $inDouble -and -not $inSingle) { break }
+      [void]$sb.Append($ch)
+    }
+    $line = $sb.ToString().Trim()
+    if ([string]::IsNullOrWhiteSpace($line)) { continue }
+
+    $match = [regex]::Match($line, $keyPattern)
+    if (-not $match.Success) { continue }
+
+    $value = $match.Groups[1].Value.Trim()
+    if ($value.StartsWith('"') -and $value.EndsWith('"') -and $value.Length -ge 2) {
+      return $value.Substring(1, $value.Length - 2)
+    }
+    if ($value.StartsWith("'") -and $value.EndsWith("'") -and $value.Length -ge 2) {
+      return $value.Substring(1, $value.Length - 2)
+    }
+    return $value
+  }
+
+  return ''
+}
+
 function Detect-Existing {
   $configPath = Join-Path $CodexHome 'config.toml'
   $authPath = Join-Path $CodexHome 'auth.json'
@@ -77,10 +134,9 @@ function Detect-Existing {
   if (Test-Path $configPath) {
     $hasConfig = $true
     Write-Info "Existing config.toml found: $configPath"
-    $configContent = Get-Content -Raw -Path $configPath
-    if ($configContent -match '(?m)^\s*model\s*=\s*"([^"]+)"') { $global:ExistingModel = $Matches[1] }
-    if ($configContent -match '(?m)^\s*model_provider\s*=\s*"([^"]+)"') { $global:ExistingProvider = $Matches[1] }
-    if ($configContent -match '(?m)^OPENAI_API_KEY\s*=\s*"([^"]+)"') { $global:ExistingApiKey = $Matches[1] }
+    $global:ExistingModel = Get-TomlValue -Path $configPath -Key 'model'
+    $global:ExistingProvider = Get-TomlValue -Path $configPath -Key 'model_provider'
+    $global:ExistingApiKey = Get-TomlValue -Path $configPath -Key 'OPENAI_API_KEY'
     if (-not [string]::IsNullOrWhiteSpace($ExistingModel)) { Write-Info "  Current model: $ExistingModel" }
     if (-not [string]::IsNullOrWhiteSpace($ExistingProvider)) { Write-Info "  Current provider: $ExistingProvider" }
   }
@@ -103,30 +159,33 @@ function Detect-Existing {
   if ($hasConfig -or -not [string]::IsNullOrWhiteSpace($ExistingApiKey)) {
     $keepAll = Read-Host 'Keep existing configuration (provider/model/API key if available)? [Y/n]'
     if ($keepAll -ne 'n' -and $keepAll -ne 'N') {
-      if (-not [string]::IsNullOrWhiteSpace($ExistingModel)) {
+      if ($hasConfig) {
         $global:SkipProvider = $true
-        if (-not [string]::IsNullOrWhiteSpace($ExistingProvider)) {
+        if (-not [string]::IsNullOrWhiteSpace($ExistingModel) -and -not [string]::IsNullOrWhiteSpace($ExistingProvider)) {
           Write-Info 'Keeping existing provider/model configuration'
-        } else {
+        } elseif (-not [string]::IsNullOrWhiteSpace($ExistingModel)) {
           Write-Info 'Keeping existing model configuration (no explicit model_provider found).'
+        } else {
+          Write-Warn 'Could not parse model from existing config.toml, but keeping existing config as requested.'
+        }
+
+        $cfgOverride = Read-Host 'Reconfigure provider/model now? [y/N]'
+        if ($cfgOverride -eq 'y' -or $cfgOverride -eq 'Y') {
+          $global:SkipProvider = $false
+          Write-Info 'Will reconfigure provider/model.'
         }
       } else {
-        Write-Warn 'Existing provider/model is incomplete.'
-        $cfgNow = Read-Host 'Configure provider/model now? [Y/n]'
-        if ($cfgNow -eq 'n' -or $cfgNow -eq 'N') {
-          if ($hasConfig) {
-            $global:SkipProvider = $true
-            Write-Warn 'Skipping provider/model setup; please verify config.toml manually.'
-          } else {
-            $global:SkipProvider = $false
-            Write-Warn 'No existing config.toml detected; provider/model setup cannot be skipped.'
-          }
-        }
+        Write-Warn 'No existing config.toml found; provider/model input is required.'
       }
 
       if (-not [string]::IsNullOrWhiteSpace($ExistingApiKey)) {
         $global:SkipAuth = $true
         Write-Info 'Keeping existing API key'
+        $keyOverride = Read-Host 'Re-enter API key now? [y/N]'
+        if ($keyOverride -eq 'y' -or $keyOverride -eq 'Y') {
+          $global:SkipAuth = $false
+          Write-Info 'Will re-enter API key.'
+        }
       } else {
         $keyNow = Read-Host 'No reusable API key found. Enter API key now? [Y/n]'
         if ($keyNow -eq 'n' -or $keyNow -eq 'N') {

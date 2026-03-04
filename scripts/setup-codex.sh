@@ -52,6 +52,30 @@ ensure_codex_cli() {
   fi
 }
 
+extract_toml_value() {
+  local key="$1"
+  local file="$2"
+  awk -v key="$key" '
+    NR==1 { sub(/^\xef\xbb\xbf/, "", $0) }
+    {
+      line=$0
+      sub(/\r$/, "", line)
+      sub(/[ \t]*#.*/, "", line)
+      if (line ~ "^[ \t]*" key "[ \t]*=") {
+        sub("^[ \t]*" key "[ \t]*=[ \t]*", "", line)
+        gsub(/^[ \t]+|[ \t]+$/, "", line)
+        if (line ~ /^".*"$/) {
+          line=substr(line, 2, length(line)-2)
+        } else if (line ~ /^'\''.*'\''$/) {
+          line=substr(line, 2, length(line)-2)
+        }
+        print line
+        exit
+      }
+    }
+  ' "$file"
+}
+
 detect_existing() {
   local has_config=false
   local config_path="$CODEX_HOME/config.toml"
@@ -60,8 +84,8 @@ detect_existing() {
   if [ -f "$config_path" ]; then
     has_config=true
     info "Existing config.toml found: $config_path"
-    EXISTING_MODEL=$(grep -E '^[[:space:]]*model[[:space:]]*=' "$config_path" 2>/dev/null | head -1 | sed 's/.*= *"//;s/".*//' || true)
-    EXISTING_PROVIDER=$(grep -E '^[[:space:]]*model_provider[[:space:]]*=' "$config_path" 2>/dev/null | head -1 | sed 's/.*= *"//;s/".*//' || true)
+    EXISTING_MODEL=$(extract_toml_value "model" "$config_path" || true)
+    EXISTING_PROVIDER=$(extract_toml_value "model_provider" "$config_path" || true)
     [ -n "$EXISTING_MODEL" ] && info "  Current model: $EXISTING_MODEL"
     [ -n "$EXISTING_PROVIDER" ] && info "  Current provider: $EXISTING_PROVIDER"
   fi
@@ -70,7 +94,7 @@ detect_existing() {
     EXISTING_API_KEY=$(grep -o '"OPENAI_API_KEY"[[:space:]]*:[[:space:]]*"[^"]*"' "$auth_path" 2>/dev/null | sed 's/.*: *"//;s/"$//' || true)
   fi
   if [ -z "$EXISTING_API_KEY" ] && [ -f "$config_path" ]; then
-    EXISTING_API_KEY=$(grep -o 'OPENAI_API_KEY[[:space:]]*=[[:space:]]*"[^"]*"' "$config_path" 2>/dev/null | head -1 | sed 's/.*= *"//;s/"$//' || true)
+    EXISTING_API_KEY=$(extract_toml_value "OPENAI_API_KEY" "$config_path" || true)
   fi
   if [ -n "$EXISTING_API_KEY" ]; then
     local masked="${EXISTING_API_KEY:0:8}...${EXISTING_API_KEY: -4}"
@@ -81,31 +105,34 @@ detect_existing() {
     local keep_all
     read -rp "Keep existing configuration (provider/model/API key if available)? [Y/n]: " keep_all
     if [ "$keep_all" != "n" ] && [ "$keep_all" != "N" ]; then
-      if [ -n "$EXISTING_MODEL" ]; then
+      if [ "$has_config" = true ]; then
         SKIP_PROVIDER=true
-        if [ -n "$EXISTING_PROVIDER" ]; then
+        if [ -n "$EXISTING_MODEL" ] && [ -n "$EXISTING_PROVIDER" ]; then
           info "Keeping existing provider/model configuration"
-        else
+        elif [ -n "$EXISTING_MODEL" ]; then
           info "Keeping existing model configuration (no explicit model_provider found)."
+        else
+          warn "Could not parse model from existing config.toml, but keeping existing config as requested."
+        fi
+        local cfg_override
+        read -rp "Reconfigure provider/model now? [y/N]: " cfg_override
+        if [ "$cfg_override" = "y" ] || [ "$cfg_override" = "Y" ]; then
+          SKIP_PROVIDER=false
+          info "Will reconfigure provider/model."
         fi
       else
-        warn "Existing provider/model is incomplete."
-        local cfg_now
-        read -rp "Configure provider/model now? [Y/n]: " cfg_now
-        if [ "$cfg_now" = "n" ] || [ "$cfg_now" = "N" ]; then
-          if [ "$has_config" = true ]; then
-            SKIP_PROVIDER=true
-            warn "Skipping provider/model setup; please verify config.toml manually."
-          else
-            SKIP_PROVIDER=false
-            warn "No existing config.toml detected; provider/model setup cannot be skipped."
-          fi
-        fi
+        warn "No existing config.toml found; provider/model input is required."
       fi
 
       if [ -n "$EXISTING_API_KEY" ]; then
         SKIP_AUTH=true
         info "Keeping existing API key"
+        local key_override
+        read -rp "Re-enter API key now? [y/N]: " key_override
+        if [ "$key_override" = "y" ] || [ "$key_override" = "Y" ]; then
+          SKIP_AUTH=false
+          info "Will re-enter API key."
+        fi
       else
         local key_now
         read -rp "No reusable API key found. Enter API key now? [Y/n]: " key_now
