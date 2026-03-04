@@ -5,6 +5,8 @@ $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $SrcDir = (Resolve-Path (Join-Path $ScriptDir '..')).Path
 $Components = @('skills', 'commands', 'agents', 'rules', 'hooks', 'scripts', 'CLAUDE.md', 'CLAUDE.zh-CN.md')
 $ClaudeCodeDocUrl = 'https://code.claude.com/docs/en/getting-started'
+$InstallLogPath = $env:OPEN_THESIS_INSTALL_LOG
+$TranscriptStarted = $false
 
 function Write-Info {
   param([string]$Message)
@@ -20,6 +22,16 @@ function Fail {
   param([string]$Message)
   Write-Host "[ERROR] $Message" -ForegroundColor Red
   exit 1
+}
+
+if (-not [string]::IsNullOrWhiteSpace($InstallLogPath)) {
+  try {
+    Start-Transcript -Path $InstallLogPath -Append -Force | Out-Null
+    $TranscriptStarted = $true
+    Write-Info "Transcript logging enabled: $InstallLogPath"
+  } catch {
+    Write-Warn "Unable to start transcript log at: $InstallLogPath"
+  }
 }
 
 function Set-ObjectProperty {
@@ -231,4 +243,11 @@ function Main {
   Write-Host ''
 }
 
-Main
+try {
+  Main
+}
+finally {
+  if ($TranscriptStarted) {
+    try { Stop-Transcript | Out-Null } catch {}
+  }
+}

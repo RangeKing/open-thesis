@@ -11,8 +11,10 @@ echo [INFO] Open Thesis Codex installer starting...
 echo [INFO] Log file: "%LOG_FILE%"
 echo [START] %DATE% %TIME% > "%LOG_FILE%"
 
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%SCRIPT_DIR%setup-codex.ps1" %* >> "%LOG_FILE%" 2>&1
+set "OPEN_THESIS_INSTALL_LOG=%LOG_FILE%"
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%SCRIPT_DIR%setup-codex.ps1" %*
 set "EXIT_CODE=%ERRORLEVEL%"
+set "OPEN_THESIS_INSTALL_LOG="
 
 if not "%EXIT_CODE%"=="0" (
   echo [ERROR] Installation failed (exit code %EXIT_CODE%).

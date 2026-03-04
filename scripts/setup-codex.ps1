@@ -11,10 +11,22 @@ $ProviderName = ''
 $ProviderUrl = ''
 $Model = ''
 $ApiKey = ''
+$InstallLogPath = $env:OPEN_THESIS_INSTALL_LOG
+$TranscriptStarted = $false
 
 function Write-Info { param([string]$Message) Write-Host "[INFO] $Message" -ForegroundColor Blue }
 function Write-Warn { param([string]$Message) Write-Host "[WARN] $Message" -ForegroundColor Yellow }
 function Fail { param([string]$Message) Write-Host "[ERROR] $Message" -ForegroundColor Red; exit 1 }
+
+if (-not [string]::IsNullOrWhiteSpace($InstallLogPath)) {
+  try {
+    Start-Transcript -Path $InstallLogPath -Append -Force | Out-Null
+    $TranscriptStarted = $true
+    Write-Info "Transcript logging enabled: $InstallLogPath"
+  } catch {
+    Write-Warn "Unable to start transcript log at: $InstallLogPath"
+  }
+}
 
 function Check-Deps {
   if (-not (Get-Command git -ErrorAction SilentlyContinue)) { Fail 'Git is required.' }
@@ -263,4 +275,11 @@ function Main {
   Write-Host "Run 'codex' to start."
 }
 
-Main
+try {
+  Main
+}
+finally {
+  if ($TranscriptStarted) {
+    try { Stop-Transcript | Out-Null } catch {}
+  }
+}
