@@ -16,6 +16,7 @@ $ExistingProvider = ''
 $ExistingApiKey = ''
 $InstallLogPath = $env:OPEN_THESIS_INSTALL_LOG
 $TranscriptStarted = $false
+$Utf8NoBom = New-Object System.Text.UTF8Encoding($false)
 
 function Write-Info { param([string]$Message) Write-Host "[INFO] $Message" -ForegroundColor Blue }
 function Write-Warn { param([string]$Message) Write-Host "[WARN] $Message" -ForegroundColor Yellow }
@@ -69,6 +70,57 @@ function Ensure-Dir([string]$Path) {
   if (-not (Test-Path $Path)) { New-Item -ItemType Directory -Force -Path $Path | Out-Null }
 }
 
+function Read-TextWithBestEffort {
+  param([string]$Path)
+
+  if (-not (Test-Path $Path)) { return '' }
+
+  $bytes = [System.IO.File]::ReadAllBytes($Path)
+  if ($bytes.Length -eq 0) { return '' }
+
+  try {
+    $strictUtf8 = New-Object System.Text.UTF8Encoding($false, $true)
+    return $strictUtf8.GetString($bytes)
+  } catch {}
+
+  $nullCount = 0
+  foreach ($b in $bytes) {
+    if ($b -eq 0) { $nullCount++ }
+  }
+
+  if ($nullCount -gt ($bytes.Length / 10)) {
+    return [System.Text.Encoding]::Unicode.GetString($bytes)
+  }
+
+  return [System.Text.Encoding]::Default.GetString($bytes)
+}
+
+function Write-Utf8NoBom {
+  param(
+    [string]$Path,
+    [string]$Content
+  )
+
+  [System.IO.File]::WriteAllText($Path, $Content, $Utf8NoBom)
+}
+
+function Append-Utf8NoBom {
+  param(
+    [string]$Path,
+    [string]$Content
+  )
+
+  [System.IO.File]::AppendAllText($Path, $Content, $Utf8NoBom)
+}
+
+function Normalize-FileToUtf8 {
+  param([string]$Path)
+
+  if (-not (Test-Path $Path)) { return }
+  $text = Read-TextWithBestEffort -Path $Path
+  Write-Utf8NoBom -Path $Path -Content $text
+}
+
 function Get-TomlValue {
   param(
     [string]$Path,
@@ -77,7 +129,7 @@ function Get-TomlValue {
 
   if (-not (Test-Path $Path)) { return '' }
 
-  $content = Get-Content -Raw -Path $Path
+  $content = Read-TextWithBestEffort -Path $Path
   if ([string]::IsNullOrWhiteSpace($content)) { return '' }
 
   # Handle UTF-8 BOM and CRLF safely.
@@ -280,9 +332,9 @@ function Add-BlockIfMissing {
     [string]$Block
   )
 
-  $content = Get-Content -Raw -Path $File
+  $content = Read-TextWithBestEffort -Path $File
   if ($content -notmatch $Pattern) {
-    Add-Content -Path $File -Value "`n$Block`n"
+    Append-Utf8NoBom -Path $File -Content ("`n$Block`n")
     return $true
   }
   return $false
@@ -293,6 +345,7 @@ function Merge-OpenThesisSections {
 
   Copy-Item -Path $ConfigPath -Destination "$ConfigPath.bak" -Force
   Write-Info 'Backed up config.toml -> config.toml.bak'
+  Normalize-FileToUtf8 -Path $ConfigPath
 
   $added = 0
   if (Add-BlockIfMissing -File $ConfigPath -Pattern '(?m)^developer_instructions\s*=' -Block 'developer_instructions = "用中文回答。thesis_mode=true。严格优先 GB/T 7713.1-2006 与 GB/T 7714-2015。输出优先给结构化 Markdown，并在需要时附 LaTeX(ctex) 版本。"') { $added++ }
@@ -320,6 +373,8 @@ ZOTERO_IMPORT_HINT = "Use DOI first; if DOI is missing, import with CNKI URL"
   } else {
     Write-Info 'Config already has all Open Thesis sections'
   }
+
+  Normalize-FileToUtf8 -Path $ConfigPath
 }
 
 function Generate-Config {
@@ -343,7 +398,7 @@ function Generate-Config {
   $template = $template.Replace('__MODEL__', $Model)
   $template = $template.Replace('__PROVIDER_NAME__', $ProviderName)
   $template = $template.Replace('__PROVIDER_URL__', $ProviderUrl)
-  Set-Content -Path $targetPath -Value $template -Encoding UTF8
+  Write-Utf8NoBom -Path $targetPath -Content $template
 
   Write-Info 'Generated config.toml'
 }
@@ -358,7 +413,7 @@ function Write-Auth {
     OPENAI_API_KEY = $ApiKey
   } | ConvertTo-Json -Depth 5
 
-  Set-Content -Path $authPath -Value ($auth + [Environment]::NewLine) -Encoding UTF8
+  Write-Utf8NoBom -Path $authPath -Content ($auth + [Environment]::NewLine)
   Write-Info 'Wrote auth.json'
 }
 
