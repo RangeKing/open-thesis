@@ -60,8 +60,8 @@ detect_existing() {
   if [ -f "$config_path" ]; then
     has_config=true
     info "Existing config.toml found: $config_path"
-    EXISTING_MODEL=$(grep '^model ' "$config_path" 2>/dev/null | head -1 | sed 's/.*= *"//;s/".*//' || true)
-    EXISTING_PROVIDER=$(grep '^model_provider ' "$config_path" 2>/dev/null | head -1 | sed 's/.*= *"//;s/".*//' || true)
+    EXISTING_MODEL=$(grep -E '^[[:space:]]*model[[:space:]]*=' "$config_path" 2>/dev/null | head -1 | sed 's/.*= *"//;s/".*//' || true)
+    EXISTING_PROVIDER=$(grep -E '^[[:space:]]*model_provider[[:space:]]*=' "$config_path" 2>/dev/null | head -1 | sed 's/.*= *"//;s/".*//' || true)
     [ -n "$EXISTING_MODEL" ] && info "  Current model: $EXISTING_MODEL"
     [ -n "$EXISTING_PROVIDER" ] && info "  Current provider: $EXISTING_PROVIDER"
   fi
@@ -81,9 +81,13 @@ detect_existing() {
     local keep_all
     read -rp "Keep existing configuration (provider/model/API key if available)? [Y/n]: " keep_all
     if [ "$keep_all" != "n" ] && [ "$keep_all" != "N" ]; then
-      if [ -n "$EXISTING_MODEL" ] && [ -n "$EXISTING_PROVIDER" ]; then
+      if [ -n "$EXISTING_MODEL" ]; then
         SKIP_PROVIDER=true
-        info "Keeping existing provider/model configuration"
+        if [ -n "$EXISTING_PROVIDER" ]; then
+          info "Keeping existing provider/model configuration"
+        else
+          info "Keeping existing model configuration (no explicit model_provider found)."
+        fi
       else
         warn "Existing provider/model is incomplete."
         local cfg_now

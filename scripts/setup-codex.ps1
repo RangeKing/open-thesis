@@ -78,8 +78,8 @@ function Detect-Existing {
     $hasConfig = $true
     Write-Info "Existing config.toml found: $configPath"
     $configContent = Get-Content -Raw -Path $configPath
-    if ($configContent -match '(?m)^model\s*=\s*"([^"]+)"') { $global:ExistingModel = $Matches[1] }
-    if ($configContent -match '(?m)^model_provider\s*=\s*"([^"]+)"') { $global:ExistingProvider = $Matches[1] }
+    if ($configContent -match '(?m)^\s*model\s*=\s*"([^"]+)"') { $global:ExistingModel = $Matches[1] }
+    if ($configContent -match '(?m)^\s*model_provider\s*=\s*"([^"]+)"') { $global:ExistingProvider = $Matches[1] }
     if ($configContent -match '(?m)^OPENAI_API_KEY\s*=\s*"([^"]+)"') { $global:ExistingApiKey = $Matches[1] }
     if (-not [string]::IsNullOrWhiteSpace($ExistingModel)) { Write-Info "  Current model: $ExistingModel" }
     if (-not [string]::IsNullOrWhiteSpace($ExistingProvider)) { Write-Info "  Current provider: $ExistingProvider" }
@@ -103,9 +103,13 @@ function Detect-Existing {
   if ($hasConfig -or -not [string]::IsNullOrWhiteSpace($ExistingApiKey)) {
     $keepAll = Read-Host 'Keep existing configuration (provider/model/API key if available)? [Y/n]'
     if ($keepAll -ne 'n' -and $keepAll -ne 'N') {
-      if (-not [string]::IsNullOrWhiteSpace($ExistingModel) -and -not [string]::IsNullOrWhiteSpace($ExistingProvider)) {
+      if (-not [string]::IsNullOrWhiteSpace($ExistingModel)) {
         $global:SkipProvider = $true
-        Write-Info 'Keeping existing provider/model configuration'
+        if (-not [string]::IsNullOrWhiteSpace($ExistingProvider)) {
+          Write-Info 'Keeping existing provider/model configuration'
+        } else {
+          Write-Info 'Keeping existing model configuration (no explicit model_provider found).'
+        }
       } else {
         Write-Warn 'Existing provider/model is incomplete.'
         $cfgNow = Read-Host 'Configure provider/model now? [Y/n]'
