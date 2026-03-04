@@ -13,6 +13,9 @@ PROVIDER_NAME=""
 PROVIDER_URL=""
 MODEL=""
 API_KEY=""
+EXISTING_MODEL=""
+EXISTING_PROVIDER=""
+EXISTING_API_KEY=""
 
 info()  { echo -e "\033[1;34m[INFO]\033[0m $*"; }
 warn()  { echo -e "\033[1;33m[WARN]\033[0m $*"; }
@@ -50,32 +53,73 @@ ensure_codex_cli() {
 }
 
 detect_existing() {
-  if [ -f "$CODEX_HOME/config.toml" ]; then
-    info "Existing config.toml found: $CODEX_HOME/config.toml"
-    local cur_model cur_provider
-    cur_model=$(grep '^model ' "$CODEX_HOME/config.toml" 2>/dev/null | head -1 | sed 's/.*= *"//;s/".*//' || true)
-    cur_provider=$(grep '^model_provider ' "$CODEX_HOME/config.toml" 2>/dev/null | head -1 | sed 's/.*= *"//;s/".*//' || true)
-    [ -n "$cur_model" ] && info "  Current model: $cur_model"
-    [ -n "$cur_provider" ] && info "  Current provider: $cur_provider"
+  local has_config=false
+  local config_path="$CODEX_HOME/config.toml"
+  local auth_path="$CODEX_HOME/auth.json"
 
-    read -rp "Keep existing provider/model config? [Y/n]: " keep
-    if [ "$keep" != "n" ] && [ "$keep" != "N" ]; then
-      SKIP_PROVIDER=true
-      info "Keeping existing provider/model configuration"
+  if [ -f "$config_path" ]; then
+    has_config=true
+    info "Existing config.toml found: $config_path"
+    EXISTING_MODEL=$(grep '^model ' "$config_path" 2>/dev/null | head -1 | sed 's/.*= *"//;s/".*//' || true)
+    EXISTING_PROVIDER=$(grep '^model_provider ' "$config_path" 2>/dev/null | head -1 | sed 's/.*= *"//;s/".*//' || true)
+    [ -n "$EXISTING_MODEL" ] && info "  Current model: $EXISTING_MODEL"
+    [ -n "$EXISTING_PROVIDER" ] && info "  Current provider: $EXISTING_PROVIDER"
+  fi
+
+  if [ -f "$auth_path" ]; then
+    EXISTING_API_KEY=$(grep -o '"OPENAI_API_KEY"[[:space:]]*:[[:space:]]*"[^"]*"' "$auth_path" 2>/dev/null | sed 's/.*: *"//;s/"$//' || true)
+  fi
+  if [ -z "$EXISTING_API_KEY" ] && [ -f "$config_path" ]; then
+    EXISTING_API_KEY=$(grep -o 'OPENAI_API_KEY[[:space:]]*=[[:space:]]*"[^"]*"' "$config_path" 2>/dev/null | head -1 | sed 's/.*= *"//;s/"$//' || true)
+  fi
+  if [ -n "$EXISTING_API_KEY" ]; then
+    local masked="${EXISTING_API_KEY:0:8}...${EXISTING_API_KEY: -4}"
+    info "Existing API key found: $masked"
+  fi
+
+  if [ "$has_config" = true ] || [ -n "$EXISTING_API_KEY" ]; then
+    local keep_all
+    read -rp "Keep existing configuration (provider/model/API key if available)? [Y/n]: " keep_all
+    if [ "$keep_all" != "n" ] && [ "$keep_all" != "N" ]; then
+      if [ -n "$EXISTING_MODEL" ] && [ -n "$EXISTING_PROVIDER" ]; then
+        SKIP_PROVIDER=true
+        info "Keeping existing provider/model configuration"
+      else
+        warn "Existing provider/model is incomplete."
+        local cfg_now
+        read -rp "Configure provider/model now? [Y/n]: " cfg_now
+        if [ "$cfg_now" = "n" ] || [ "$cfg_now" = "N" ]; then
+          if [ "$has_config" = true ]; then
+            SKIP_PROVIDER=true
+            warn "Skipping provider/model setup; please verify config.toml manually."
+          else
+            SKIP_PROVIDER=false
+            warn "No existing config.toml detected; provider/model setup cannot be skipped."
+          fi
+        fi
+      fi
+
+      if [ -n "$EXISTING_API_KEY" ]; then
+        SKIP_AUTH=true
+        info "Keeping existing API key"
+      else
+        local key_now
+        read -rp "No reusable API key found. Enter API key now? [Y/n]: " key_now
+        if [ "$key_now" = "n" ] || [ "$key_now" = "N" ]; then
+          SKIP_AUTH=true
+          warn "Skipping API key input; ensure OPENAI_API_KEY is set before running codex."
+        fi
+      fi
+      return
     fi
   fi
 
-  if [ -f "$CODEX_HOME/auth.json" ]; then
-    local masked key
-    key=$(grep -o '"OPENAI_API_KEY"[[:space:]]*:[[:space:]]*"[^"]*"' "$CODEX_HOME/auth.json" 2>/dev/null | sed 's/.*: *"//;s/"$//' || true)
-    if [ -n "$key" ]; then
-      masked="${key:0:8}...${key: -4}"
-      info "Existing API key found: $masked"
-      read -rp "Keep existing API key? [Y/n]: " keep_key
-      if [ "$keep_key" != "n" ] && [ "$keep_key" != "N" ]; then
-        SKIP_AUTH=true
-        info "Keeping existing API key"
-      fi
+  if [ -n "$EXISTING_API_KEY" ]; then
+    local keep_key
+    read -rp "Reuse existing API key? [Y/n]: " keep_key
+    if [ "$keep_key" != "n" ] && [ "$keep_key" != "N" ]; then
+      SKIP_AUTH=true
+      info "Keeping existing API key"
     fi
   fi
 }
@@ -118,6 +162,14 @@ configure_api_key() {
   [ "$SKIP_AUTH" = true ] && return
 
   echo ""
+  local input_now
+  read -rp "Configure API key now? [Y/n]: " input_now
+  if [ "$input_now" = "n" ] || [ "$input_now" = "N" ]; then
+    warn "Skipping API key input. Ensure OPENAI_API_KEY is available in your environment."
+    SKIP_AUTH=true
+    return
+  fi
+
   read -rp "Enter API key (OPENAI_API_KEY, or press Enter to skip): " API_KEY
   if [ -z "$API_KEY" ]; then
     warn "No API key written. Ensure OPENAI_API_KEY is available in your environment."

@@ -11,6 +11,9 @@ $ProviderName = ''
 $ProviderUrl = ''
 $Model = ''
 $ApiKey = ''
+$ExistingModel = ''
+$ExistingProvider = ''
+$ExistingApiKey = ''
 $InstallLogPath = $env:OPEN_THESIS_INSTALL_LOG
 $TranscriptStarted = $false
 
@@ -69,19 +72,70 @@ function Ensure-Dir([string]$Path) {
 function Detect-Existing {
   $configPath = Join-Path $CodexHome 'config.toml'
   $authPath = Join-Path $CodexHome 'auth.json'
+  $hasConfig = $false
 
   if (Test-Path $configPath) {
+    $hasConfig = $true
     Write-Info "Existing config.toml found: $configPath"
-    $keep = Read-Host 'Keep existing provider/model config? [Y/n]'
-    if ($keep -ne 'n' -and $keep -ne 'N') {
-      $global:SkipProvider = $true
-      Write-Info 'Keeping existing provider/model configuration'
-    }
+    $configContent = Get-Content -Raw -Path $configPath
+    if ($configContent -match '(?m)^model\s*=\s*"([^"]+)"') { $global:ExistingModel = $Matches[1] }
+    if ($configContent -match '(?m)^model_provider\s*=\s*"([^"]+)"') { $global:ExistingProvider = $Matches[1] }
+    if ($configContent -match '(?m)^OPENAI_API_KEY\s*=\s*"([^"]+)"') { $global:ExistingApiKey = $Matches[1] }
+    if (-not [string]::IsNullOrWhiteSpace($ExistingModel)) { Write-Info "  Current model: $ExistingModel" }
+    if (-not [string]::IsNullOrWhiteSpace($ExistingProvider)) { Write-Info "  Current provider: $ExistingProvider" }
   }
 
   if (Test-Path $authPath) {
-    Write-Info "Existing auth.json found: $authPath"
-    $keepAuth = Read-Host 'Keep existing API key? [Y/n]'
+    try {
+      $authObj = Get-Content -Raw -Path $authPath | ConvertFrom-Json
+      if (-not [string]::IsNullOrWhiteSpace($authObj.OPENAI_API_KEY)) {
+        $global:ExistingApiKey = $authObj.OPENAI_API_KEY
+      }
+    } catch {}
+  }
+
+  if (-not [string]::IsNullOrWhiteSpace($ExistingApiKey)) {
+    $prefix = if ($ExistingApiKey.Length -ge 8) { $ExistingApiKey.Substring(0, 8) } else { $ExistingApiKey }
+    $suffix = if ($ExistingApiKey.Length -ge 4) { $ExistingApiKey.Substring($ExistingApiKey.Length - 4) } else { $ExistingApiKey }
+    Write-Info "Existing API key found: $prefix...$suffix"
+  }
+
+  if ($hasConfig -or -not [string]::IsNullOrWhiteSpace($ExistingApiKey)) {
+    $keepAll = Read-Host 'Keep existing configuration (provider/model/API key if available)? [Y/n]'
+    if ($keepAll -ne 'n' -and $keepAll -ne 'N') {
+      if (-not [string]::IsNullOrWhiteSpace($ExistingModel) -and -not [string]::IsNullOrWhiteSpace($ExistingProvider)) {
+        $global:SkipProvider = $true
+        Write-Info 'Keeping existing provider/model configuration'
+      } else {
+        Write-Warn 'Existing provider/model is incomplete.'
+        $cfgNow = Read-Host 'Configure provider/model now? [Y/n]'
+        if ($cfgNow -eq 'n' -or $cfgNow -eq 'N') {
+          if ($hasConfig) {
+            $global:SkipProvider = $true
+            Write-Warn 'Skipping provider/model setup; please verify config.toml manually.'
+          } else {
+            $global:SkipProvider = $false
+            Write-Warn 'No existing config.toml detected; provider/model setup cannot be skipped.'
+          }
+        }
+      }
+
+      if (-not [string]::IsNullOrWhiteSpace($ExistingApiKey)) {
+        $global:SkipAuth = $true
+        Write-Info 'Keeping existing API key'
+      } else {
+        $keyNow = Read-Host 'No reusable API key found. Enter API key now? [Y/n]'
+        if ($keyNow -eq 'n' -or $keyNow -eq 'N') {
+          $global:SkipAuth = $true
+          Write-Warn 'Skipping API key input; ensure OPENAI_API_KEY is set before running codex.'
+        }
+      }
+      return
+    }
+  }
+
+  if (-not [string]::IsNullOrWhiteSpace($ExistingApiKey)) {
+    $keepAuth = Read-Host 'Reuse existing API key? [Y/n]'
     if ($keepAuth -ne 'n' -and $keepAuth -ne 'N') {
       $global:SkipAuth = $true
       Write-Info 'Keeping existing API key'
@@ -121,6 +175,13 @@ function Choose-Provider {
 
 function Configure-ApiKey {
   if ($SkipAuth) { return }
+
+  $askNow = Read-Host 'Configure API key now? [Y/n]'
+  if ($askNow -eq 'n' -or $askNow -eq 'N') {
+    $global:SkipAuth = $true
+    Write-Warn 'Skipping API key input. Ensure OPENAI_API_KEY exists in your environment.'
+    return
+  }
 
   $global:ApiKey = Read-Host 'Enter API key (OPENAI_API_KEY, Enter to skip)'
   if ([string]::IsNullOrWhiteSpace($ApiKey)) {

@@ -17,6 +17,10 @@ npm install -g @openai/codex
 若自动安装失败，会提示官方文档：
 - https://github.com/openai/codex#installation
 
+安装流程会检测已有 `~/.codex/config.toml` 与 `~/.codex/auth.json`：
+- 若你选择“保持已有配置”，且已有 model 与 API key，可直接复用并跳过输入。
+- 若缺失项需要补充，脚本会给出“现在输入/跳过输入”的选项。
+
 ## 一键安装
 
 ### macOS / Linux
