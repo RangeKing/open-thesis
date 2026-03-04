@@ -107,6 +107,7 @@ detect_existing() {
     if [ "$keep_all" != "n" ] && [ "$keep_all" != "N" ]; then
       if [ "$has_config" = true ]; then
         SKIP_PROVIDER=true
+        SKIP_AUTH=true
         if [ -n "$EXISTING_MODEL" ] && [ -n "$EXISTING_PROVIDER" ]; then
           info "Keeping existing provider/model configuration"
         elif [ -n "$EXISTING_MODEL" ]; then
@@ -114,6 +115,12 @@ detect_existing() {
         else
           info "Keeping existing config.toml as requested (model/provider values were not re-parsed)."
         fi
+        if [ -n "$EXISTING_API_KEY" ]; then
+          info "Keeping existing API key"
+        else
+          info "Keeping existing auth configuration (no API key re-entry in keep-existing mode)."
+        fi
+        return
       else
         warn "No existing config.toml found; provider/model input is required."
       fi
