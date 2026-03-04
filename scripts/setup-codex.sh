@@ -102,6 +102,34 @@ ensure_or_replace_line() {
   mv "$tmp" "$file"
 }
 
+insert_top_level_key_if_missing() {
+  local file="$1"
+  local key="$2"
+  local line="$3"
+
+  if grep -q "^[[:space:]]*${key}[[:space:]]*=" "$file" 2>/dev/null; then
+    return 1
+  fi
+
+  local tmp
+  tmp="$(mktemp)"
+  local inserted=false
+  while IFS= read -r cur_line || [ -n "$cur_line" ]; do
+    if [ "$inserted" = false ] && echo "$cur_line" | grep -q '^\['; then
+      echo "$line"
+      inserted=true
+    fi
+    echo "$cur_line"
+  done < "$file" > "$tmp"
+
+  if [ "$inserted" = false ]; then
+    echo "$line" >> "$tmp"
+  fi
+
+  mv "$tmp" "$file"
+  return 0
+}
+
 detect_existing() {
   local has_config=false
   local config_path="$CODEX_HOME/config.toml"
@@ -263,11 +291,11 @@ merge_open_thesis_sections() {
   cp "$target" "${target}.bak"
   info "Backed up config.toml -> config.toml.bak"
 
-  ensure_or_replace_line "$target" '^[[:space:]]*developer_instructions[[:space:]]*=' "$SAFE_DEVELOPER_INSTRUCTIONS"
-  added=$((added + 1))
+  if insert_top_level_key_if_missing "$target" "developer_instructions" "$SAFE_DEVELOPER_INSTRUCTIONS"; then
+    added=$((added + 1))
+  fi
 
-  if ! grep -q '^sandbox_mode' "$target" 2>/dev/null; then
-    echo 'sandbox_mode = "workspace-write"' >> "$target"
+  if insert_top_level_key_if_missing "$target" "sandbox_mode" 'sandbox_mode = "workspace-write"'; then
     added=$((added + 1))
   fi
 
@@ -330,8 +358,6 @@ generate_config() {
       -e "s|__PROVIDER_NAME__|$PROVIDER_NAME|g" \
       -e "s|__PROVIDER_URL__|$PROVIDER_URL|g" \
       "$template" > "$target"
-
-  ensure_or_replace_line "$target" '^[[:space:]]*developer_instructions[[:space:]]*=' "$SAFE_DEVELOPER_INSTRUCTIONS"
 
   info "Generated config.toml"
 }

@@ -341,6 +341,31 @@ function Add-BlockIfMissing {
   return $false
 }
 
+function Insert-TopLevelKeyIfMissing {
+  param(
+    [string]$File,
+    [string]$Key,
+    [string]$Line
+  )
+
+  $content = Read-TextWithBestEffort -Path $File
+  $keyPattern = '(?m)^\s*' + [regex]::Escape($Key) + '\s*='
+  if ($content -match $keyPattern) { return $false }
+
+  $sectionPattern = '(?m)^\[.+\]'
+  $match = [regex]::Match($content, $sectionPattern)
+  if ($match.Success) {
+    $pos = $match.Index
+    $before = $content.Substring(0, $pos).TrimEnd()
+    $after = $content.Substring($pos)
+    $updated = "$before`n$Line`n`n$after"
+  } else {
+    $updated = $content.TrimEnd() + "`n$Line`n"
+  }
+  Write-Utf8NoBom -Path $File -Content $updated
+  return $true
+}
+
 function Ensure-Or-ReplaceLine {
   param(
     [string]$File,
@@ -370,8 +395,8 @@ function Merge-OpenThesisSections {
   Normalize-FileToUtf8 -Path $ConfigPath
 
   $added = 0
-  if (Ensure-Or-ReplaceLine -File $ConfigPath -Pattern '^\s*developer_instructions\s*=.*$' -Line $SafeDeveloperInstructionsLine) { $added++ }
-  if (Add-BlockIfMissing -File $ConfigPath -Pattern '(?m)^sandbox_mode\s*=' -Block 'sandbox_mode = "workspace-write"') { $added++ }
+  if (Insert-TopLevelKeyIfMissing -File $ConfigPath -Key 'developer_instructions' -Line $SafeDeveloperInstructionsLine) { $added++ }
+  if (Insert-TopLevelKeyIfMissing -File $ConfigPath -Key 'sandbox_mode' -Line 'sandbox_mode = "workspace-write"') { $added++ }
   if (Add-BlockIfMissing -File $ConfigPath -Pattern '(?m)^\[features\]' -Block "[features]`nmulti_agent = true`nmemories = true`nskill_approval = true") { $added++ }
 
   $mcpBlock = @"
@@ -417,7 +442,6 @@ function Generate-Config {
   }
 
   $template = Read-TextWithBestEffort -Path $templatePath
-  $template = [regex]::Replace($template, '^\s*developer_instructions\s*=.*$', $SafeDeveloperInstructionsLine, [System.Text.RegularExpressions.RegexOptions]::Multiline)
   $template = $template.Replace('__MODEL__', $Model)
   $template = $template.Replace('__PROVIDER_NAME__', $ProviderName)
   $template = $template.Replace('__PROVIDER_URL__', $ProviderUrl)

@@ -5,16 +5,14 @@ model = "__MODEL__"
 model_provider = "__PROVIDER_NAME__"
 model_reasoning_effort = "medium"
 disable_response_storage = true
+sandbox_mode = "workspace-write"
+developer_instructions = "Respond in Chinese. thesis_mode=true. Prioritize GB/T 7713.1-2006 and GB/T 7714-2015. Prefer structured Markdown and add LaTeX (ctex) when needed."
 
 [model_providers.__PROVIDER_NAME__]
 name = "__PROVIDER_NAME__"
 base_url = "__PROVIDER_URL__"
 wire_api = "responses"
 requires_openai_auth = true
-
-sandbox_mode = "workspace-write"
-
-developer_instructions = "Respond in Chinese. thesis_mode=true. Prioritize GB/T 7713.1-2006 and GB/T 7714-2015. Prefer structured Markdown and add LaTeX (ctex) when needed."
 
 [features]
 multi_agent = true
