@@ -3,6 +3,7 @@ $ErrorActionPreference = 'Stop'
 $CodexHome = if ($env:CODEX_HOME) { $env:CODEX_HOME } else { Join-Path $HOME '.codex' }
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $RepoRoot = (Resolve-Path (Join-Path $ScriptDir '..')).Path
+$CodexDocUrl = 'https://github.com/openai/codex#installation'
 
 $SkipProvider = $false
 $SkipAuth = $false
@@ -17,7 +18,36 @@ function Fail { param([string]$Message) Write-Host "[ERROR] $Message" -Foregroun
 
 function Check-Deps {
   if (-not (Get-Command git -ErrorAction SilentlyContinue)) { Fail 'Git is required.' }
-  if (-not (Get-Command codex -ErrorAction SilentlyContinue)) { Write-Warn 'Codex CLI not found. Install: npm i -g @openai/codex' }
+}
+
+function Ensure-CodexCli {
+  if (Get-Command codex -ErrorAction SilentlyContinue) {
+    $version = (& codex --version 2>$null)
+    if ([string]::IsNullOrWhiteSpace($version)) { $version = 'installed' }
+    Write-Info "Detected Codex CLI: $version"
+    return
+  }
+
+  Write-Warn 'Codex CLI not found. Attempting automatic install...'
+  if (Get-Command npm -ErrorAction SilentlyContinue) {
+    try {
+      npm install -g @openai/codex | Out-Host
+    } catch {
+      Write-Warn 'Automatic install via npm failed.'
+    }
+  } else {
+    Write-Warn 'npm not found; cannot auto-install Codex CLI.'
+  }
+
+  if (Get-Command codex -ErrorAction SilentlyContinue) {
+    $version = (& codex --version 2>$null)
+    if ([string]::IsNullOrWhiteSpace($version)) { $version = 'installed' }
+    Write-Info "Codex CLI installed successfully: $version"
+  } else {
+    Write-Warn 'Codex CLI is still unavailable.'
+    Write-Warn "Official installation docs: $CodexDocUrl"
+    Write-Warn 'Official quick install: npm install -g @openai/codex'
+  }
 }
 
 function Ensure-Dir([string]$Path) {
@@ -212,6 +242,7 @@ function Main {
   Write-Host ''
 
   Check-Deps
+  Ensure-CodexCli
   Write-Info "Source: $RepoRoot"
   Write-Info "Target: $CodexHome"
 

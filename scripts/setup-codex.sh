@@ -5,6 +5,7 @@ set -euo pipefail
 CODEX_HOME="${CODEX_HOME:-$HOME/.codex}"
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 SRC_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+CODEX_DOC_URL="https://github.com/openai/codex#installation"
 
 SKIP_PROVIDER=false
 SKIP_AUTH=false
@@ -19,8 +20,32 @@ error() { echo -e "\033[1;31m[ERROR]\033[0m $*"; exit 1; }
 
 check_deps() {
   command -v git >/dev/null || error "Git is required."
-  if ! command -v codex >/dev/null 2>&1; then
-    warn "Codex CLI not found. Install: npm i -g @openai/codex"
+}
+
+# Ensure Codex CLI exists; try automatic install if missing.
+ensure_codex_cli() {
+  if command -v codex >/dev/null 2>&1; then
+    info "Detected Codex CLI: $(codex --version 2>/dev/null || echo 'installed')"
+    return
+  fi
+
+  warn "Codex CLI not found. Attempting automatic install..."
+  if command -v npm >/dev/null 2>&1; then
+    if npm install -g @openai/codex; then
+      hash -r
+    else
+      warn "Automatic install via npm failed."
+    fi
+  else
+    warn "npm not found; cannot auto-install Codex CLI."
+  fi
+
+  if command -v codex >/dev/null 2>&1; then
+    info "Codex CLI installed successfully: $(codex --version 2>/dev/null || echo 'installed')"
+  else
+    warn "Codex CLI is still unavailable."
+    warn "Official installation docs: $CODEX_DOC_URL"
+    warn "Official quick install: npm install -g @openai/codex"
   fi
 }
 
@@ -226,6 +251,7 @@ main() {
   echo ""
 
   check_deps
+  ensure_codex_cli
   info "Source: $SRC_DIR"
   info "Target: $CODEX_HOME"
 

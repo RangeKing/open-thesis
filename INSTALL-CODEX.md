@@ -4,10 +4,18 @@
 
 ## 先决条件
 
-- 已安装 Codex CLI
 - Git
 - Node.js
 - （可选）zotero-mcp
+
+说明：安装脚本会自动检测 `codex`，若未安装会尝试执行：
+
+```bash
+npm install -g @openai/codex
+```
+
+若自动安装失败，会提示官方文档：
+- https://github.com/openai/codex#installation
 
 ## 一键安装
 

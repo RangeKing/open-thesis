@@ -4,6 +4,7 @@ $ClaudeDir = Join-Path $HOME '.claude'
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $SrcDir = (Resolve-Path (Join-Path $ScriptDir '..')).Path
 $Components = @('skills', 'commands', 'agents', 'rules', 'hooks', 'scripts', 'CLAUDE.md', 'CLAUDE.zh-CN.md')
+$ClaudeCodeDocUrl = 'https://code.claude.com/docs/en/getting-started'
 
 function Write-Info {
   param([string]$Message)
@@ -65,6 +66,38 @@ function Check-Deps {
 
   if (-not (Get-Command node -ErrorAction SilentlyContinue)) {
     Fail 'Node.js is required (hooks depend on it). Install it first.'
+  }
+}
+
+function Ensure-ClaudeCli {
+  if (Get-Command claude -ErrorAction SilentlyContinue) {
+    $version = (& claude --version 2>$null)
+    if ([string]::IsNullOrWhiteSpace($version)) { $version = 'installed' }
+    Write-Info "Detected Claude Code CLI: $version"
+    return
+  }
+
+  Write-Warn 'Claude Code CLI not found. Attempting automatic install...'
+  if (Get-Command npm -ErrorAction SilentlyContinue) {
+    try {
+      npm install -g @anthropic-ai/claude-code | Out-Host
+    } catch {
+      Write-Warn 'Automatic install via npm failed.'
+    }
+  } else {
+    Write-Warn 'npm not found; cannot auto-install Claude Code CLI.'
+  }
+
+  if (Get-Command claude -ErrorAction SilentlyContinue) {
+    $version = (& claude --version 2>$null)
+    if ([string]::IsNullOrWhiteSpace($version)) { $version = 'installed' }
+    Write-Info "Claude Code CLI installed successfully: $version"
+  } else {
+    Write-Warn 'Claude Code CLI is still unavailable.'
+    Write-Warn "Official installation docs: $ClaudeCodeDocUrl"
+    Write-Warn 'Official quick install:'
+    Write-Warn '  macOS/Linux/WSL: curl -fsSL https://claude.ai/install.sh | bash'
+    Write-Warn '  Windows PowerShell: irm https://claude.ai/install.ps1 | iex'
   }
 }
 
@@ -183,6 +216,7 @@ function Main {
   Write-Host ''
 
   Check-Deps
+  Ensure-ClaudeCli
   Check-ThesisToolchain
 
   Write-Info "Installing from: $SrcDir"

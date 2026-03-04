@@ -20,6 +20,7 @@ Windows（一键安装）：
 
 - 双击 `setup.bat`
 - 脚本会停留窗口并写入日志 `setup-windows.log`
+- 安装脚本会检测 `claude`，未安装时尝试自动安装；失败时给出官方安装文档链接
 
 ## Codex CLI 支持
 
@@ -39,6 +40,7 @@ Windows 一键：
 
 - 双击 `setup-codex.bat`（日志：`setup-codex-windows.log`）
 - 详细文档见 [INSTALL-CODEX.md](./INSTALL-CODEX.md)
+- 安装脚本会检测 `codex`，未安装时尝试自动安装；失败时给出官方安装文档链接
 
 ## 核心命令
 

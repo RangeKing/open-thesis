@@ -5,6 +5,7 @@ CLAUDE_DIR="$HOME/.claude"
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 SRC_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 COMPONENTS=(skills commands agents rules hooks scripts CLAUDE.md CLAUDE.zh-CN.md)
+CLAUDE_CODE_DOC_URL="https://code.claude.com/docs/en/getting-started"
 
 info()  { echo -e "\033[1;34m[INFO]\033[0m $*"; }
 warn()  { echo -e "\033[1;33m[WARN]\033[0m $*"; }
@@ -13,6 +14,35 @@ error() { echo -e "\033[1;31m[ERROR]\033[0m $*"; exit 1; }
 check_deps() {
   command -v git  >/dev/null || error "Git is required. Install it first."
   command -v node >/dev/null || error "Node.js is required (hooks depend on it). Install it first."
+}
+
+# Ensure Claude Code CLI exists; try automatic install if missing.
+ensure_claude_cli() {
+  if command -v claude >/dev/null 2>&1; then
+    info "Detected Claude Code CLI: $(claude --version 2>/dev/null || echo 'installed')"
+    return
+  fi
+
+  warn "Claude Code CLI not found. Attempting automatic install..."
+  if command -v npm >/dev/null 2>&1; then
+    if npm install -g @anthropic-ai/claude-code; then
+      hash -r
+    else
+      warn "Automatic install via npm failed."
+    fi
+  else
+    warn "npm not found; cannot auto-install Claude Code CLI."
+  fi
+
+  if command -v claude >/dev/null 2>&1; then
+    info "Claude Code CLI installed successfully: $(claude --version 2>/dev/null || echo 'installed')"
+  else
+    warn "Claude Code CLI is still unavailable."
+    warn "Official installation docs: $CLAUDE_CODE_DOC_URL"
+    warn "Official quick install:"
+    warn "  macOS/Linux/WSL: curl -fsSL https://claude.ai/install.sh | bash"
+    warn "  Windows PowerShell: irm https://claude.ai/install.ps1 | iex"
+  fi
 }
 
 # Check optional LaTeX toolchain for Chinese thesis workflow
@@ -104,6 +134,7 @@ main() {
   echo ""
 
   check_deps
+  ensure_claude_cli
   check_thesis_toolchain
 
   info "Installing from: $SRC_DIR"

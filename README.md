@@ -63,8 +63,10 @@ Windows 双击：
 
 1. 复制 `skills/commands/agents/rules/hooks/CLAUDE*.md`
 2. 合并 `settings.json.template` 中的 hooks / mcpServers / enabledPlugins
-3. 检查可选论文工具链（`xelatex`、`biber`）
-4. 给出 ctex 模板位置提示
+3. 检测 Claude Code / Codex CLI 是否已安装，缺失时尝试自动安装
+4. 安装失败时输出官方安装文档链接
+5. 检查可选论文工具链（`xelatex`、`biber`）
+6. 给出 ctex 模板位置提示
 
 ---
 
