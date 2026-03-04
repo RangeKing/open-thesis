@@ -1,170 +1,90 @@
 ---
 name: research-init
-description: Initialize a research project with Zotero-integrated literature review. Creates Zotero collections, searches and imports papers, analyzes content, and generates literature review and research proposal.
+description: 初始化中文硕士/博士学位论文研究流程（Zotero 文献库 + 论文框架 + ctex 模板 + 研究计划）
 args:
   - name: topic
-    description: Research topic or keywords
+    description: 论文题目或研究主题
     required: true
+  - name: degree
+    description: 学位类型（master/phd）
+    required: false
+    default: master
   - name: scope
-    description: Review scope (focused/broad)
+    description: 调研范围（focused/broad）
     required: false
     default: focused
-  - name: output_type
-    description: Output type (review/proposal/both)
-    required: false
-    default: both
-tags: [Research, Literature Review, Zotero, Paper Search]
+tags: [Thesis, Zotero, Literature Review, Chinese Academic]
 ---
 
-# /research-init - Zotero-Integrated Research Startup Workflow
+# /research-init - 中文学位论文研究初始化
 
-Launch a complete literature survey workflow for the research topic "$topic", with scope "$scope" and output type "$output_type".
+为主题 "$topic" 初始化中文学位论文工作流（学位类型："$degree"，调研范围："$scope"）。
 
-## Usage
+## 执行步骤
 
-### Basic Usage
+### Step 1: 启用 thesis 模式
 
-```bash
-/research-init "transformer interpretability"
-```
+1. 强制启用技能：`chinese-degree-thesis-writing`
+2. 在上下文中写入偏好：`thesis_mode: true`
+3. 默认遵循：GB/T 7713.1-2006 与 GB/T 7714-2015
 
-### Specify Scope
+### Step 2: 创建 Zotero 论文集合
 
-```bash
-/research-init "few-shot learning" focused
-```
+1. 创建主集合：`中文学位论文-{TopicShort}-{YYYY-MM}`
+2. 创建子集合：
+   - `中文核心文献`
+   - `外文核心文献`
+   - `方法与理论`
+   - `待精读`
+   - `答辩支撑材料`
+3. 记录各子集合 `collection_key`
 
-### Specify All Parameters
+### Step 3: 文献检索与导入（DOI 优先，CNKI 兜底）
 
-```bash
-/research-init "neural architecture search" broad both
-```
+1. 检索与 "$topic" 高相关的中外文文献
+2. 导入策略：
+   - 优先 `mcp__zotero__add_items_by_doi`
+   - 无 DOI 时，提示并允许通过 CNKI 链接导入（`add_web_item`）
+3. 导入前去重：
+   - DOI 精确匹配
+   - 标题相似度 > 0.8 视为重复
+4. 导入后批量附 PDF：`mcp__zotero__find_and_attach_pdfs`
 
-## Workflow
+### Step 4: 生成论文初稿骨架
 
-Execute the following steps in order:
+输出以下文件：
 
-### Step 1: Create Zotero Research Collection
+1. `thesis-outline.md`
+   - 含完整章节顺序：封面/声明/中英摘要/目录/正文/参考文献/附录/致谢/成果/作者简介（博士）
+2. `literature-review.md`
+   - 按“述评结合”写法组织：研究脉络 + 评议 + gap
+3. `thesis-template.tex`
+   - ctex + xeCJK 可编译模板
+4. `references.bib`
+   - 从 Zotero 导出
+5. `writing-plan.md`
+   - 周计划与里程碑（选题、综述、方法、实验、定稿、答辩）
 
-1. Call `mcp__zotero__create_collection` to create the main collection, named `Research-{Topic}-{YYYY-MM}` (extract a short PascalCase keyword from the topic, use the current year and month)
-2. Create sub-collections under the main collection:
-   - `Core Papers`
-   - `Methods`
-   - `Applications`
-   - `Baselines`
-   - `To-Read`
-3. Record the `collection_key` for each sub-collection (needed for import in Step 2)
+### Step 5: 合规检查
 
-### Step 2: Literature Search and Import
+使用 `structure-checklist.md` 检查：
+- 硕士文献不少于 40，博士不少于 100
+- 中外文比例建议各半
+- 近 5 年文献不少于 1/3
 
-1. Use WebSearch to find papers related to "$topic"
-   - Search strategy: use the topic directly, plus variant combinations of key terms
-   - Target sources: arXiv, Google Scholar, conference proceedings
-   - Time range: focused mode searches the last 3 years, broad mode searches the last 5 years
-   - Target paper count: 20-50 papers for focused scope, 50-100 for broad scope
-2. Extract DOIs from search results
-3. **Classify before import**: For each paper, determine which sub-collection it belongs to (Core Papers, Methods, Applications, Baselines, or To-Read) based on its title, abstract, and venue
-4. **Pre-import deduplication (two-step)**:
-   - Call `mcp__zotero__search_library` with the DOI string to find potential matches
-   - Call `mcp__zotero__zotero_get_item_metadata` on results to confirm the DOI field matches exactly
-   - If confirmed match → skip import, log ("Already exists: {DOI} → {item_key}")
-   - For papers without DOI → search by title using token overlap ratio (lowercase both titles, remove punctuation, compute intersection of words / union of words). Ratio > 0.8 = duplicate
-5. **Import with collection assignment**: Call `mcp__zotero__add_items_by_doi` with the target sub-collection's `collection_key` to add papers directly into the correct sub-collection
-6. **Fallback for papers without DOI**: Call `mcp__zotero__add_web_item` with the paper URL (e.g., arXiv page) and the target `collection_key`
-   - **Note**: Items added via `add_web_item` will have `itemType: webpage`. Prefer finding the DOI and using `add_items_by_doi` whenever possible for proper bibliographic metadata.
-7. Collect all `item_key` values from the import results in Steps 2.5 and 2.6, then call `mcp__zotero__find_and_attach_pdfs({ item_keys: [...] })`. Note: `add_items_by_doi` already auto-attaches open-access PDFs by default (`auto_attach_pdf: true`), so this step primarily benefits `add_web_item` imports.
+## 强制输出格式
 
-**Note**: Items cannot be moved between Zotero collections via MCP tools after import. Always classify papers and specify the target `collection_key` during import. Post-import reorganization requires manual action in the Zotero desktop client.
+每个核心结果必须给两版：
+1. Markdown
+2. LaTeX(ctex)
 
-### Step 3: Paper Analysis
+## 进度跟踪
 
-1. Call `mcp__zotero__zotero_get_collection_items` to list imported papers
-2. Call `mcp__zotero__zotero_get_item_metadata` with `include_abstract: true` to get metadata and abstracts (ensures abstracts are available as fallback if full-text retrieval fails)
-3. Call `mcp__zotero__zotero_get_item_fulltext` to read full text of papers with PDFs
-3. For each paper, extract:
-   - Research question and motivation
-   - Core methodology
-   - Key findings and contributions
-   - Limitations and future work
-4. Use these structured notes as intermediate analysis to inform the final `literature-review.md` (they are not a separate output file)
+使用 TodoWrite 记录阶段状态（检索、导入、综述、框架、模板、核验）。
 
-### Step 4: Gap Analysis and Synthesis
+## 相关命令
 
-1. Analyze all collected papers for:
-   - Research trends and directions
-   - Methodological gaps
-   - Unexplored application domains
-   - Contradictions in research findings
-2. Identify 2-3 concrete research gaps
-3. Formulate potential research questions
-
-### Step 5: Generate Outputs
-
-Generate corresponding files based on output_type "$output_type":
-
-1. **literature-review.md** - Structured literature review with real citations from Zotero
-2. **research-proposal.md** - Research proposal (generated when output_type is "proposal" or "both")
-3. **references.bib** - BibTeX references from Zotero data
-   - **Primary method**: Use Zotero REST API with `?format=bibtex` to export accurate, complete BibTeX entries
-     ```
-     GET https://api.zotero.org/users/{user_id}/collections/{collection_key}/items?format=bibtex
-     ```
-     **Note**: The REST API `?format=bibtex` on a collection only exports items directly in that collection, not items in sub-collections. You must iterate each sub-collection key individually, or collect all item keys and use the items endpoint: `GET https://api.zotero.org/users/{user_id}/items?itemKey=KEY1,KEY2,...&format=bibtex`
-   - **Fallback**: Construct BibTeX manually from `get_items_details` metadata (note: volume, issue, pages, and publisher fields are not available via this tool — entries will be incomplete)
-
-Use TodoWrite to track progress throughout the workflow.
-
-## Error Handling
-
-If MCP tools fail during execution, use these fallback strategies:
-
-1. **`create_collection` fails** → Create via Zotero REST API directly
-2. **`add_items_by_doi` fails** → Fetch metadata via CrossRef API (`https://api.crossref.org/works/{DOI}`) + import via `add_web_item` or Zotero REST API
-3. **`get_item_fulltext` fails** → Use `WebFetch` on the paper's DOI URL to scrape abstract → fall back to `abstractNote` from `get_items_details` + domain knowledge
-4. **`find_and_attach_pdfs` fails** → Log and continue; PDFs are not required for analysis. If user has local PDFs, use `import_pdf_to_zotero`
-5. **Single paper fails** → Log error, skip, and continue to next paper
-6. **API rate limit** → Wait 5 seconds and retry, up to 3 attempts
-
-## Completion Checklist
-
-Before finishing, verify:
-
-- [ ] Zotero collection `Research-{Topic}-{YYYY-MM}` created with sub-collections
-- [ ] Papers imported and organized into sub-collections (target: 20-50 focused / 50-100 broad)
-- [ ] PDFs attached for available open-access papers
-- [ ] Full-text analysis completed for core papers
-- [ ] Gap analysis identifies at least 2-3 concrete research gaps
-- [ ] Output files generated: `literature-review.md`, `references.bib`, and optionally `research-proposal.md`
-- [ ] All citations in review correspond to actual Zotero library entries
-
-## Output Files
-
-The command generates the following files:
-
-```
-{project_dir}/
-├── literature-review.md      # Structured literature review (with Zotero citations)
-├── research-proposal.md      # Research proposal (if requested)
-└── references.bib            # BibTeX references
-```
-
-## Integration Notes
-
-This command will:
-1. Use **Zotero MCP** tools to manage literature collections and metadata
-2. Trigger the **literature-reviewer agent** for literature analysis
-3. Use the **research-ideation skill** methodology (5W1H, Gap Analysis)
-4. Search for latest papers via **WebSearch**
-
-## Notes
-
-- Ensure the Zotero MCP service is properly configured and running
-- DOI import depends on network connectivity and Zotero's metadata resolution capability
-- PDF attachment is limited to open-access papers; paywalled papers must be added manually
-- Generated literature reviews and research proposals require manual review and refinement
-
-## Related Resources
-
-- **Skill**: `research-ideation` - Research ideation methodology
-- **Agent**: `literature-reviewer` - Literature search and analysis
-- **Commands**: `/zotero-review` - Analyze existing Zotero collections, `/zotero-notes` - Batch generate reading notes
+- `/zotero-review`：对已有文献集合做述评分析
+- `/thesis-format-check`：检查格式合规
+- `/generate-bilingual-abstract`：中英摘要生成
+- `/defense-rebuttal`：答辩意见分类回复

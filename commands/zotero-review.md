@@ -1,117 +1,67 @@
 ---
 name: zotero-review
-description: Read and analyze papers from an existing Zotero collection, generate structured notes and literature review
+description: 针对 Zotero 集合生成中文学位论文文献综述（述评结合）与国标引用核验
 args:
   - name: collection
-    description: Zotero collection name or keyword to search
+    description: Zotero 集合名或关键词
     required: true
   - name: depth
-    description: Analysis depth (quick/deep)
+    description: 分析深度（quick/deep）
     required: false
     default: deep
-tags: [Research, Zotero, Literature Review, Paper Analysis]
+tags: [Thesis, Zotero, Literature Review, GB/T 7714]
 ---
 
-# /zotero-review - Zotero Collection Literature Analysis
+# /zotero-review - 中文学位论文文献综述
 
-Read and analyze papers in the Zotero collection "$collection", with analysis depth "$depth".
+读取并分析 Zotero 集合 "$collection"（深度："$depth"），输出符合中文学位论文要求的综述结果。
 
-## Usage
+## 执行步骤
 
-### Basic Usage
+### Step 1: 定位集合
 
-```bash
-/zotero-review "Sparse Attention"
-```
+1. 获取集合列表
+2. 定位目标集合
+3. 拉取集合条目与基础元数据
 
-### Quick Analysis
+### Step 2: 读取文献内容
 
-```bash
-/zotero-review "Research-Transformer-2026-02" quick
-```
+- `quick`：摘要 + 引言
+- `deep`：优先全文（PDF）+ 摘要补充
 
-## Workflow
+对每篇文献提取：
+- 研究问题
+- 理论/方法
+- 数据与实验设计
+- 关键结论
+- 局限性
+- 可复用到本论文的位置
 
-### Step 1: Locate Collection
+### Step 3: 述评结合综合
 
-1. Call `mcp__zotero__zotero_get_collections` to list all collections
-2. Find the collection matching "$collection"
-3. Call `mcp__zotero__zotero_get_collection_items` to get all items in the collection
+1. “述”：按时间线或主题线梳理研究脉络
+2. “评”：识别共识、分歧、方法短板、数据偏差
+3. 提炼创新入口：
+   - 理论创新
+   - 方法创新
+   - 应用创新
 
-### Step 2: Read Papers
+### Step 4: 国标引用核验
 
-For each paper in the collection:
-1. Call `mcp__zotero__zotero_get_item_metadata` with `include_abstract: true` to get metadata and abstracts (ensures abstracts are available as fallback if full-text retrieval fails)
-2. Call `mcp__zotero__zotero_get_item_fulltext` to read full text (if PDF is available)
-3. If depth is "quick": analyze only the abstract and introduction
-4. If depth is "deep": analyze the complete paper content
+按 GB/T 7714-2015 检查：
+- 顺序编码制 `[1][2]...`
+- 文内编号与文末条目一致
+- 作者、题名、文献类型标识、出版项完整
 
-### Step 3: Generate Notes
+### Step 5: 输出文件
 
-Create structured notes for each paper:
-- **Research Question**: What problem does this paper address?
-- **Core Method**: What method/approach is proposed?
-- **Key Findings**: What are the main results?
-- **Limitations**: What are the limitations?
-- **Relevance to Our Research**: How does it relate to our work?
+1. `literature-review.md`
+   - 含“国内外研究现状 + 述评 + 本文切入点”
+2. `references.bib`
+   - Zotero 导出
+3. `references-gbt7714-check.md`
+   - 格式核验报告（错误项 + 修复建议）
 
-If depth is "deep": Create individual note files in the `paper-notes/` directory, one file per paper named `paper-notes/{paper-title}.md`. These notes serve as intermediate analysis that feeds into the final `literature-review.md`.
+## Zotero 导入提示
 
-### Step 4: Synthesis
-
-1. Group papers by theme/method
-2. Identify common patterns and divergences
-3. Generate comparison matrix
-4. Update or create `literature-review.md`
-
-Use TodoWrite to track progress.
-
-## Analysis Depth
-
-| Depth | Description | Use Case |
-|-------|-------------|----------|
-| `quick` | Analyze abstract and introduction only | Quick overview, initial screening |
-| `deep` | Analyze complete paper content | In-depth understanding, writing reviews |
-
-## Output Files
-
-```
-{project_dir}/
-├── literature-review.md      # Structured literature review (with comparison analysis)
-└── paper-notes/              # Individual notes per paper (deep mode)
-    ├── {paper1-title}.md
-    └── {paper2-title}.md
-```
-
-## Notes
-
-- Ensure the Zotero MCP service is properly configured and running
-- Full-text analysis depends on PDF attachments; papers without PDFs will use metadata only
-- If user has local PDFs for papers missing attachments, use `mcp__zotero__import_pdf_to_zotero` to add them
-- Deep mode takes longer; for large collections, consider processing in batches
-- Collection names support fuzzy matching — entering keywords is sufficient
-
-## Error Handling
-
-If MCP tools fail during execution, use these fallback strategies:
-
-1. **`get_item_fulltext` fails** → Use `WebFetch` on the paper's DOI URL → fall back to `abstractNote` from `get_items_details` + domain knowledge
-2. **`get_collection_items` fails** → Use `search_library` with collection-related keywords as alternative. Note: `search_library` searches the entire library, not scoped to a specific collection. Filter results by comparing against the target collection's expected papers.
-3. **Single paper fails** → Log error, skip, and continue to next paper
-4. **API rate limit** → Wait 5 seconds and retry, up to 3 attempts
-
-## Completion Checklist
-
-Before finishing, verify:
-
-- [ ] All papers in the collection have been read (or flagged if no PDF)
-- [ ] Structured notes generated for each paper
-- [ ] Individual `paper-notes/{paper-title}.md` files created (deep mode)
-- [ ] `literature-review.md` generated with thematic grouping and comparison matrix
-- [ ] Papers without PDFs listed for manual processing
-
-## Related Resources
-
-- **Commands**: `/research-init` - Create new research project, `/zotero-notes` - Batch generate reading notes
-- **Agent**: `literature-reviewer` - Literature search and analysis
-- **Skill**: `research-ideation` - Research ideation methodology
+如需补充文献，优先 DOI 导入；无 DOI 时提示使用 CNKI 链接导入。

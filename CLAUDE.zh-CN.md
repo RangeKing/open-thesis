@@ -1,301 +1,177 @@
-# Claude Scholar 配置
+# Open Thesis 配置
 
-## 项目概述
+## 项目定位
 
-**Claude Scholar** - 面向学术研究和软件开发的个人 Claude Code 配置系统
+**Open Thesis** 是面向中文硕士/博士学位论文的 Claude Code / Codex / OpenCode 配置体系。
 
-**Mission**: 覆盖完整的学术研究生命周期（从构思到发表）和软件开发工作流，同时提供插件开发和项目管理能力。
-
----
-
-## 用户背景
-
-### 学术背景
-- **学历**: 计算机科学 PhD
-- **投稿目标**:
-  - 顶会：NeurIPS, ICML, ICLR, KDD
-  - 高影响期刊：Nature, Science, Cell, PNAS
-- **关注点**: 学术写作质量、逻辑连贯性、自然表达
-
-### 技术栈偏好
-
-**Python 生态**:
-- **包管理**: `uv` - 现代化 Python 包管理器
-- **配置管理**: Hydra + OmegaConf（配置组合、覆盖、类型安全）
-- **模型训练**: Transformers Trainer
-
-**Git 规范**:
-- **提交规范**: Conventional Commits
-  ```
-  Type: feat, fix, docs, style, refactor, perf, test, chore
-  Scope: data, model, config, trainer, utils, workflow
-  ```
-- **分支策略**: master/develop/feature/bugfix/hotfix/release
-- **合并策略**: 功能分支用 rebase 同步，用 merge --no-ff 合并
+**目标**：覆盖学位论文全流程：选题、综述、写作、格式审查、答辩回复、定稿交付。
 
 ---
 
-## 全局配置
+## 全局最高优先级配置
 
-### 语言设置
-- 用中文进行回答
-- 专业术语保持英文（如 NeurIPS, RLHF, TDD, Git）
-- 不翻译特定名词或名称
+```yaml
+thesis_mode: true
+academic_standard_priority:
+  - GB/T 7713.1-2006
+  - GB/T 7714-2015
+  - 学校模板细则
+```
 
-### 工作目录规范
-- 计划文档：`/plan` 文件夹
-- 临时文件：`/temp` 文件夹
-- 文件夹不存在时自动创建
+### 语言
 
-### 任务执行原则
-- 复杂任务先交流意见，再拆解实施
-- 实施后进行示例测试
-- 做好备份，不影响现有功能
-- 完成后及时删除临时文件
+- 默认使用中文回答
+- 必要时保留英文术语（如 DOI、LaTeX、Zotero）
 
-### 工作风格
-- **任务管理**: 使用 TodoWrite 跟踪进度，复杂任务先规划再执行，优先使用已有 skills
-- **沟通方式**: 不确定时主动询问，重要操作前先确认，遵循 hook 强制流程
-- **代码风格**: Python 遵循 PEP 8，注释使用中文，命名使用英文
+### 输出强约束
+
+- 所有核心写作任务必须同时输出：
+  1. 结构化 Markdown
+  2. LaTeX（ctex）
+
+---
+
+## 学位论文硬约束
+
+### 结构顺序
+
+1. 封面（中/英）
+2. 原创性声明 + 使用授权书
+3. 中文摘要 + 关键词
+4. 英文摘要 + Keywords
+5. 目录
+6. 正文（绪论/文献综述/研究方法/结果与分析/结论）
+7. 参考文献
+8. 附录
+9. 致谢
+10. 攻读期间成果
+11. 作者简介（博士）
+
+### 排版规范
+
+- A4
+- 正文：宋体小四
+- 章标题：黑体小二
+- 英文：Times New Roman
+- 固定行距：20 磅
+- 首行缩进：2 字符
+- 编号：`第一章`、`2.1`、`2.1.1`
+
+### 摘要规范
+
+- 硕士中文摘要：500-1000 字
+- 博士中文摘要：1000-2000 字
+- 关键词：3-8 个
+- 中英文摘要语义一致
+
+### 参考文献规范
+
+- GB/T 7714-2015 顺序编码制 `[1][2]...`
+- 硕士不少于 40 篇
+- 博士不少于 100 篇
+- 中外文建议各半
+- 近 5 年文献建议不少于 1/3
+
+---
+
+## 原创性声明模板（默认）
+
+```text
+本人郑重声明：所呈交的学位论文是本人在导师指导下独立完成的研究成果。除文中已经注明引用的内容外，本论文不包含任何他人已经发表或撰写过的研究成果。对本研究做出重要贡献的个人和集体，均已在文中以明确方式标明。
+
+本人完全了解并同意学校关于保存、使用学位论文的相关规定，同意学校以复制、缩印、数字化或其他方式保存和汇编本学位论文。
+```
 
 ---
 
 ## 核心工作流
 
-### 研究生命周期（7 阶段）
+### 1. 论文初始化
 
-```
-构思 → ML开发 → 实验分析 → 论文写作 → 自审 → 投稿/Rebuttal → 录用后处理
-```
+工具：`research-ideation` + `chinese-degree-thesis-writing` + `literature-reviewer` + Zotero MCP
 
-| 阶段 | 核心工具 | 命令 |
-|------|---------|------|
-| 1. 研究构思 | `research-ideation` skill + `literature-reviewer` agent + Zotero MCP | `/research-init`, `/zotero-review`, `/zotero-notes` |
-| 2. ML 项目开发 | `architecture-design` skill + `code-reviewer` agent | `/plan`, `/commit`, `/tdd` |
-| 3. 实验分析 | `results-analysis` skill + `data-analyst` agent | `/analyze-results` |
-| 4. 论文写作 | `ml-paper-writing` skill + `paper-miner` agent | - |
-| 5. 论文自审 | `paper-self-review` skill | - |
-| 6. 投稿与 Rebuttal | `review-response` skill + `rebuttal-writer` agent | `/rebuttal` |
-| 7. 录用后处理 | `post-acceptance` skill | `/presentation`, `/poster`, `/promote` |
+命令：
+- `/research-init`
+- `/zotero-review`
 
-### 支撑工作流
+### 2. 写作与格式核验
 
-- **自动化执行**: 5 个 Hook 在会话各阶段自动触发（技能评估、环境初始化、工作总结、安全检查）
-- **Zotero 集成**: 通过 Zotero MCP 服务器实现论文自动导入、集合管理、全文阅读和准确引用导出
-- **知识提取**: `paper-miner` 和 `kaggle-miner` agent 持续从论文和竞赛中提取知识
-- **技能进化**: `skill-development` → `skill-quality-reviewer` → `skill-improver` 三步改进循环
+工具：`chinese-degree-thesis-writing` + `paper-self-review`
 
----
+命令：
+- `/generate-bilingual-abstract`
+- `/thesis-format-check`
+- `/paper-self-review`
 
-## 技能目录（32 skills）
+### 3. 答辩准备
 
-### 🔬 研究与分析 (4 skills)
+工具：`rebuttal-writer` + `review-response`
 
-- **research-ideation**: 研究构思启动（5W1H、文献综述、Gap 分析、研究问题制定、Zotero 自动集成）
-- **results-analysis**: 实验结果分析（统计检验、可视化、消融实验）
-- **citation-verification**: 引文验证（多层验证：格式→API→信息→内容）
-- **daily-paper-generator**: 每日论文生成器，用于研究追踪
-
-### 📝 论文写作与发表 (7 skills)
-
-- **ml-paper-writing**: ML/AI 论文写作辅助
-  - 顶会：NeurIPS, ICML, ICLR, ACL, AAAI, COLM
-  - 期刊：Nature, Science, Cell, PNAS
-- **writing-anti-ai**: 去除 AI 写作痕迹，支持中英文双语
-- **paper-self-review**: 论文自审（6 项质量检查清单）
-- **review-response**: 系统化 rebuttal 写作
-- **post-acceptance**: 录用后处理（演讲、海报、推广）
-- **doc-coauthoring**: 文档协作工作流
-- **latex-conference-template-organizer**: LaTeX 会议模板整理
-
-### 💻 开发工作流 (6 skills)
-
-- **daily-coding**: 日常编码检查清单（极简模式，自动触发）
-- **git-workflow**: Git 工作流规范（Conventional Commits, 分支管理策略）
-- **code-review-excellence**: 代码审查最佳实践
-- **bug-detective**: 调试和错误排查（Python, Bash/Zsh, JavaScript/TypeScript）
-- **architecture-design**: ML 项目代码框架和设计模式
-- **verification-loop**: 验证循环和测试
-
-### 🔌 插件开发 (8 skills)
-
-- **skill-development**: Skill 开发指南
-- **skill-improver**: Skill 改进工具
-- **skill-quality-reviewer**: Skill 质量审查
-- **command-development**: Slash 命令开发
-- **command-name**: 插件结构指南
-- **agent-identifier**: Agent 开发配置
-- **hook-development**: Hook 开发和事件处理
-- **mcp-integration**: MCP 服务器集成
-
-### 🧪 工具与实用 (4 skills)
-
-- **planning-with-files**: 使用 Markdown 文件进行规划和进度跟踪
-- **uv-package-manager**: uv 包管理器使用
-- **webapp-testing**: 本地 Web 应用测试
-- **kaggle-learner**: Kaggle 竞赛学习
-
-### 🎨 网页设计 (3 skills)
-
-- **frontend-design**: 创建独特、生产级的前端界面，避免通用 AI 美学
-- **ui-ux-pro-max**: UI/UX 设计智能（50+ 风格、97 色板、57 字体配对、9 技术栈）
-- **web-design-reviewer**: 网站设计视觉检查，识别并修复响应式、可访问性、布局问题
+命令：
+- `/defense-rebuttal`
+- `/rebuttal`
 
 ---
 
-## 命令（50+ Commands）
+## 技能兼容策略
 
-### 研究工作流命令
-
-| 命令 | 功能 |
-|------|------|
-| `/research-init` | 启动 Zotero 集成研究构思工作流（自动建集合、导入论文、全文分析） |
-| `/zotero-review` | 从 Zotero 集合读取论文，生成结构化文献综述 |
-| `/zotero-notes` | 批量阅读 Zotero 论文，生成结构化阅读笔记 |
-| `/analyze-results` | 分析实验结果（统计检验、可视化、消融实验） |
-| `/rebuttal` | 生成系统化 rebuttal 文档 |
-| `/presentation` | 创建会议演讲大纲 |
-| `/poster` | 生成学术海报设计方案 |
-| `/promote` | 生成推广内容（Twitter、LinkedIn、博客） |
-
-### 开发工作流命令
-
-| 命令 | 功能 |
-|------|------|
-| `/plan` | 创建实施计划 |
-| `/commit` | 提交代码（遵循 Conventional Commits） |
-| `/update-github` | 提交并推送到 GitHub |
-| `/update-readme` | 更新 README 文档 |
-| `/code-review` | 代码审查 |
-| `/tdd` | 测试驱动开发工作流 |
-| `/build-fix` | 修复构建错误 |
-| `/verify` | 验证更改 |
-| `/checkpoint` | 创建检查点 |
-| `/refactor-clean` | 重构和清理 |
-| `/learn` | 从代码中提取可重用模式 |
-| `/create_project` | 创建新项目 |
-| `/setup-pm` | 配置包管理器（uv/pnpm） |
-| `/update-memory` | 检查并更新 CLAUDE.md 记忆 |
-
-### SuperClaude 命令集 (`/sc`)
-
-- `/sc agent` - Agent 调度
-- `/sc analyze` - 代码分析
-- `/sc brainstorm` - 交互式头脑风暴
-- `/sc build` - 构建项目
-- `/sc business-panel` - 业务面板
-- `/sc cleanup` - 代码清理
-- `/sc design` - 系统设计
-- `/sc document` - 生成文档
-- `/sc estimate` - 工作量估算
-- `/sc explain` - 代码解释
-- `/sc git` - Git 操作
-- `/sc help` - 帮助信息
-- `/sc implement` - 功能实现
-- `/sc improve` - 代码改进
-- `/sc index` - 项目索引
-- `/sc index-repo` - 仓库索引
-- `/sc load` - 加载上下文
-- `/sc pm` - 包管理器操作
-- `/sc recommend` - 推荐方案
-- `/sc reflect` - 反思总结
-- `/sc research` - 技术调研
-- `/sc save` - 保存上下文
-- `/sc select-tool` - 工具选择
-- `/sc spawn` - 生成子任务
-- `/sc spec-panel` - 规格面板
-- `/sc task` - 任务管理
-- `/sc test` - 测试执行
-- `/sc troubleshoot` - 问题排查
-- `/sc workflow` - 工作流管理
+- 默认写作技能：`chinese-degree-thesis-writing`
+- `ml-paper-writing` 保留为兼容入口
+- 仅当用户明确要求 NeurIPS/ICML/ICLR/ACL/AAAI/COLM 时，切换到 legacy ML 写作模式
 
 ---
 
-## 代理（14 Agents）
+## Agent 要求
 
-### 研究工作流代理
-
-- **literature-reviewer** - 文献搜索、分类和趋势分析（Zotero MCP 集成，支持自动导入、全文阅读）
-- **data-analyst** - 自动化数据分析和可视化
-- **rebuttal-writer** - 系统化 rebuttal 写作，语气优化
-- **paper-miner** - 从成功论文中提取写作知识
-
-### 开发工作流代理
-
-- **architect** - 系统架构设计
-- **build-error-resolver** - 构建错误修复
-- **bug-analyzer** - 深度代码执行流分析和根因调查
-- **code-reviewer** - 代码审查
-- **dev-planner** - 开发任务规划和拆解
-- **refactor-cleaner** - 代码重构和清理
-- **tdd-guide** - TDD 工作流指导
-- **kaggle-miner** - Kaggle 工程实践提取
-
-### 设计与内容代理
-
-- **ui-sketcher** - UI 蓝图设计和交互规范
-- **story-generator** - 用户故事和需求生成
+- `literature-reviewer`：输出必须体现“述评结合”
+- `paper-miner`：必须提取创新点表达模板与答辩证据组织方式
+- `rebuttal-writer`：必须进行 Major/Minor/Formatting/Misunderstanding 分类
 
 ---
 
-## 钩子（5 Hooks）
+## 全局规则（始终启用）
 
-跨平台 Node.js 钩子，自动化工作流执行：
-
-| 钩子 | 触发时机 | 功能 |
-|------|----------|------|
-| `session-start.js` | 会话开始 | 显示 Git 状态、待办事项、可用命令 |
-| `skill-forced-eval.js` | 每次用户输入 | 强制评估所有可用技能 |
-| `session-summary.js` | 会话结束 | 生成工作日志，检测 CLAUDE.md 更新 |
-| `stop-summary.js` | 会话停止 | 快速状态检查，临时文件检测 |
-| `security-guard.js` | 文件操作 | 安全验证（密钥检测、危险命令拦截） |
+1. `rules/coding-style.md`
+2. `rules/agents.md`
+3. `rules/security.md`
+4. `rules/experiment-reproducibility.md`
+5. `rules/chinese-thesis-formatting.md`
+6. `rules/gbt-7714-citation.md`
+7. `rules/defense-rebuttal-strategy.md`
 
 ---
 
-## 规则（4 Rules）
+## Zotero + CNKI 导入策略
 
-全局约束，始终生效：
-
-| 规则文件 | 作用 |
-|---------|------|
-| `coding-style.md` | ML 项目代码标准：文件 200-400 行、不可变配置、类型提示、Factory & Registry 模式 |
-| `agents.md` | 代理编排：自动调用时机、并行执行、多视角分析 |
-| `security.md` | 安全规范：密钥管理、敏感文件保护、提交前安全检查 |
-| `experiment-reproducibility.md` | 实验可复现性：随机种子、配置记录、环境记录、检查点管理 |
+- 文献导入优先 DOI
+- 无 DOI 时，明确提示使用 CNKI 链接导入
+- 默认集合名称：`中文学位论文`
+- 引用导出后必须执行 GB/T 7714 格式核验
 
 ---
 
-## 命名规范
+## 防 AI 检测中文写作规则
 
-### Skill 命名
-- 格式：kebab-case（小写+连字符）
-- 形式：优先使用 gerund form（动词+ing）
-- 示例：`scientific-writing`, `git-workflow`, `bug-detective`
+避免：
+- 宣传化语言
+- 象征化修辞
+- 模糊归因
+- “本文认为”“笔者认为”
 
-### Tags 命名
-- 格式：Title Case
-- 缩写全大写：TDD, RLHF, NeurIPS, ICLR
-- 示例：`[Writing, Research, Academic]`
-
-### 描述规范
-- 人称：第三人称
-- 内容：包含用途和使用场景
-- 示例："为学术论文写作提供指导，覆盖顶会投稿要求"
+推荐：
+- “研究发现”
+- “实证结果表明”
+- “数据分析显示”
+- “比较结果支持”
 
 ---
 
-## 任务完成总结
+## 任务结束汇报要求
 
-每次任务完成时，主动提供简要总结：
+每次重要任务完成后，必须汇报：
 
-```
-📋 本次操作回顾
-1. [主要操作]
-2. [修改的文件]
-
-📊 当前状态
-• [Git/文件系统/运行状态]
-
-💡 下一步建议
-1. [针对性建议]
+```text
+1）变更文件
+2）规范符合性（结构/引用）
+3）剩余风险与下一步
 ```

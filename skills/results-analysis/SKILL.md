@@ -202,16 +202,16 @@ See `references/common-pitfalls.md` for the complete error patterns and fixes.
 
 ## Integration with Paper Writing
 
-### Collaboration with ml-paper-writing Skill
+### Collaboration with Thesis Writing Skill
 
-This skill focuses on experimental results analysis and works in tandem with the `ml-paper-writing` skill:
+This skill focuses on experimental results analysis and works in tandem with the `chinese-degree-thesis-writing` skill (legacy `ml-paper-writing` remains available):
 
 **results-analysis handles:**
 - Data analysis and statistical tests
 - Visualization generation
 - Results interpretation
 
-**ml-paper-writing handles:**
+**chinese-degree-thesis-writing handles:**
 - Complete paper structure
 - Citation management
 - Conference format requirements
@@ -222,7 +222,7 @@ Experiments complete → results-analysis analyzes
     ↓
 Generate analysis report and visualizations
     ↓
-ml-paper-writing integrates into paper
+chinese-degree-thesis-writing integrates into thesis chapters
     ↓
 Complete Results section
 ```

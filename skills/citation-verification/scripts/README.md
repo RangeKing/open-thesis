@@ -16,7 +16,7 @@
 
 ## 主要工作流
 
-**实际的引用验证应该使用 `ml-paper-writing` skill 中的 Citation Workflow：**
+**实际的引用验证应优先使用 `chinese-degree-thesis-writing` 中的 Citation Workflow：**
 
 1. 使用 WebSearch 查找论文
 2. 在 Google Scholar 上验证
@@ -24,7 +24,7 @@
 4. 验证声明（如需要）
 5. 添加到 bibliography
 
-详见 `ml-paper-writing` skill 的 "Citation Workflow (Hallucination Prevention)" 部分。
+详见 `chinese-degree-thesis-writing` 的 Citation Workflow 说明（legacy `ml-paper-writing` 仍兼容）。
 
 ## 脚本说明
 
@@ -59,7 +59,7 @@ BibTeX和LaTeX格式检查工具，包含：
 ## 使用建议
 
 **对于日常论文写作**:
-- ✅ 使用 `ml-paper-writing` skill 的 Citation Workflow
+- ✅ 使用 `chinese-degree-thesis-writing` 的 Citation Workflow
 - ✅ 使用 WebSearch 和 Google Scholar
 - ❌ 不要使用这些Python脚本
 

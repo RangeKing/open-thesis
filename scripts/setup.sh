@@ -15,6 +15,21 @@ check_deps() {
   command -v node >/dev/null || error "Node.js is required (hooks depend on it). Install it first."
 }
 
+# Check optional LaTeX toolchain for Chinese thesis workflow
+check_thesis_toolchain() {
+  if command -v xelatex >/dev/null; then
+    info "Detected xelatex (ctex compile supported)."
+  else
+    warn "xelatex not found. Install TeX Live/MacTeX for ctex compilation."
+  fi
+
+  if command -v biber >/dev/null; then
+    info "Detected biber (GB/T 7714 biblatex workflow supported)."
+  else
+    warn "biber not found. GB/T 7714 biblatex references may not compile."
+  fi
+}
+
 # Create settings.json from template
 create_settings() {
   local template="$1/settings.json.template"
@@ -89,11 +104,14 @@ main() {
   echo ""
 
   check_deps
+  check_thesis_toolchain
 
   info "Installing from: $SRC_DIR"
   copy_components "$SRC_DIR"
   merge_settings "$SRC_DIR"
   info "Your existing env/permissions are preserved."
+  info "Chinese thesis template: $CLAUDE_DIR/skills/chinese-degree-thesis-writing/template-latex-ctex.md"
+  info "Zotero default collection: 中文学位论文 (configurable in settings.json)"
 
   echo ""
   info "Done! Restart Claude Code CLI to activate."

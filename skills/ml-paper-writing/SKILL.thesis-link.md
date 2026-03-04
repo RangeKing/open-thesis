@@ -1,0 +1,1 @@
+../chinese-degree-thesis-writing/SKILL.md

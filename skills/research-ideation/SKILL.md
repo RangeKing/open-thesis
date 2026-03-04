@@ -107,14 +107,14 @@ Experiment execution (completed by user)
     ↓
 results-analysis (Results analysis)
     ↓
-ml-paper-writing (Paper writing)
+chinese-degree-thesis-writing (Thesis writing)
 ```
 
 ### Data Flow
 
 - **research-ideation output** → Guides experiment design and method selection
 - **Experimental results** → results-analysis for statistical analysis
-- **Analysis results** → Related Work and Methods sections of ml-paper-writing
+- **Analysis results** → 文献综述与研究方法章节（`chinese-degree-thesis-writing`）
 
 ### Zotero Integration
 

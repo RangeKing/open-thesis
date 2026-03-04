@@ -1,6 +1,17 @@
 {
   "env": {
-    "GITHUB_PERSONAL_ACCESS_TOKEN": "<your-github-token-optional>"
+    "GITHUB_PERSONAL_ACCESS_TOKEN": "<your-github-token-optional>",
+    "THESIS_MODE": "true"
+  },
+  "thesisDefaults": {
+    "thesis_mode": true,
+    "default_zotero_collection": "中文学位论文",
+    "zotero_import_priority": [
+      "DOI",
+      "CNKI_URL",
+      "WEB"
+    ],
+    "cnki_import_tip": "优先 DOI 导入；无 DOI 时可通过 CNKI 链接导入。"
   },
   "hooks": {
     "PreToolUse": [
@@ -77,13 +88,17 @@
     },
     "zotero": {
       "command": "zotero-mcp",
-      "args": ["serve"],
+      "args": [
+        "serve"
+      ],
       "env": {
         "ZOTERO_API_KEY": "<your-api-key>",
         "ZOTERO_LIBRARY_ID": "<your-library-id>",
         "ZOTERO_LIBRARY_TYPE": "user",
         "UNPAYWALL_EMAIL": "<your-email@example.com>",
-        "UNSAFE_OPERATIONS": "all"
+        "UNSAFE_OPERATIONS": "all",
+        "ZOTERO_DEFAULT_COLLECTION": "中文学位论文",
+        "ZOTERO_IMPORT_HINT": "Use DOI first; if DOI is missing, import with CNKI URL"
       }
     }
   },
