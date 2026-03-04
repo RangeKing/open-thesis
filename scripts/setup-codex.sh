@@ -114,12 +114,6 @@ detect_existing() {
         else
           info "Keeping existing config.toml as requested (model/provider values were not re-parsed)."
         fi
-        local cfg_override
-        read -rp "Reconfigure provider/model now? [y/N]: " cfg_override
-        if [ "$cfg_override" = "y" ] || [ "$cfg_override" = "Y" ]; then
-          SKIP_PROVIDER=false
-          info "Will reconfigure provider/model."
-        fi
       else
         warn "No existing config.toml found; provider/model input is required."
       fi
@@ -155,6 +149,28 @@ detect_existing() {
   fi
 }
 
+choose_openai_model() {
+  echo "Select OpenAI model:"
+  echo "  1) gpt-5.3-codex (recommended)"
+  echo "  2) gpt-5"
+  echo "  3) Custom model name"
+  local model_choice
+  read -rp "Enter choice [1-3] (default: 1): " model_choice
+  model_choice="${model_choice:-1}"
+
+  case "$model_choice" in
+    1) MODEL="gpt-5.3-codex" ;;
+    2) MODEL="gpt-5" ;;
+    3)
+      read -rp "Custom model name: " MODEL
+      [ -n "$MODEL" ] || error "Custom model name is required."
+      ;;
+    *)
+      error "Invalid model choice: $model_choice"
+      ;;
+  esac
+}
+
 choose_provider() {
   [ "$SKIP_PROVIDER" = true ] && return
 
@@ -172,9 +188,7 @@ choose_provider() {
     1)
       PROVIDER_NAME="openai"
       PROVIDER_URL="https://api.openai.com/v1"
-      MODEL="gpt-5"
-      read -rp "Model name (default: $MODEL): " input_model
-      MODEL="${input_model:-$MODEL}"
+      choose_openai_model
       ;;
     2)
       read -rp "Provider name: " PROVIDER_NAME

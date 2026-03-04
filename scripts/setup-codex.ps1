@@ -168,12 +168,6 @@ function Detect-Existing {
         } else {
           Write-Info 'Keeping existing config.toml as requested (model/provider values were not re-parsed).'
         }
-
-        $cfgOverride = Read-Host 'Reconfigure provider/model now? [y/N]'
-        if ($cfgOverride -eq 'y' -or $cfgOverride -eq 'Y') {
-          $global:SkipProvider = $false
-          Write-Info 'Will reconfigure provider/model.'
-        }
       } else {
         Write-Warn 'No existing config.toml found; provider/model input is required.'
       }
@@ -206,6 +200,27 @@ function Detect-Existing {
   }
 }
 
+function Choose-OpenAiModel {
+  Write-Host 'Select OpenAI model:'
+  Write-Host '  1) gpt-5.3-codex (recommended)'
+  Write-Host '  2) gpt-5'
+  Write-Host '  3) Custom model name'
+
+  $modelChoice = Read-Host 'Enter choice [1-3] (default: 1)'
+  if ([string]::IsNullOrWhiteSpace($modelChoice)) { $modelChoice = '1' }
+
+  switch ($modelChoice) {
+    '1' { return 'gpt-5.3-codex' }
+    '2' { return 'gpt-5' }
+    '3' {
+      $customModel = Read-Host 'Custom model name'
+      if ([string]::IsNullOrWhiteSpace($customModel)) { Fail 'Custom model name is required.' }
+      return $customModel
+    }
+    default { Fail "Invalid model choice: $modelChoice" }
+  }
+}
+
 function Choose-Provider {
   if ($SkipProvider) { return }
 
@@ -221,9 +236,7 @@ function Choose-Provider {
     '1' {
       $global:ProviderName = 'openai'
       $global:ProviderUrl = 'https://api.openai.com/v1'
-      $global:Model = 'gpt-5'
-      $inputModel = Read-Host "Model name (default: $Model)"
-      if (-not [string]::IsNullOrWhiteSpace($inputModel)) { $global:Model = $inputModel }
+      $global:Model = Choose-OpenAiModel
     }
     '2' {
       $global:ProviderName = Read-Host 'Provider name'

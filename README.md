@@ -40,7 +40,51 @@ Windows（一键双击）：
 - 直接双击 `setup.bat`
 - 会保留窗口并输出日志到 `setup-windows.log`
 
-### Codex CLI 安装
+## 安装 Claude Code / Codex CLI（分平台）
+
+> 安装脚本会自动检测并尝试安装；如果你希望先手动安装，可按下面执行。
+
+### Claude Code CLI
+
+macOS / Linux / WSL：
+
+```bash
+curl -fsSL https://claude.ai/install.sh | bash
+```
+
+Windows PowerShell：
+
+```powershell
+irm https://claude.ai/install.ps1 | iex
+```
+
+验证：
+
+```bash
+claude --version
+```
+
+官方文档：[Claude Code Getting Started](https://code.claude.com/docs/en/getting-started)
+
+### Codex CLI
+
+前置要求：Node.js + npm
+
+macOS / Linux / Windows（PowerShell/cmd 都可）：
+
+```bash
+npm install -g @openai/codex
+```
+
+验证：
+
+```bash
+codex --version
+```
+
+官方文档：[OpenAI Codex Installation](https://github.com/openai/codex#installation)
+
+### Codex 一键安装（本项目脚本）
 
 macOS / Linux:
 
