@@ -38,7 +38,9 @@ uv tool install git+https://github.com/Galaxy-Dawn/zotero-mcp.git
 
 ##### Claude Code
 
-在 `~/.claude/settings.json` 中添加：
+Claude Code v2.1.5+：在 `~/.claude.json` 的 `mcpServers` 中添加。
+
+更早版本：在 `~/.claude/settings.json` 的 `mcpServers` 中添加：
 
 ```json
 {

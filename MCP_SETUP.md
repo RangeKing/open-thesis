@@ -38,7 +38,9 @@ Choose your platform below:
 
 ##### Claude Code
 
-Add to your `~/.claude/settings.json`:
+For Claude Code v2.1.5+, add to your `~/.claude.json` under `mcpServers`.
+
+For earlier versions, add to your `~/.claude/settings.json` under `mcpServers`:
 
 ```json
 {
