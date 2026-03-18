@@ -18,7 +18,7 @@
 
 ## 最新动态
 
-- **2026-03-18**: **实验结果报告与工作流整理** — 将实验后处理明确拆成两层：`results-analysis` 负责严格统计、真实科研图、`analysis-report` / `stats-appendix` / `figure-catalog`，`results-report` 负责面向决策的实验总结报告与 Obsidian 写回；移除了冗余的 `data-analyst` 入口，把 `/analyze-results` 调整为默认的一键分析 + 成稿命令，同时重写 README 的定位为以人类决策为中心的 semi-automated research assistant，并更新了项目 logo。
+- **2026-03-18**: **实验结果报告、写作记忆与工作流整理** — 将实验后处理明确拆成两层：`results-analysis` 负责严格统计、真实科研图、`analysis-report` / `stats-appendix` / `figure-catalog`，`results-report` 负责面向决策的实验总结报告与 Obsidian 写回；移除了冗余的 `data-analyst` 入口，把 `/analyze-results` 调整为默认的一键分析 + 成稿命令；同时为 `paper-miner` 引入全局 writing memory 与新的 `/mine-writing-patterns` 命令，并让 `ml-paper-writing` 与 `review-response` 统一读取这份共享记忆；此外还重写了 README 的定位为以人类决策为中心的 semi-automated research assistant，并更新了项目 logo。
 - **2026-03-17**: **Obsidian 项目知识库** — 基于 filesystem-first 的项目知识库工作流，支持项目导入、已绑定仓库自动同步、`Papers / Experiments / Results / Results/Reports / Writing` 路由，且不依赖 MCP。
 - **2026-02-26**: **Zotero MCP Web API 模式** — 支持远程 Zotero 访问、DOI/arXiv/URL 导入、集合管理、条目更新，并补充了 Claude Code、Codex CLI、OpenCode 的配置说明。
 
