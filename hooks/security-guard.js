@@ -7,6 +7,8 @@
  */
 
 const path = require('path');
+const os = require('os');
+const common = require('./hook-common');
 
 // Read stdin input
 let input = {};
@@ -25,6 +27,11 @@ const cwd = input.cwd || process.cwd();
 let decision = 'allow';
 let reason = '';
 let confirmLabel = '';
+
+function isPathInside(basePath, targetPath) {
+  const relative = path.relative(basePath, targetPath);
+  return relative === '' || (!relative.startsWith('..') && !path.isAbsolute(relative));
+}
 
 // === Bash command security check ===
 if (toolName === 'Bash') {
@@ -79,6 +86,9 @@ if (toolName === 'Bash') {
 // === File write security check ===
 } else if (toolName === 'Write' || toolName === 'Edit') {
   const filePath = input.tool_input?.file_path || '';
+  const homeDir = os.homedir();
+  const repoRoot = common.getRepoRoot(cwd);
+  const resolved = path.resolve(cwd, filePath);
 
   // Tier 1: Block — system paths
   const sensitivePaths = [
@@ -95,13 +105,17 @@ if (toolName === 'Bash') {
     }
   }
 
-  // Block — path traversal
+  // Block — outside repo and home
   if (decision === 'allow') {
-    const homedir = require('os').homedir();
-    const resolved = path.resolve(cwd, filePath);
-    if (!resolved.startsWith(cwd) && !resolved.startsWith(homedir)) {
+    const insideRepo = isPathInside(repoRoot, resolved);
+    const insideHome = isPathInside(homeDir, resolved);
+
+    if (!insideRepo && !insideHome) {
       decision = 'deny';
-      reason = 'Path traversal attack detected: resolved path is outside allowed directories';
+      reason = 'Path traversal attack detected: resolved path is outside the repository and home directory';
+    } else if (!insideRepo && insideHome) {
+      const relativeHomePath = path.relative(homeDir, resolved) || path.basename(resolved);
+      confirmLabel = `home directory path outside repo (~/${relativeHomePath})`;
     }
   }
 

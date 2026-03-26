@@ -26,6 +26,8 @@ const cwd = input.cwd || process.cwd();
 const sessionId = input.session_id || 'unknown';
 const transcriptPath = input.transcript_path || '';
 const binding = common.getProjectMemoryBinding(cwd);
+const MAX_LOGGED_GIT_CHANGES = 20;
+const MAX_LOGGED_MEMORY_CHANGES = 5;
 
 // Create work log directory
 const logDir = path.join(cwd, '.claude', 'logs');
@@ -57,11 +59,15 @@ const changesDetails = gitInfo.is_repo ? common.getChangesDetails(cwd) : { added
 if (gitInfo.is_repo) {
   logContent += `**Branch**: ${gitInfo.branch}\n`;
   logContent += `\n`;
+  const shownGitChanges = gitInfo.changes.slice(0, MAX_LOGGED_GIT_CHANGES);
   logContent += '```\n';
 
   if (gitInfo.has_changes) {
-    for (const change of gitInfo.changes) {
+    for (const change of shownGitChanges) {
       logContent += `${change}\n`;
+    }
+    if (gitInfo.changes.length > MAX_LOGGED_GIT_CHANGES) {
+      logContent += `... (${gitInfo.changes.length - MAX_LOGGED_GIT_CHANGES} more changes omitted)\n`;
     }
   } else {
     logContent += 'No changes\n';
@@ -163,11 +169,11 @@ if (claudeMdCheck.needsUpdate) {
   logContent += `\n`;
   logContent += `| Type | File | Modified |\n`;
   logContent += `|------|------|----------|\n`;
-  for (const file of claudeMdCheck.changedFiles.slice(0, 10)) {
+  for (const file of claudeMdCheck.changedFiles.slice(0, MAX_LOGGED_MEMORY_CHANGES)) {
     logContent += `| ${file.type} | ${file.relativePath} | ${file.mtime} |\n`;
   }
-  if (claudeMdCheck.changedFiles.length > 10) {
-    logContent += `| ... | ${claudeMdCheck.changedFiles.length - 10} more files | ... |\n`;
+  if (claudeMdCheck.changedFiles.length > MAX_LOGGED_MEMORY_CHANGES) {
+    logContent += `| ... | ${claudeMdCheck.changedFiles.length - MAX_LOGGED_MEMORY_CHANGES} more files omitted | ... |\n`;
   }
 } else {
   logContent += `- ✅ CLAUDE.md memory is up to date\n`;

@@ -50,7 +50,7 @@ if (gitInfo.is_repo) {
   if (gitInfo.has_changes) {
     output += `⚠️  Uncommitted changes (${gitInfo.changes_count} files):\n`;
 
-    // Show change list (up to 10)
+    // Show change list (up to 5)
     const statusIcons = {
       'M': '📝',  // Modified
       'A': '➕',  // Added
@@ -59,7 +59,7 @@ if (gitInfo.is_repo) {
       '??': '❓'  // Untracked
     };
 
-    for (let i = 0; i < Math.min(gitInfo.changes.length, 10); i++) {
+    for (let i = 0; i < Math.min(gitInfo.changes.length, 5); i++) {
       const change = gitInfo.changes[i];
       const status = change.substring(0, 2).trim();
       const file = change.substring(3).trim();
@@ -68,8 +68,8 @@ if (gitInfo.is_repo) {
       output += `  ${icon} ${file}\n`;
     }
 
-    if (gitInfo.changes_count > 10) {
-      output += `  ... (${gitInfo.changes_count - 10} more files)\n`;
+    if (gitInfo.changes_count > 5) {
+      output += `  ... (${gitInfo.changes_count - 5} more files)\n`;
     }
   } else {
     output += `✅ Working directory clean\n`;

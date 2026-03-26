@@ -345,7 +345,7 @@ function analyzeChangesByType(cwd) {
  * @returns {Object} Temporary file information
  */
 function detectTempFiles(cwd) {
-  const tempFiles = [];
+  const tempFiles = new Set();
   const gitInfo = getGitInfo(cwd);
 
   // Find temp files from Git untracked files
@@ -354,7 +354,7 @@ function detectTempFiles(cwd) {
       if (change.startsWith('??')) {
         const file = change.substring(3).trim();
         if (/plan|draft|tmp|temp|scratch/i.test(file)) {
-          tempFiles.push(file);
+          tempFiles.add(file);
         }
       }
     }
@@ -368,7 +368,7 @@ function detectTempFiles(cwd) {
       try {
         const files = getAllFiles(dirPath);
         for (const file of files) {
-          tempFiles.push(path.relative(cwd, file));
+          tempFiles.add(path.relative(cwd, file));
         }
       } catch {
         // Ignore errors
@@ -377,8 +377,8 @@ function detectTempFiles(cwd) {
   }
 
   return {
-    files: tempFiles,
-    count: tempFiles.length
+    files: Array.from(tempFiles),
+    count: tempFiles.size
   };
 }
 
