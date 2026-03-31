@@ -11,7 +11,7 @@
     <img src="https://img.shields.io/badge/OpenCode-Compatible-orange?style=flat-square" alt="OpenCode"/>
   </p>
 
-  <strong>Language</strong>: <a href="README.md">English</a> | <a href="README.zh-CN.md">中文</a> | <a href="README.ja.md">日本語</a>
+  <strong>Language</strong>: <a href="README.md">English</a> | <a href="README.zh-CN.md">中文</a> | <a href="README.ja-JP.md">日本語</a>
 
 </div>
 
@@ -189,7 +189,7 @@ Claude Scholarは以下のプラットフォームをサポートしています
 - Zotero MCPを通じたフルテキストアクセス
 - 詳細な論文ノートと文献合成
 
-詳細は [MCP_SETUP.md](./MCP_SETUP.md) を参照。
+詳細は [MCP_SETUP.ja-JP.md](./MCP_SETUP.ja-JP.md) を参照。
 
 ### Obsidian
 
@@ -201,7 +201,7 @@ Claude Scholarは以下のプラットフォームをサポートしています
 - `Writing/`
 - `Daily/`
 
-詳細は [OBSIDIAN_SETUP.md](./OBSIDIAN_SETUP.md) を参照。
+詳細は [OBSIDIAN_SETUP.ja-JP.md](./OBSIDIAN_SETUP.ja-JP.md) を参照。
 
 ## 主要ワークフロー
 
@@ -441,10 +441,11 @@ Claude Scholar自身のスキルに対する自己改善ループ。
 
 ## ドキュメント
 
-- [MCP_SETUP.md](./MCP_SETUP.md) — Zotero/ブラウザMCPセットアップ
-- [OBSIDIAN_SETUP.md](./OBSIDIAN_SETUP.md) — Obsidianナレッジベースワークフロー
-- [CLAUDE.md](./CLAUDE.md) — 完全なローカル設定、スキル一覧、ワークフロー詳細
-- [CLAUDE.zh-CN.md](./CLAUDE.zh-CN.md) — メイン設定ドキュメントの中国語版
+- [MCP_SETUP.ja-JP.md](./MCP_SETUP.ja-JP.md) — Zotero/ブラウザMCPセットアップ（日本語）
+- [OBSIDIAN_SETUP.ja-JP.md](./OBSIDIAN_SETUP.ja-JP.md) — Obsidianナレッジベースワークフロー（日本語）
+- [CLAUDE.ja-JP.md](./CLAUDE.ja-JP.md) — 完全なローカル設定、スキル一覧、ワークフロー詳細（日本語）
+- [CLAUDE.md](./CLAUDE.md) — ローカル設定（英語版）
+- [CLAUDE.zh-CN.md](./CLAUDE.zh-CN.md) — ローカル設定（中国語版）
 - [settings.json.template](./settings.json.template) — hooks/plugins/MCP用のオプション設定テンプレート
 
 ## プロジェクトルール
