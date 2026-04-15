@@ -25,26 +25,6 @@
 - **2026-04-15**: **提出 pubfig 与 pubtab 两个 Python package** — 推出了 [`pubfig`](https://github.com/Galaxy-Dawn/pubfig)（用于论文级 scientific figures）和 [`pubtab`](https://github.com/Galaxy-Dawn/pubtab)（用于 publication-ready tables 与 Excel↔LaTeX workflows）两个独立 Python package，为研究者提供更清晰的论文图、benchmark 表、导出控制与最终 QA 生产路径。
 - **2026-04-15**: **将 publication-chart-skill 融入 Claude Scholar** — 把 [`pubfig`](https://github.com/Galaxy-Dawn/pubfig) + [`pubtab`](https://github.com/Galaxy-Dawn/pubtab) 封装成 `publication-chart-skill`，加入仓库，并接到 Claude Scholar 的分析/写作边界里，让论文级图表工作有了明确的 handoff 路径，而不是继续混在通用分析或 prose skill 里。
 
-<details>
-<summary>查看历史更新日志</summary>
-
-- **2026-03-31**: **Zotero smart-import 工作流文档完成对齐** — 围绕最新 `zotero-mcp` 的公开能力，系统更新了 Claude Scholar 的研究工作流文档：将 `zotero_add_items_by_identifier` 明确为默认论文导入入口，把 `zotero_reconcile_collection_duplicates` 设为标准导入后清理步骤，更准确地说明了来源感知 PDF cascade，同时把公开工具与内部诊断能力的边界重新讲清楚了。
-- **2026-03-31**: **README 上手路径完成刷新** — 明确了 Claude Scholar 尤其适合计算机科学与 AI 研究者，在安装说明后补充了更贴近真实使用的上手场景，进一步收紧了 prerequisite / 分支说明，并把“如果用户本地已有 md 文件，需要手动 merge”这件事写得更明确。
-- **2026-03-31**: **安装器与 hooks 行为进一步收口** — 安装器现在会保留已有的本地 `CLAUDE.md` / `CLAUDE.zh-CN.md`，并把仓库版本作为 sidecar 文件安装；同时默认 hooks 的摘要输出进一步降噪，减少 temp files / uncommitted files 的噪声，同时保留更安全的写入守卫边界。
-- **2026-03-31**: **日文文档补齐** — 为主 README 以及 `CLAUDE`、`MCP_SETUP`、`OBSIDIAN_SETUP` 补充了日文文档，使仓库的多语言文档入口更完整。
-
-- **2026-02-25**: **Codex CLI** 支持 — 新增 `codex` 分支，支持 [OpenAI Codex CLI](https://github.com/openai/codex)，包含 config.toml、40 个 skills、14 个 agents 和 sandbox 安全机制
-- **2026-02-23**: 新增 `setup.sh` 安装脚本 — 面向已有 `~/.claude` 的带备份增量更新，自动备份 `settings.json`，以追加方式合并 hooks/mcpServers/plugins
-- **2026-02-21**: **OpenCode** 支持 — Claude Scholar 现已支持 [OpenCode](https://github.com/opencode-ai/opencode) 作为替代 CLI；切换到 `opencode` 分支获取兼容配置
-- **2026-02-20**: 双语配置 — 将 `CLAUDE.md` 翻译为英文以便国际用户阅读；新增 `CLAUDE.zh-CN.md` 作为中文备份；中文用户可通过 `cp CLAUDE.zh-CN.md CLAUDE.md` 切换回中文版
-- **2026-02-15**: Zotero MCP 集成 — 新增 `/zotero-review` 和 `/zotero-notes` 命令，更新 `research-ideation` skill 添加 Zotero 集成指南，增强 `literature-reviewer` agent 支持 Zotero MCP 自动论文导入、集合管理、全文阅读和引用导出
-- **2026-02-14**: Hooks 优化 — `security-guard` 重构为两层系统（Block + Confirm），`skill-forced-eval` 按 6 类分组并切换为静默扫描模式，`session-start` 限制显示前 5 项，`session-summary` 新增 30 天日志自动清理，`stop-summary` 分别显示新增/修改/删除计数；移除废弃的 shell 脚本（lib/common.sh、lib/platform.sh）
-- **2026-02-11**: 大版本更新 — 新增 10 个 skills（research-ideation、results-analysis、citation-verification、review-response、paper-self-review、post-acceptance、daily-coding、frontend-design、ui-ux-pro-max、web-design-reviewer）、7 个 agents、8 个研究工作流命令、2 条新规则（security、experiment-reproducibility）；重构 CLAUDE.md；涉及 89 个文件
-- **2026-01-26**: 所有 Hooks 重写为跨平台 Node.js 版本；README 完全重写；扩展 ML 论文写作知识库；合并 PR #1（跨平台支持）
-- **2026-01-25**: 项目正式开源，v1.0.0 发布，包含 25 个 skills（architecture-design、bug-detective、git-workflow、kaggle-learner、scientific-writing 等）、2 个 agents（paper-miner、kaggle-miner）、30+ 个命令（含 SuperClaude 命令套件）、5 个 Shell Hooks、2 条规则（coding-style、agents）
-
-</details>
-
 ## 快速导航
 
 | 部分 | 作用 |
