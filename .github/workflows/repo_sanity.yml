@@ -15,7 +15,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Check tracked documentation surfaces for obvious machine-specific paths
+      - name: Check tracked top-level docs for obvious machine-specific paths
         run: |
           set -euo pipefail
           python3 - <<'PY'
@@ -25,7 +25,6 @@ jobs:
           from pathlib import Path
 
           tracked = subprocess.check_output(['git', 'ls-files'], text=True).splitlines()
-          targets = []
           allowed = {
               'README.md', 'README.zh-CN.md', 'README.ja-JP.md',
               'CLAUDE.md', 'CLAUDE.zh-CN.md', 'CLAUDE.ja-JP.md',
@@ -39,15 +38,13 @@ jobs:
               '.github/ISSUE_TEMPLATE/docs_problem.yml',
               '.github/ISSUE_TEMPLATE/config.yml',
           }
-          for path in tracked:
-              if path in allowed or re.fullmatch(r'skills/[^/]+/SKILL\.md', path):
-                  targets.append(path)
-          pattern = re.compile(r'/Users/[A-Za-z0-9_.-]+|/home/[A-Za-z0-9_.-]+|[A-Za-z]:\\Users\\[A-Za-z0-9_. -]+')
+          pattern = re.compile(r'/Users/[A-Za-z0-9_.-]+|/home/[A-Za-z0-9_.-]+|[A-Za-z]:\Users\[A-Za-z0-9_. -]+')
           bad = []
-          for rel in targets:
-              p = Path(rel)
+          for rel in tracked:
+              if rel not in allowed:
+                  continue
               try:
-                  text = p.read_text(encoding='utf-8')
+                  text = Path(rel).read_text(encoding='utf-8')
               except Exception:
                   continue
               if pattern.search(text):

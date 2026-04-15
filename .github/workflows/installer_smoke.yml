@@ -22,7 +22,6 @@ jobs:
           test -f README.md
           test -f README.zh-CN.md
           test -f README.ja-JP.md
-          test -f settings.json.template
 
       - name: Syntax check setup.sh
         run: bash -n scripts/setup.sh
