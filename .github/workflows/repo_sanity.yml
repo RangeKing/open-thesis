@@ -38,7 +38,7 @@ jobs:
               '.github/ISSUE_TEMPLATE/docs_problem.yml',
               '.github/ISSUE_TEMPLATE/config.yml',
           }
-          pattern = re.compile(r'/Users/[A-Za-z0-9_.-]+|/home/[A-Za-z0-9_.-]+|[A-Za-z]:\Users\[A-Za-z0-9_. -]+')
+          pattern = re.compile(r'/Users/[A-Za-z0-9_.-]+|/home/[A-Za-z0-9_.-]+|[A-Za-z]:\\Users\\[A-Za-z0-9_. -]+')
           bad = []
           for rel in tracked:
               if rel not in allowed:
