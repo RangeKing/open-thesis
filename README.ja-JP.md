@@ -21,25 +21,8 @@
 
 ## 最新ニュース
 
-- **2026-03-31**: **Zotero smart-importワークフロー文書を整合** — 最新の`zotero-mcp`公開インターフェースに合わせて、Claude Scholarの研究向けドキュメントを更新しました。`zotero_add_items_by_identifier`を標準の論文インポート経路として明示し、`zotero_reconcile_collection_duplicates`を標準的なインポート後クリーンアップ手順に位置づけ、source-awareなPDF cascadeの挙動もより正確に説明し直しました。公開機能と内部診断機能の境界も整理しています。
-- **2026-03-31**: **READMEの導入案内を刷新** — Claude Scholarが特にコンピュータサイエンスおよびAI研究者に適していることを明確にし、インストール後すぐ使える実践的な導入シナリオを追加しました。前提条件やブランチ案内も整理し、「既存のローカルmdファイルは手動でマージする必要がある」点をより明確にしました。
-- **2026-03-31**: **インストーラーとhooksの挙動を整理** — インストーラーは既存のローカル`CLAUDE.md` / `CLAUDE.zh-CN.md`を保持しつつ、リポジトリ版をsidecarファイルとして追加するようになりました。あわせて、デフォルトhooksの要約出力も整理し、temp filesやuncommitted filesのノイズを抑えつつ、より安全な書き込みガードは維持しています。
-- **2026-03-31**: **日本語ドキュメントを追加** — メインREADMEに加え、`CLAUDE`、`MCP_SETUP`、`OBSIDIAN_SETUP`の日本語版も追加し、リポジトリ全体の多言語ドキュメント導線をより充実させました。
-
-<details>
-<summary>過去の更新履歴を表示</summary>
-
-- **2026-02-25**: **Codex CLI**サポート — [OpenAI Codex CLI](https://github.com/openai/codex)をサポートする`codex`ブランチを追加。config.toml、40スキル、14エージェント、サンドボックスセキュリティ
-- **2026-02-23**: `setup.sh`インストーラー追加 — 既存の`~/.claude`へのバックアップ対応インクリメンタルアップデート、`settings.json`の自動バックアップ、hooks/mcpServers/pluginsの追加的マージ
-- **2026-02-21**: **OpenCode**サポート — [OpenCode](https://github.com/opencode-ai/opencode)を代替CLIとしてサポート。OpenCode対応設定は`opencode`ブランチ
-- **2026-02-20**: バイリンガル設定 — `CLAUDE.md`を国際的な可読性のため英語に翻訳。中国語バックアップとして`CLAUDE.zh-CN.md`を追加
-- **2026-02-15**: Zotero MCP連携 — `/zotero-review`と`/zotero-notes`コマンドを追加、`research-ideation`スキルにZotero連携ガイドを追加、`literature-reviewer`エージェントにZotero MCPサポート
-- **2026-02-14**: Hooks最適化 — `security-guard`を2段階システムに再構築、`skill-forced-eval`が6カテゴリ分類+サイレントスキャンモードに、`session-start`は上位5件表示に制限、`session-summary`に30日ログ自動クリーンアップ追加、`stop-summary`で追加/変更/削除を個別カウント表示
-- **2026-02-11**: 大規模アップデート — 新スキル10個、新エージェント7個、リサーチワークフローコマンド8個、新ルール2個を追加。CLAUDE.mdを再構成。89ファイル変更
-- **2026-01-26**: 全HooksをクロスプラットフォームNode.jsに書き直し。README全面改訂。ML論文執筆ナレッジベース拡充。PR #1をマージ
-- **2026-01-25**: プロジェクトオープンソース化、v1.0.0リリース。25スキル、2エージェント、30以上のコマンド、5 Shell Hooks、2ルールを搭載
-
-</details>
+- **2026-04-15**: **pubfig と pubtab という 2 つの Python package を導入** — [`pubfig`](https://github.com/Galaxy-Dawn/pubfig) を論文品質の scientific figures 向け Python package、[`pubtab`](https://github.com/Galaxy-Dawn/pubtab) を publication-ready な tables と Excel↔LaTeX workflows 向け Python package として打ち出し、論文図、benchmark 表、書き出し制御、最終 QA までの生産経路をより明確にしました。
+- **2026-04-15**: **publication-chart-skill を Claude Scholar に統合** — [`pubfig`](https://github.com/Galaxy-Dawn/pubfig) + [`pubtab`](https://github.com/Galaxy-Dawn/pubtab) を `publication-chart-skill` としてまとめてリポジトリに追加し、Claude Scholar の分析/執筆スタックの boundary に接続しました。これにより、論文品質の図表作業を汎用分析や prose skill に混ぜず、明示的な handoff で扱えるようになりました。
 
 ## クイックナビゲーション
 

@@ -1034,6 +1034,8 @@ See [references/reviewer-guidelines.md](references/reviewer-guidelines.md) for d
 
 ## Tables and Figures
 
+If the task is to generate or redesign paper-ready figures/tables themselves, use `publication-chart-skill`; `ml-paper-writing` stays responsible for caption quality, placement, storyline, and paper integration.
+
 ### Tables
 
 Use `booktabs` LaTeX package for professional tables:
