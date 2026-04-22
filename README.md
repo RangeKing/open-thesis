@@ -22,6 +22,7 @@
 
 ## Recent News
 
+- **2026-04-22**: **Lightweight core instructions** — replaced the large always-on `CLAUDE.md` / `AGENTS.md` files with compact core instructions, added Chinese companion files, and kept detailed skills, commands, agents, and workflows as on-demand references to reduce default context overhead.
 - **2026-04-15**: **pubfig and pubtab introduced** — introduced [`pubfig`](https://github.com/Galaxy-Dawn/pubfig), a Python package for publication-grade scientific figures, and [`pubtab`](https://github.com/Galaxy-Dawn/pubtab), a Python package for publication-ready tables and Excel↔LaTeX workflows. Together they provide a cleaner production stack for paper figures, benchmark tables, export control, and final artifact QA.
 - **2026-04-15**: **publication-chart-skill integrated into Claude Scholar** — wrapped [`pubfig`](https://github.com/Galaxy-Dawn/pubfig) + [`pubtab`](https://github.com/Galaxy-Dawn/pubtab) into `publication-chart-skill`, added the skill to the repository, and connected it to Claude Scholar's analysis and writing boundaries so publication-grade figure/table work now has an explicit handoff route instead of being mixed into general analysis or prose skills.
 
@@ -510,8 +511,8 @@ Claude Scholar also contains a self-improvement loop for its own skills.
 
 - [MCP_SETUP.md](./MCP_SETUP.md) — Zotero/browser MCP setup
 - [OBSIDIAN_SETUP.md](./OBSIDIAN_SETUP.md) — Obsidian knowledge base workflow
-- [CLAUDE.md](./CLAUDE.md) — full local configuration, skill list, and workflow details
-- [CLAUDE.zh-CN.md](./CLAUDE.zh-CN.md) — Chinese version of the main configuration doc
+- [CLAUDE.md](./CLAUDE.md) — lightweight Claude Code core instructions
+- [CLAUDE.zh-CN.md](./CLAUDE.zh-CN.md) — Chinese companion for the lightweight core instructions
 - [settings.json.template](./settings.json.template) — optional settings template for hooks/plugins/MCP
 
 ## Project Rules

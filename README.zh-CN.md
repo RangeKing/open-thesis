@@ -22,6 +22,7 @@
 
 ## 最新动态
 
+- **2026-04-22**: **精简常驻核心指令** — 将大型 always-on `CLAUDE.md` / `AGENTS.md` 改为紧凑的核心指令，新增中文 companion 文件，并把详细 skills、commands、agents 与 workflow 内容保留为按需参考，以降低默认 context 开销。
 - **2026-04-15**: **提出 pubfig 与 pubtab 两个 Python package** — 推出了 [`pubfig`](https://github.com/Galaxy-Dawn/pubfig)（用于论文级 scientific figures）和 [`pubtab`](https://github.com/Galaxy-Dawn/pubtab)（用于 publication-ready tables 与 Excel↔LaTeX workflows）两个独立 Python package，为研究者提供更清晰的论文图、benchmark 表、导出控制与最终 QA 生产路径。
 - **2026-04-15**: **将 publication-chart-skill 融入 Claude Scholar** — 把 [`pubfig`](https://github.com/Galaxy-Dawn/pubfig) + [`pubtab`](https://github.com/Galaxy-Dawn/pubtab) 封装成 `publication-chart-skill`，加入仓库，并接到 Claude Scholar 的分析/写作边界里，让论文级图表工作有了明确的 handoff 路径，而不是继续混在通用分析或 prose skill 里。
 
@@ -510,8 +511,8 @@ Claude Scholar 也内置了自我改进的 skill 工作流。
 
 - [MCP_SETUP.zh-CN.md](./MCP_SETUP.zh-CN.md) — Zotero / 浏览器 MCP 配置
 - [OBSIDIAN_SETUP.zh-CN.md](./OBSIDIAN_SETUP.zh-CN.md) — Obsidian 项目知识库工作流
-- [CLAUDE.md](./CLAUDE.md) — 完整本地配置、技能列表与工作流说明
-- [CLAUDE.zh-CN.md](./CLAUDE.zh-CN.md) — 中文版主配置文档
+- [CLAUDE.md](./CLAUDE.md) — 轻量版 Claude Code 核心指令
+- [CLAUDE.zh-CN.md](./CLAUDE.zh-CN.md) — 轻量核心指令的中文 companion 文件
 - [settings.json.template](./settings.json.template) — hooks / plugins / MCP 的可选模板
 
 ## 项目规则

@@ -21,6 +21,7 @@
 
 ## 最新ニュース
 
+- **2026-04-22**: **軽量なコア指示へ更新** — 大きな always-on `CLAUDE.md` / `AGENTS.md` をコンパクトなコア指示に置き換え、中国語 companion ファイルを追加し、詳細な skills、commands、agents、workflow は必要時に読む参照として残しました。これによりデフォルトの context コストを抑えます。
 - **2026-04-15**: **pubfig と pubtab という 2 つの Python package を導入** — [`pubfig`](https://github.com/Galaxy-Dawn/pubfig) を論文品質の scientific figures 向け Python package、[`pubtab`](https://github.com/Galaxy-Dawn/pubtab) を publication-ready な tables と Excel↔LaTeX workflows 向け Python package として打ち出し、論文図、benchmark 表、書き出し制御、最終 QA までの生産経路をより明確にしました。
 - **2026-04-15**: **publication-chart-skill を Claude Scholar に統合** — [`pubfig`](https://github.com/Galaxy-Dawn/pubfig) + [`pubtab`](https://github.com/Galaxy-Dawn/pubtab) を `publication-chart-skill` としてまとめてリポジトリに追加し、Claude Scholar の分析/執筆スタックの boundary に接続しました。これにより、論文品質の図表作業を汎用分析や prose skill に混ぜず、明示的な handoff で扱えるようになりました。
 
@@ -481,8 +482,8 @@ Claude Scholar自身のスキルに対する自己改善ループ。
 - [MCP_SETUP.ja-JP.md](./MCP_SETUP.ja-JP.md) — Zotero/ブラウザMCPセットアップ（日本語）
 - [OBSIDIAN_SETUP.ja-JP.md](./OBSIDIAN_SETUP.ja-JP.md) — Obsidianナレッジベースワークフロー（日本語）
 - [CLAUDE.ja-JP.md](./CLAUDE.ja-JP.md) — 完全なローカル設定、スキル一覧、ワークフロー詳細（日本語）
-- [CLAUDE.md](./CLAUDE.md) — ローカル設定（英語版）
-- [CLAUDE.zh-CN.md](./CLAUDE.zh-CN.md) — ローカル設定（中国語版）
+- [CLAUDE.md](./CLAUDE.md) — 軽量な Claude Code コア指示（英語版）
+- [CLAUDE.zh-CN.md](./CLAUDE.zh-CN.md) — 軽量コア指示の中国語 companion ファイル
 - [settings.json.template](./settings.json.template) — hooks/plugins/MCP用のオプション設定テンプレート
 
 ## プロジェクトルール
