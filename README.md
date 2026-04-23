@@ -310,6 +310,7 @@ Maintainable ML project structure for experiment code and iteration.
 | Skill | `git-workflow` | Enforce branch hygiene, commit conventions, and safer collaboration workflows. |
 | Skill | `bug-detective` | Debug stack traces, shell failures, and code-path issues systematically. |
 | Agent | `code-reviewer` | Review modified code for correctness, maintainability, and implementation quality. |
+| Agent | `tdd-guide` | Provide focused test-driven implementation guidance when a TDD path is explicitly needed. |
 | Command | `/plan` | Create or refine an implementation plan before coding. |
 | Command | `/commit` | Prepare a conventional commit for the current changes. |
 | Command | `/code-review` | Run a focused review on the current code changes. |

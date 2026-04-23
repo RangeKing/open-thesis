@@ -308,6 +308,7 @@ Claude Scholarは以下のプラットフォームをサポートしています
 | Skill | `git-workflow` | ブランチ管理、コミット規約、安全なコラボレーションワークフローを適用 |
 | Skill | `bug-detective` | スタックトレース、シェルエラー、コードパスの問題を体系的にデバッグ |
 | Agent | `code-reviewer` | 変更されたコードの正確性、保守性、実装品質をレビュー |
+| Agent | `tdd-guide` | 明示的に TDD が必要な場面で、絞ったテスト駆動の実装ガイドを出す。 |
 | Command | `/plan` | コーディング前に実装計画を作成・改善 |
 | Command | `/commit` | 現在の変更に対してConventional Commitを準備 |
 | Command | `/code-review` | 現在のコード変更に対するフォーカスレビューを実行 |
