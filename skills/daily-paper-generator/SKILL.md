@@ -1,273 +1,144 @@
 ---
 name: daily-paper-generator
-description: Use when the user asks to "generate daily paper", "search arXiv for EEG papers", "find EEG decoding papers", "review brain-computer interface papers", or wants to create paper summaries for EEG/brain decoding/speech decoding research. This skill automates searching arXiv for recent papers on EEG decoding, EEG speech decoding, or brain foundation models, reviewing paper quality, and generating structured Chinese/English summaries.
-version: 0.4.0
+description: Use when the user asks to generate daily paper digests on a general topic. This skill supports both arXiv and bioRxiv (or either one), then produces structured Chinese/English summaries for selected papers.
+version: 0.5.1
 ---
 
 # Daily Paper Generator
 
 ## Overview
 
-Automate the workflow of discovering, reviewing, and summarizing recent research papers on arXiv related to EEG decoding, brain-computer interfaces, and neural foundation models.
+Discover, screen, and summarize recent papers for any research topic.
 
-**Core workflow:**
-1. Search arXiv for recent papers (within 3 months) using Chrome browser
-2. Retrieve paper metadata from arXiv pages
-3. Evaluate paper quality using structured criteria
-4. Select top 3 papers
-5. Generate structured summaries with Chinese and English reviews
-6. Save results as Markdown files in `daily paper/` directory
+Supported sources:
+- arXiv
+- bioRxiv
+- both (`--source both`)
+
+Core workflow:
+1. Define topic query and time window
+2. Search papers from arXiv / bioRxiv
+3. Select Top 10 candidates per field
+4. Score and narrow to Top 3 per field
+5. Choose Top 1 per field
+6. Generate bilingual summaries
+7. Save outputs to `daily paper/`
 
 ## When to Use
 
 Use this skill when:
-- User asks to "generate daily paper" or "find recent EEG papers"
-- User wants to discover research on EEG decoding, speech decoding from EEG, or brain foundation models
-- User needs paper reviews with both Chinese and English summaries
-- User wants to track recent arXiv publications in neuro/AI intersection
+- The user asks for a daily/weekly paper digest on any topic
+- The user wants recent papers from arXiv and/or bioRxiv
+- The user needs structured bilingual notes for reading and tracking
 
 ## Output Format
 
-Each paper summary follows this structure (see `example/daily paper example.md` for complete example):
-
-### 1. Header Section
-```markdown
-# Paper Title
-
-## 作者及单位
-Author list
-Institution
-
-## arXiv 链接
-https://arxiv.org/abs/ARXIV_ID
-
-**发表日期**: YYYY-MM-DD
-**arXiv ID**: XXXX.XXXXX
-**分类**: cs.LG, q-bio.NC, eess.SP
-```
-
-### 2. Review Sections
-
-**中文评语** (~300 words):
-- Background (1-2 sentences): Research context and importance
-- Challenges (2-3 sentences): Problems with existing methods
-- Contribution (1-2 sentences): Core contribution of this work
-- Method (2-3 sentences): Key technical details
-- Results (2-3 sentences): Main findings and metrics
-- Analysis & Limitations (1-2 sentences): Significance and limitations
-
-**English Review** (fluent academic English):
-- Concise summary following the same structure as Chinese review
-- Use natural academic prose (avoid AI-like patterns)
-- Apply scientific writing best practices
-
-### 3. Main Figure Section
-```markdown
-## 主图
-[预留论文主图位置]
-```
-
-### 4. Metadata Table
-```markdown
-## 论文元数据
-
-| 项目 | 内容 |
-|------|------|
-| **标题** | Paper Title |
-| **第一作者** | First Author Name |
-| **作者列表** | Full author list |
-| **第一作者单位** | Institution |
-| **发表日期** | YYYY-MM-DD |
-| **arXiv 链接** | https://arxiv.org/abs/ID |
-| **PDF 链接** | https://arxiv.org/pdf/ID |
-| **分类** | cs.LG, q-bio.NC, eess.SP |
-```
-
-### 5. Integrated Format (for publishing)
-```markdown
-## 整合格式
-
-Daily Paper MMDD
-
-Paper Title
-
-https://arxiv.org/abs/ARXIV_ID
-
-[Chinese Review]
-
-[English Review]
-```
-
-### 6. Appendix
-```markdown
-## 附录
-
-**github连接：** [Available/Not Available]
-
-**补充说明**
-
-[Key insights, impact points]
-
-**Sources:**
-- [arXiv Abstract](URL)
-- [arXiv HTML](URL)
-- [Paperverse Review](URL) (if available)
-```
+Each summary should contain:
+1. Paper title
+2. Authors and venue/source
+3. Link(s) and date
+4. Chinese review (~300 words)
+5. English review (concise academic prose)
+6. Metadata table
+7. Appendix (optional resources)
 
 ## Quick Reference
 
 | Task | Method |
-|------|--------|
-| Search arXiv | Use Chrome MCP tools (chrome-mcp-helper) |
-| Get paper details | Navigate to arXiv pages and extract metadata |
-| Evaluate quality | Use criteria in `references/quality-criteria.md` |
-| Write Chinese review | Follow style in `references/writing-style.md` |
-| Write English review | Apply scientific-writing skill best practices |
-| Create output | Use template in `example/daily paper example.md` |
+|---|---|
+| Search papers | Use `scripts/arxiv_search.py` with `--source arxiv|biorxiv|both` |
+| Topic selection | Use general-topic queries from `references/keywords.md` |
+| Evaluate quality | Use `references/quality-criteria.md` |
+| Write Chinese review | Use `references/writing-style.md` |
+| Write English review | Follow scientific writing best practices |
 
 ## Workflow
 
-### Step 1: Search arXiv Using Chrome
+### Step 1: Define query
 
-**Search keywords** (see `references/keywords.md` for full list):
-- EEG decoding: `EEG decoding`, `brain decoding`, `neural decoding`
-- Speech decoding: `speech decoding from EEG`, `EEG speech reconstruction`
-- Foundation models: `EEG foundation model`, `large EEG model`, `brain foundation model`
+Choose a concrete topic query. Examples:
+- `test-time adaptation for medical imaging`
+- `multimodal foundation model for healthcare`
+- `protein language model interpretability`
 
-**Method: Use Chrome browser with arXiv search**
+### Step 2: Search arXiv and/or bioRxiv
 
-1. **Navigate to arXiv search** using Chrome MCP tools:
-   - URL: `https://arxiv.org/search/`
-   - Add search parameters: `?searchtype=all&query=KEYWORDS&abstracts=show&order=-announced_date_first`
+Use helper script:
 
-2. **Search URL pattern**:
-   ```
-   https://arxiv.org/search/?searchtype=all&query=EEG+decoding&abstracts=show&order=-announced_date_first
-   https://arxiv.org/search/?searchtype=all&query=EEG+foundation+model&abstracts=show&order=-announced_date_first
-   ```
-
-3. **Time filtering**: Use date filters or sort by `announced_date_first` to get recent papers
-
-4. **Extract paper information** from search results:
-   - Paper title
-   - Authors
-   - arXiv ID
-   - Abstract preview
-   - Publication date
-
-### Step 2: Retrieve Paper Details
-
-For each candidate paper, navigate to its arXiv abs page and extract:
-
-**URL pattern**: `https://arxiv.org/abs/ARXIV_ID`
-
-**Extract from page**:
-- Title (from `<h1>` tag)
-- Authors (from `.authors` element)
-- Abstract (from `blockquote.abstract`)
-- Submission date (from `.dateline`)
-- arXiv ID (from URL or page)
-- Categories (from `.subjects`)
-- Comments (if present)
-- First author institution (if available in comments or author affiliations)
-
-### Step 3: Evaluate Paper Quality
-
-Review each paper using the 5-dimension criteria in `references/quality-criteria.md`:
-
-| Dimension | Weight | Key Points |
-|-----------|--------|------------|
-| Innovation | 30% | Novelty of contribution |
-| Method Completeness | 25% | Clarity and reproducibility |
-| Experimental Thoroughness | 25% | Validation depth |
-| Writing Quality | 10% | Clarity of expression |
-| Relevance & Impact | 10% | Domain importance |
-
-**Scoring:** Rate each dimension 1-5, calculate weighted sum.
-
-**Process:**
-1. Screen by title/abstract for relevance
-2. Navigate to full paper page for detailed review
-3. Score each dimension
-4. Rank by total score
-5. Select top 3
-
-### Step 4: Generate Paper Summaries
-
-For each selected paper, create a summary following the structure in `example/daily paper example.md`:
-
-**Required sections:**
-1. Title (H1 heading)
-2. 作者及单位 (Authors and Institution)
-3. arXiv 链接 (with metadata: date, ID, categories)
-4. 中文评语 (Chinese review, ~300 words)
-5. English Review (fluent academic English)
-6. 主图 (placeholder for main figure)
-7. 论文元数据 (metadata table)
-8. 整合格式 (integrated format for publishing)
-9. 附录 (appendix with github link,补充说明, sources)
-
-**Writing Chinese review** (see `references/writing-style.md`):
-- Background: 研究背景和重要性
-- Challenges: 现有方法的不足
-- Contribution: 本工作的核心贡献
-- Method: 关键技术细节
-- Results: 主要发现和指标
-- Analysis & Limitations: 意义和局限性
-
-**Writing English review**:
-- Apply scientific-writing skill best practices
-- Use anti-AI writing principles (natural, varied sentence structure)
-- Keep concise and direct
-- Avoid formulaic transitions ("furthermore", "moreover", "additionally")
-
-### Step 5: Save Output
-
-Create Markdown files in the `daily paper/` directory:
-
+```bash
+python skills/daily-paper-generator/scripts/arxiv_search.py \
+  --query "test-time adaptation for medical imaging" \
+  --source both \
+  --months 1 \
+  --max-results 80 \
+  --output /tmp/papers.json
 ```
+
+Notes:
+- `--source arxiv`: arXiv only
+- `--source biorxiv`: bioRxiv only
+- `--source both`: merge both sources and sort by date
+
+### Step 3: Top 10 candidate selection (per field)
+
+For each candidate paper:
+1. Check topic relevance from title + abstract
+2. Remove obviously off-topic papers
+3. Keep **Top 10 candidates** for this field
+
+Minimum rule:
+- Do not jump directly from raw search results to final paper.
+- Keep an explicit Top 10 list first.
+
+### Step 4: Top 3 quality shortlist (per field)
+
+For the Top 10 pool:
+1. Score each paper with `references/quality-criteria.md`
+2. Rank by weighted score
+3. Keep **Top 3**
+
+### Step 5: Final Top 1 selection (per field)
+
+For the Top 3 shortlist:
+1. Compare novelty + method completeness + experimental credibility
+2. Check practical impact for the field
+3. Select **Top 1** as the final pick
+
+Required output trace:
+- Top 10 candidate list
+- Top 3 scored shortlist (with weighted scores)
+- Final Top 1 and one-paragraph selection rationale
+
+### Step 6: Generate bilingual summaries
+
+For each selected paper, generate:
+- 中文评语：背景、挑战、贡献、方法、结果、局限
+- English Review: concise, factual, non-formulaic
+
+### Step 7: Save output
+
+Recommended directory and naming:
+
+```text
 daily paper/
-├── 2025-01-26-1430-paper-1.md
-├── 2025-01-26-1430-paper-2.md
-└── 2025-01-26-1430-paper-3.md
+  YYYY-MM-DD-HHMM-paper-1.md
+  YYYY-MM-DD-HHMM-paper-2.md
+  YYYY-MM-DD-HHMM-paper-3.md
 ```
-
-**Filename format:** `YYYY-MM-DD-HHMM-paper-N.md`
-
-**Important:** 使用时间戳（精确到分钟）避免覆盖之前生成的文件。
-
-## Example Output
-
-See `example/daily paper example.md` for a complete example of the DeeperBrain paper summary with all sections properly formatted.
 
 ## Additional Resources
 
-### Reference Files
-
-- **`references/keywords.md`** - Complete search keyword list and arXiv URL patterns
-- **`references/quality-criteria.md`** - Detailed 5-dimension evaluation criteria with scoring rubrics
-- **`references/writing-style.md`** - Chinese review structure, templates, and example analysis
-
-### Example Files
-
-- **`example/daily paper example.md`** - Complete output example with all sections
-- **`scripts/arxiv_search.py`** - Legacy Python script (deprecated, use Chrome instead)
-
-### Chrome MCP Tools
-
-Use Chrome MCP tools for browser automation:
-- **Navigation**: Open arXiv search and paper pages
-- **Screenshot**: Capture pages for analysis
-- **Tabs**: Manage multiple arXiv pages
-- **Content extraction**: Parse paper metadata from HTML
+- `references/keywords.md`: general-topic query templates
+- `references/quality-criteria.md`: scoring rubric
+- `references/writing-style.md`: review writing style
+- `example/daily paper example.md`: output example
+- `scripts/arxiv_search.py`: arXiv + bioRxiv search helper
 
 ## Important Notes
 
-1. **Time range:** Search focuses on papers from the last 3 months (check submission dates)
-2. **Link format:** Use arXiv abs page links (https://arxiv.org/abs/ID), not direct PDF links
-3. **Review length:** Chinese reviews should be approximately 300 words
-4. **Quality focus:** Prioritize content quality (innovation, method, experiments) over quantitative metrics
-5. **Bilingual output:** Both Chinese and English reviews are required for each paper
-6. **Chrome required:** This workflow uses Chrome browser automation via MCP tools
-7. **Complete format:** Ensure all 9 sections are included in each summary
-8. **Consistent naming:** Use Daily Paper MMDD format in integrated section
+1. Use explicit topic queries, avoid single-word vague queries.
+2. Keep the time window explicit (`--months N`).
+3. Distinguish source in metadata (`arxiv` vs `biorxiv`).
+4. Use the fixed narrowing rule: **Top 10 -> Top 3 -> Top 1** (per field).
+5. If a paper lacks robust evaluation, mark confidence and limitations clearly.
+6. Do not fabricate unavailable fields (institution/GitHub/code links).

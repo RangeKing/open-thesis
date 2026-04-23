@@ -110,5 +110,4 @@ After planning:
 
 ## Related Skills
 
-- `planning-with-files`
 - `architecture-design` (when structural design is needed)

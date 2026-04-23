@@ -160,7 +160,6 @@ const KEYWORD_SKILL_MAP = [
   { keywords: /\b(ablation)\b|实验结果|results.*analysis|统计检验|消融实验|科学绘图|实验统计/i, skills: ['results-analysis'] },
   { keywords: /\b(experiment.?report|results.?report|retrospective|wrap.?up)\b|实验报告|实验总结|实验复盘|结果总结/i, skills: ['results-report'] },
   { keywords: /\b(poster|presentation|promote)\b|海报|演讲|推广/i, skills: ['post-acceptance'] },
-  { keywords: /\b(plan|planning)\b|规划|计划/i, skills: ['planning-with-files'] },
   { keywords: /\b(verify|verification)\b|验证/i, skills: ['verification-loop'] },
   { keywords: /\b(self.?review)\b|自审|论文检查/i, skills: ['paper-self-review'] },
   { keywords: /\b(anti.?ai|humanize)\b|去.*ai.*痕迹|AI写作/i, skills: ['writing-anti-ai'] },
