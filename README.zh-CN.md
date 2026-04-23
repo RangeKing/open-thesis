@@ -22,7 +22,7 @@
 
 ## 最新动态
 
-- **2026-04-22**: **精简常驻核心指令** — 将大型 always-on `CLAUDE.md` / `AGENTS.md` 改为紧凑的核心指令，新增中文 companion 文件，并把详细 skills、commands、agents 与 workflow 内容保留为按需参考，以降低默认 context 开销。
+- **2026-04-22**: **精简核心指令、裁剪默认 agents、安全安装生命周期与通用论文发现流程** — 将大型 always-on `CLAUDE.md` / `AGENTS.md` 改为紧凑核心指令，裁剪默认 agent 集合并保留主链路所需的核心 agents，新增基于 install state 的安全卸载支持，将 `daily-paper-generator` 扩展为面向通用 topic 的 arXiv / bioRxiv 检索与 Top 10 -> Top 3 -> Top 1 固定筛选流程，并删除低使用率的 `planning-with-files` skill。
 - **2026-04-15**: **提出 pubfig 与 pubtab 两个 Python package** — 推出了 [`pubfig`](https://github.com/Galaxy-Dawn/pubfig)（用于论文级 scientific figures）和 [`pubtab`](https://github.com/Galaxy-Dawn/pubtab)（用于 publication-ready tables 与 Excel↔LaTeX workflows）两个独立 Python package，为研究者提供更清晰的论文图、benchmark 表、导出控制与最终 QA 生产路径。
 - **2026-04-15**: **将 publication-chart-skill 融入 Claude Scholar** — 把 [`pubfig`](https://github.com/Galaxy-Dawn/pubfig) + [`pubtab`](https://github.com/Galaxy-Dawn/pubtab) 封装成 `publication-chart-skill`，加入仓库，并接到 Claude Scholar 的分析/写作边界里，让论文级图表工作有了明确的 handoff 路径，而不是继续混在通用分析或 prose skill 里。
 
@@ -117,6 +117,19 @@ cd /tmp/claude-scholar
 git pull --ff-only
 bash scripts/setup.sh
 ```
+
+以后如果要卸载：
+
+```bash
+cd /tmp/claude-scholar
+bash scripts/uninstall.sh
+```
+
+安装器现在还会写入：
+- `~/.claude/.claude-scholar-manifest.txt`：记录 Claude Scholar 实际管理的文件
+- `~/.claude/.claude-scholar-install-state`：记录安全卸载所需的 ownership 元数据
+
+卸载脚本只会删除 install state 中明确记录的文件和 settings 条目，不会再根据当前 repo 工作树去猜测所有权。
 
 ### 选项 2：最小化安装
 

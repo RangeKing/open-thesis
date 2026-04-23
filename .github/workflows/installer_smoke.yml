@@ -19,12 +19,17 @@ jobs:
         run: |
           set -euo pipefail
           test -f scripts/setup.sh
+          test -f scripts/uninstall.sh
+          test -f scripts/test_install_uninstall.sh
           test -f README.md
           test -f README.zh-CN.md
           test -f README.ja-JP.md
 
-      - name: Syntax check setup.sh
+      - name: Syntax check installer scripts
         run: bash -n scripts/setup.sh
+
+      - name: Run install/uninstall smoke tests
+        run: bash scripts/test_install_uninstall.sh
 
       - name: Verify branch-specific top-level docs exist
         run: |

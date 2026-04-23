@@ -21,7 +21,7 @@
 
 ## 最新ニュース
 
-- **2026-04-22**: **軽量なコア指示へ更新** — 常時読み込まれる大きな `CLAUDE.md` / `AGENTS.md` をコンパクトなコア指示に置き換え、中国語版の補助ファイルを追加し、詳細な skills、commands、agents、作業手順は必要時に読む参照として残しました。これによりデフォルトの context コストを抑えます。
+- **2026-04-22**: **軽量なコア指示、既定 agent の整理、安全なインストール管理、汎用的な論文発見フロー** — 常時読み込まれる大きな `CLAUDE.md` / `AGENTS.md` をコンパクトなコア指示に置き換え、既定 agent 集合を主経路に必要なものへ整理し、install state に基づく安全なアンインストールを追加し、`daily-paper-generator` を汎用 topic 向けの arXiv / bioRxiv 検索と Top 10 -> Top 3 -> Top 1 の固定選定フローへ拡張し、利用頻度の低い `planning-with-files` skill を削除しました。
 - **2026-04-15**: **pubfig と pubtab という 2 つの Python package を導入** — [`pubfig`](https://github.com/Galaxy-Dawn/pubfig) を論文品質の科学図向け Python package、[`pubtab`](https://github.com/Galaxy-Dawn/pubtab) を出版品質の比較表と Excel↔LaTeX 作業向け Python package として位置づけ、論文図、比較表、書き出し制御、最終確認までの作業経路をより明確にしました。
 - **2026-04-15**: **publication-chart-skill を Claude Scholar に統合** — [`pubfig`](https://github.com/Galaxy-Dawn/pubfig) + [`pubtab`](https://github.com/Galaxy-Dawn/pubtab) を `publication-chart-skill` としてまとめてリポジトリに追加し、Claude Scholar の分析・執筆スタックの接続点として位置づけました。これにより、論文品質の図表作業を汎用分析や文章作成用 skill に混ぜず、明示的な受け渡しで扱えるようになりました。
 
@@ -116,6 +116,19 @@ cd /tmp/claude-scholar
 git pull --ff-only
 bash scripts/setup.sh
 ```
+
+アンインストールする場合:
+
+```bash
+cd /tmp/claude-scholar
+bash scripts/uninstall.sh
+```
+
+インストーラーは次のファイルも書き込みます:
+- `~/.claude/.claude-scholar-manifest.txt`: Claude Scholar が実際に管理するファイル一覧
+- `~/.claude/.claude-scholar-install-state`: 安全なアンインストールに使う ownership メタデータ
+
+アンインストーラーは install state に記録されたファイルと settings エントリだけを削除し、現在のリポジトリ内容から所有権を推測しません。
 
 ### オプション2: ミニマルインストール
 
