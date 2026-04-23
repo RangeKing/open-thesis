@@ -19,6 +19,7 @@
 
   <p><em>ブランチについて</em>: <code>main</code>ブランチはClaude Codeワークフロー用です。Codex CLIをご利用の場合は<a href="https://github.com/Galaxy-Dawn/claude-scholar/tree/codex"><code>codex</code>ブランチ</a>を、OpenCodeをご利用の場合は<a href="https://github.com/Galaxy-Dawn/claude-scholar/tree/opencode"><code>opencode</code>ブランチ</a>をご参照ください。</p>
 
+> **既定 agent に関する注記**：Claude Scholar は context 負荷を抑えるため、既定 agent を少数に絞っています。現在保留しているのは `literature-reviewer`、`paper-miner`、`rebuttal-writer`、`code-reviewer`、`kaggle-miner`、`tdd-guide` です。その他の作業は、追加の既定 agent を前提にするのではなく、skills と commands を優先してください。
 ## 最新ニュース
 
 - **2026-04-22**: **軽量なコア指示へ更新** — 常時読み込まれる大きな `CLAUDE.md` / `AGENTS.md` をコンパクトなコア指示に置き換え、中国語版の補助ファイルを追加し、詳細な skills、commands、agents、作業手順は必要時に読む参照として残しました。これによりデフォルトの context コストを抑えます。
@@ -38,6 +39,22 @@
 | [サポートワークフロー](#サポートワークフロー) | 主要ワークフローを支えるバックグラウンドシステム |
 | [ドキュメント](#ドキュメント) | セットアップ、設定、テンプレートへのリンク |
 | [引用](#引用) | 論文やレポートでのClaude Scholarの引用方法 |
+
+## 現在保留している既定 Agent
+
+Claude Scholar がこの分岐で既定で保持している agent は以下が全てです。
+
+| 種別 | 名前 | 保持している役割 |
+|---|---|---|
+| Agent | `literature-reviewer` | 論文を検索・分類・統合し、実行可能な文献全体像を作る。 |
+| Agent | `paper-miner` | 優れた論文から再利用可能な書き方、構造シグナル、投稿知識を抽出する。 |
+| Agent | `rebuttal-writer` | 専門的で礼儀正しく、戦略的に整理された rebuttal 文面を起草する。 |
+| Agent | `code-reviewer` | 変更されたコードの正確性、保守性、実装品質をレビューする。 |
+| Agent | `kaggle-miner` | 優れた Kaggle ワークフローから実装慣行と解法パターンを抽出する。 |
+| Agent | `tdd-guide` | 明示的に TDD が必要な場面で、絞ったテスト駆動の実装ガイドを出す。 |
+
+その他の作業は skills と commands を優先し、追加の既定 agent がある前提では考えないでください。
+
 
 ## Claude Scholarとは
 

@@ -2,6 +2,9 @@
 
 Claude Scholar ships with a built-in Obsidian research knowledge-base workflow. It does **not** require MCP or an API key.
 
+> **Default agent note**: the current default agent set is `literature-reviewer`, `paper-miner`, `rebuttal-writer`, `code-reviewer`, `kaggle-miner`, and `tdd-guide`. Obsidian workflows mainly run through `obsidian-project-memory` and related skills rather than extra default Obsidian agents.
+
+
 ## What this provides
 
 Obsidian is treated as the default knowledge base for a research project, not just a paper library. A project knowledge base can store:

@@ -2,6 +2,9 @@
 
 Claude Scholarは拡張機能のためにMCP（Model Context Protocol）サーバーを利用します。MCPサーバーはこのリポジトリには**含まれていません** — ユーザーが個別にインストールおよび設定する必要があります。
 
+> **既定 agent に関する注記**：現在の既定 agent は `literature-reviewer`、`paper-miner`、`rebuttal-writer`、`code-reviewer`、`kaggle-miner`、`tdd-guide` のみです。MCP を使うワークフローは主に skills、commands、そしてこの最小 agent 集合で動きます。追加の legacy agents が既定で入っているとは考えないでください。
+
+
 ## 必須MCPサーバー
 
 ### 1. Zotero MCP（研究ワークフロー）
