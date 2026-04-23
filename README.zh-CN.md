@@ -20,7 +20,6 @@
 
   <p><em>分支说明</em>：<code>main</code> 分支对应 Claude Code 工作流。如果你使用 Codex CLI，请查看 <a href="https://github.com/Galaxy-Dawn/claude-scholar/tree/codex"><code>codex</code> 分支</a>；如果你使用 OpenCode，请查看 <a href="https://github.com/Galaxy-Dawn/claude-scholar/tree/opencode"><code>opencode</code> 分支</a>。</p>
 
-> **默认 agent 说明**：为了降低上下文开销，Claude Scholar 现在只保留一组精简的默认 agent。当前保留的是 `literature-reviewer`、`paper-miner`、`rebuttal-writer`、`code-reviewer`、`kaggle-miner` 和 `tdd-guide`。其他大多数工作应优先走 skills 和 commands，而不是依赖额外默认 agent。
 ## 最新动态
 
 - **2026-04-22**: **精简常驻核心指令** — 将大型 always-on `CLAUDE.md` / `AGENTS.md` 改为紧凑的核心指令，新增中文 companion 文件，并把详细 skills、commands、agents 与 workflow 内容保留为按需参考，以降低默认 context 开销。
@@ -40,22 +39,6 @@
 | [支撑工作流](#支撑工作流) | 查看支撑主工作流的后台机制。 |
 | [文档入口](#文档入口) | 快速跳转到 setup、配置和模板文档。 |
 | [引用](#引用) | 在论文、报告或项目文档中引用 Claude Scholar。 |
-
-## 当前保留的默认 Agent
-
-Claude Scholar 现在只保留这一组默认 agent。下面这张表就是当前分支的完整默认集合。
-
-| 类型 | 名称 | 保留用途 |
-|---|---|---|
-| Agent | `literature-reviewer` | 搜索、分类并综合论文，形成可执行的文献图景。 |
-| Agent | `paper-miner` | 从高质量论文中提炼可复用的写作模式、结构信号和投稿经验。 |
-| Agent | `rebuttal-writer` | 起草专业、礼貌且结构清晰的 rebuttal 文本。 |
-| Agent | `code-reviewer` | 审查改动代码的正确性、可维护性和实现质量。 |
-| Agent | `kaggle-miner` | 从优秀 Kaggle 工作流中提炼工程实践和解决方案模式。 |
-| Agent | `tdd-guide` | 当任务明确需要 TDD 路径时，提供聚焦的测试驱动实现指导。 |
-
-其他大多数任务请优先走 skills 和 commands，不要默认还有更多内置 agent。
-
 
 ## 为什么使用 Claude Scholar
 

@@ -20,7 +20,6 @@
 
   <p><em>Branch note</em>: the <code>main</code> branch is the Claude Code workflow. If you use Codex CLI, please see the <a href="https://github.com/Galaxy-Dawn/claude-scholar/tree/codex"><code>codex</code> branch</a>. If you use OpenCode, please see the <a href="https://github.com/Galaxy-Dawn/claude-scholar/tree/opencode"><code>opencode</code> branch</a>.</p>
 
-> **Default agent note**: Claude Scholar now keeps a small default agent set to reduce context overhead. The retained agents are `literature-reviewer`, `paper-miner`, `rebuttal-writer`, `code-reviewer`, `kaggle-miner`, and `tdd-guide`. Most other work should go through skills and commands rather than additional default agents.
 
 ## Recent News
 
@@ -41,22 +40,6 @@
 | [Supporting Workflows](#supporting-workflows) | See the background systems that strengthen the main workflow. |
 | [Documentation](#documentation) | Jump to setup docs, configuration, and templates. |
 | [Citation](#citation) | Cite Claude Scholar in papers, reports, or project docs. |
-
-## Retained Default Agents
-
-Claude Scholar now keeps a small default agent set. This table is the full default set for this branch.
-
-| Type | Name | What it is kept for |
-|---|---|---|
-| Agent | `literature-reviewer` | Search, classify, and synthesize papers into an actionable literature picture. |
-| Agent | `paper-miner` | Mine strong papers for reusable writing patterns, structure signals, and venue heuristics. |
-| Agent | `rebuttal-writer` | Draft professional, respectful, and strategically organized rebuttal text. |
-| Agent | `code-reviewer` | Review modified code for correctness, maintainability, and implementation quality. |
-| Agent | `kaggle-miner` | Extract engineering practices and solution patterns from strong Kaggle workflows. |
-| Agent | `tdd-guide` | Provide focused test-driven implementation guidance when a TDD path is explicitly needed. |
-
-For most other work, use skills and commands instead of assuming additional default agents.
-
 
 ## Why Claude Scholar
 

@@ -2,9 +2,6 @@
 
 Claude Scholar 内置了 Obsidian 研究知识库工作流，不需要 MCP，也不需要 API key。
 
-> **默认 agent 说明**：当前默认 agent 只保留 `literature-reviewer`、`paper-miner`、`rebuttal-writer`、`code-reviewer`、`kaggle-miner` 和 `tdd-guide`。Obsidian 工作流主要通过 `obsidian-project-memory` 及其相关 skills 运行，而不是依赖额外默认 Obsidian agents。
-
-
 ## 能做什么
 
 Obsidian 在这里不是“文献库插件”，而是整个科研项目的默认知识库，可以统一沉淀：

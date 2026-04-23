@@ -2,9 +2,6 @@
 
 Claude Scholar relies on MCP (Model Context Protocol) servers for extended capabilities. MCP servers are **not included** in this repository — users must install and configure them separately.
 
-> **Default agent note**: the current default agent set is `literature-reviewer`, `paper-miner`, `rebuttal-writer`, `code-reviewer`, `kaggle-miner`, and `tdd-guide`. MCP-backed workflows mainly run through skills and commands plus that minimal agent set; do not expect additional legacy agents to be installed by default.
-
-
 ## Required MCP Servers
 
 ### 1. Zotero MCP (Research Workflow)

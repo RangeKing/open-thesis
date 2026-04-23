@@ -2,9 +2,6 @@
 
 Claude Scholar 依赖 MCP（Model Context Protocol）服务器提供扩展能力。MCP 服务器**不包含**在本仓库中，用户需自行安装和配置。
 
-> **默认 agent 说明**：当前默认 agent 只保留 `literature-reviewer`、`paper-miner`、`rebuttal-writer`、`code-reviewer`、`kaggle-miner` 和 `tdd-guide`。MCP 相关工作流主要通过 skills、commands 和这组精简 agent 运行，不要默认还安装了额外的 legacy agents。
-
-
 ## 所需 MCP 服务
 
 ### 1. Zotero MCP（研究工作流）

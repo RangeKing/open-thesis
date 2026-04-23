@@ -2,9 +2,6 @@
 
 Claude Scholarには、Obsidian研究ナレッジベースワークフローが内蔵されています。MCPやAPIキーは**不要**です。
 
-> **既定 agent に関する注記**：現在の既定 agent は `literature-reviewer`、`paper-miner`、`rebuttal-writer`、`code-reviewer`、`kaggle-miner`、`tdd-guide` のみです。Obsidian ワークフローは追加の既定 Obsidian agent ではなく、主に `obsidian-project-memory` と関連 skills を通して動きます。
-
-
 ## 提供される機能
 
 Obsidianは単なる論文ライブラリではなく、研究プロジェクトのデフォルトナレッジベースとして扱われます。プロジェクトナレッジベースには以下を保存できます:
