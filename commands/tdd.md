@@ -4,7 +4,7 @@ description: Enforce test-driven development workflow. Scaffold interfaces, gene
 
 # TDD Command
 
-This command invokes the **tdd-guide** agent to enforce test-driven development methodology.
+This command enforces a test-driven development methodology directly.
 
 ## What This Command Does
 
@@ -25,7 +25,7 @@ Use `/tdd` when:
 
 ## How It Works
 
-The tdd-guide agent will:
+This command should:
 
 1. **Define interfaces** for inputs/outputs
 2. **Write tests that will FAIL** (because code doesn't exist yet)
@@ -51,7 +51,7 @@ REPEAT:   Next feature/scenario
 ```
 User: /tdd I need a function to calculate market liquidity score
 
-Agent (tdd-guide):
+Assistant:
 # TDD Session: Market Liquidity Score Calculator
 
 ## Step 1: Define Interface (SCAFFOLD)
@@ -318,8 +318,7 @@ Never skip the RED phase. Never write code before tests.
 
 ## Related Agents
 
-This command invokes the `tdd-guide` agent located at:
-`~/.claude/agents/tdd-guide.md`
+Use `daily-coding` and `verification-loop` style checks to keep the cycle test-backed and incremental.
 
 And can reference the `tdd-workflow` skill at:
 `~/.claude/skills/tdd-workflow/`

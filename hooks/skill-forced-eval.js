@@ -213,7 +213,7 @@ const suggestedHint = dedupedSuggestedSkills.length > 0
   : '';
 
 const boundRepoHint = binding.bound && isResearchPrompt
-  ? `\n**Bound Obsidian repo detected**: ${binding.projectId || 'unknown-project'}\nUse lightweight curator behavior by default: keep \`Daily/YYYY-MM-DD.md\` and \`.claude/project-memory/<project_id>.md\` in sync when this turn changes research state, and touch \`00-Hub.md\` only when top-level project status really changes. Consider the \`research-knowledge-curator-obsidian\` agent when the task spans plans, papers, experiments, results, or writing.\n`
+  ? `\n**Bound Obsidian repo detected**: ${binding.projectId || 'unknown-project'}\nUse lightweight curator behavior by default: keep \`Daily/YYYY-MM-DD.md\` and \`.claude/project-memory/<project_id>.md\` in sync when this turn changes research state, and touch \`00-Hub.md\` only when top-level project status really changes. Prefer \`obsidian-project-memory\` and related Obsidian skills when the task spans plans, papers, experiments, results, or writing.\n`
   : '';
 
 // Generate output

@@ -21,9 +21,9 @@
 
 ## 最新ニュース
 
-- **2026-04-22**: **軽量なコア指示へ更新** — 大きな always-on `CLAUDE.md` / `AGENTS.md` をコンパクトなコア指示に置き換え、中国語 companion ファイルを追加し、詳細な skills、commands、agents、workflow は必要時に読む参照として残しました。これによりデフォルトの context コストを抑えます。
-- **2026-04-15**: **pubfig と pubtab という 2 つの Python package を導入** — [`pubfig`](https://github.com/Galaxy-Dawn/pubfig) を論文品質の scientific figures 向け Python package、[`pubtab`](https://github.com/Galaxy-Dawn/pubtab) を publication-ready な tables と Excel↔LaTeX workflows 向け Python package として打ち出し、論文図、benchmark 表、書き出し制御、最終 QA までの生産経路をより明確にしました。
-- **2026-04-15**: **publication-chart-skill を Claude Scholar に統合** — [`pubfig`](https://github.com/Galaxy-Dawn/pubfig) + [`pubtab`](https://github.com/Galaxy-Dawn/pubtab) を `publication-chart-skill` としてまとめてリポジトリに追加し、Claude Scholar の分析/執筆スタックの boundary に接続しました。これにより、論文品質の図表作業を汎用分析や prose skill に混ぜず、明示的な handoff で扱えるようになりました。
+- **2026-04-22**: **軽量なコア指示へ更新** — 常時読み込まれる大きな `CLAUDE.md` / `AGENTS.md` をコンパクトなコア指示に置き換え、中国語版の補助ファイルを追加し、詳細な skills、commands、agents、作業手順は必要時に読む参照として残しました。これによりデフォルトの context コストを抑えます。
+- **2026-04-15**: **pubfig と pubtab という 2 つの Python package を導入** — [`pubfig`](https://github.com/Galaxy-Dawn/pubfig) を論文品質の科学図向け Python package、[`pubtab`](https://github.com/Galaxy-Dawn/pubtab) を出版品質の比較表と Excel↔LaTeX 作業向け Python package として位置づけ、論文図、比較表、書き出し制御、最終確認までの作業経路をより明確にしました。
+- **2026-04-15**: **publication-chart-skill を Claude Scholar に統合** — [`pubfig`](https://github.com/Galaxy-Dawn/pubfig) + [`pubtab`](https://github.com/Galaxy-Dawn/pubtab) を `publication-chart-skill` としてまとめてリポジトリに追加し、Claude Scholar の分析・執筆スタックの接続点として位置づけました。これにより、論文品質の図表作業を汎用分析や文章作成用 skill に混ぜず、明示的な受け渡しで扱えるようになりました。
 
 ## クイックナビゲーション
 
@@ -31,7 +31,7 @@
 |---|---|
 | [Claude Scholarとは](#claude-scholarとは) | プロジェクトの位置づけとターゲットユースケース |
 | [コアワークフロー](#コアワークフロー) | アイデア創出から出版までのエンドツーエンド研究パイプライン |
-| [クイックスタート](#クイックスタート) | フル、ミニマル、選択的モードでのインストール |
+| [クイックスタート](#クイックスタート) | フル、ミニマル、選択的、プラグインマーケットプレイス経由のインストール |
 | [使い始めのシナリオ](#使い始めのシナリオ) | インストール後の代表的な使い始め方を見る |
 | [連携ツール](#連携ツール) | ZoteroとObsidianのワークフロー統合 |
 | [主要ワークフロー](#主要ワークフロー) | 研究・開発の主要ワークフロー一覧 |
@@ -154,6 +154,35 @@ cp rules/agents.md ~/.claude/rules/
 ```
 
 **インストール後**: 選択的/手動インストールでは`settings.json`の自動マージは行われません。`settings.json.template`から実際に必要なhooksやMCPエントリのみをコピーしてください。既に独自の`~/.claude/CLAUDE.md`や`~/.claude/CLAUDE.zh-CN.md`をお持ちの場合は、上書きせずに関連セクションをマージしてください。
+
+### オプション4: プラグインマーケットプレイス経由のインストール
+
+**ステップ1: プラグインをインストール**
+
+```bash
+/plugin marketplace add Galaxy-Dawn/claude-scholar
+/plugin install claude-scholar@claude-scholar
+```
+
+これにより、skills、commands、agents、hooks が自動で読み込まれます。インストール時に、適用範囲として user（全プロジェクト）または project（単一プロジェクト）を選択できます。
+
+**ステップ2: ルールをインストール（必須）**
+
+Claude Code のプラグインは rules を自動配布できないため、手動で追加してください:
+
+```bash
+git clone https://github.com/Galaxy-Dawn/claude-scholar.git /tmp/claude-scholar
+
+# ユーザー全体（全プロジェクト）
+mkdir -p ~/.claude/rules
+cp /tmp/claude-scholar/rules/*.md ~/.claude/rules/
+
+# あるいはプロジェクト単位（現在のプロジェクトのみ）
+mkdir -p .claude/rules
+cp /tmp/claude-scholar/rules/*.md .claude/rules/
+```
+
+**インストール後**: プラグインインストールでは `CLAUDE.md` の自動読み込みや `settings.json` の自動設定は行われません。既に独自の `~/.claude/CLAUDE.md` や `~/.claude/CLAUDE.zh-CN.md` をお持ちの場合は、プラグインが自動適用すると考えず、Claude Scholar 側の関連セクションを手動でマージしてください。Zotero MCP などの連携が必要な場合は、[連携ツール](#連携ツール) セクションを参照してください。
 
 ## 使い始めのシナリオ
 
@@ -279,7 +308,6 @@ Claude Scholarは以下のプラットフォームをサポートしています
 | Skill | `git-workflow` | ブランチ管理、コミット規約、安全なコラボレーションワークフローを適用 |
 | Skill | `bug-detective` | スタックトレース、シェルエラー、コードパスの問題を体系的にデバッグ |
 | Agent | `code-reviewer` | 変更されたコードの正確性、保守性、実装品質をレビュー |
-| Agent | `dev-planner` | 複雑なエンジニアリング作業を具体的な実装ステップに分解 |
 | Command | `/plan` | コーディング前に実装計画を作成・改善 |
 | Command | `/commit` | 現在の変更に対してConventional Commitを準備 |
 | Command | `/code-review` | 現在のコード変更に対するフォーカスレビューを実行 |
@@ -481,9 +509,9 @@ Claude Scholar自身のスキルに対する自己改善ループ。
 
 - [MCP_SETUP.ja-JP.md](./MCP_SETUP.ja-JP.md) — Zotero/ブラウザMCPセットアップ（日本語）
 - [OBSIDIAN_SETUP.ja-JP.md](./OBSIDIAN_SETUP.ja-JP.md) — Obsidianナレッジベースワークフロー（日本語）
-- [CLAUDE.ja-JP.md](./CLAUDE.ja-JP.md) — 完全なローカル設定、スキル一覧、ワークフロー詳細（日本語）
+- [CLAUDE.ja-JP.md](./CLAUDE.ja-JP.md) — 軽量な Claude Code コア指示の日本語版
 - [CLAUDE.md](./CLAUDE.md) — 軽量な Claude Code コア指示（英語版）
-- [CLAUDE.zh-CN.md](./CLAUDE.zh-CN.md) — 軽量コア指示の中国語 companion ファイル
+- [CLAUDE.zh-CN.md](./CLAUDE.zh-CN.md) — 軽量コア指示の中国語版補助ファイル
 - [settings.json.template](./settings.json.template) — hooks/plugins/MCP用のオプション設定テンプレート
 
 ## プロジェクトルール

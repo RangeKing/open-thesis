@@ -309,7 +309,6 @@ Claude Scholar 目前面向以下 CLI 工作流：
 | Skill | `git-workflow` | 约束分支规范、commit 规范和更安全的协作流程。 |
 | Skill | `bug-detective` | 系统化排查 stack trace、shell 报错和代码路径问题。 |
 | Agent | `code-reviewer` | 审查改动代码的正确性、可维护性和实现质量。 |
-| Agent | `dev-planner` | 把复杂工程任务拆成可执行的实现步骤。 |
 | Command | `/plan` | 在编码前创建或细化实现计划。 |
 | Command | `/commit` | 为当前改动生成符合规范的 commit。 |
 | Command | `/code-review` | 对当前代码改动执行一次聚焦审查。 |
