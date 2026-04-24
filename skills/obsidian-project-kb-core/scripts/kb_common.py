@@ -565,13 +565,8 @@ def registry_add_or_update(project_root: Path, rel_path: str, *, status: str | N
             row['Status'] = status
         rows[section].append(row)
     else:
-        for key, value in row.items():
-            if key == 'Updated':
-                existing[key] = value
-            elif value:
-                existing[key] = value
-            else:
-                existing.setdefault(key, value)
+        existing['Path'] = row['Path']
+        existing['Updated'] = row['Updated']
         if status is not None:
             existing['Status'] = status
     write_registry(project_root, rows)
@@ -652,24 +647,50 @@ def scan_canonical_relpaths(project_root: Path) -> list[str]:
 
 def update_index(project_root: Path) -> None:
     rows = parse_registry_md(registry_path(project_root))
-    lines = [
-        '---',
-        'type: project-index',
-        f'updated: {now_iso()}',
-        '---',
-        '',
-        '# Index',
-        '',
-    ]
+    auto_lines: list[str] = []
     for title, section in [('Sources', 'Sources'), ('Knowledge', 'Knowledge'), ('Experiments', 'Experiments'), ('Results', 'Results'), ('Writing', 'Writing'), ('Maps', 'Maps')]:
-        lines.append(f'## {title}')
+        auto_lines.append(f'### {title}')
         active = [row['Path'] for row in rows.get(section, []) if row.get('Status', '') != 'archived']
         if active:
-            lines.extend(f'- {item}' for item in active)
+            auto_lines.extend(f'- {item}' for item in active)
         else:
-            lines.append('- None yet.')
-        lines.append('')
-    write_text(project_root / '02-Index.md', '\n'.join(lines).rstrip() + '\n')
+            auto_lines.append('- None yet.')
+        auto_lines.append('')
+
+    auto_block = '<!-- BEGIN AUTO INDEX -->\n' + '\n'.join(auto_lines).rstrip() + '\n<!-- END AUTO INDEX -->'
+    index_path = project_root / '02-Index.md'
+    content = read_text(index_path)
+
+    if not content.strip():
+        content = '\n'.join([
+            '---',
+            'type: project-index',
+            f'updated: {now_iso()}',
+            '---',
+            '',
+            '# Index',
+            '',
+            '## Curated Index',
+            '- Add human-maintained entry points here.',
+            '',
+            '## Auto Index',
+            auto_block,
+            '',
+        ]).rstrip() + '\n'
+    else:
+        content = set_frontmatter_value(content, 'updated', now_iso())
+        if '<!-- BEGIN AUTO INDEX -->' in content and '<!-- END AUTO INDEX -->' in content:
+            content = re.sub(
+                r'<!-- BEGIN AUTO INDEX -->[\s\S]*?<!-- END AUTO INDEX -->',
+                auto_block,
+                content,
+                count=1,
+            )
+        else:
+            append_block = '\n\n## Auto Index\n' + auto_block + '\n'
+            content = content.rstrip() + append_block
+
+    write_text(index_path, content.rstrip() + '\n')
 
 
 def ensure_today_daily(project_root: Path, project_slug: str, force: bool = False) -> Path:

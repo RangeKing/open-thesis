@@ -16,16 +16,30 @@ tags: [Research, Obsidian, KB, Lifecycle]
 
 # /kb-archive
 
-Project-level:
+Use this command for KB lifecycle actions.
+
+## Project-level lifecycle
 
 ```bash
 python3 "${CLAUDE_PLUGIN_ROOT}/skills/obsidian-project-kb-core/scripts/project_kb.py" lifecycle --cwd "$PWD" --mode "$action"
 ```
 
-Note-level:
+Project archive means moving the whole project to:
+
+```text
+Research/_archived/{project-slug}-{date}/
+```
+
+## Note-level lifecycle
 
 ```bash
 python3 "${CLAUDE_PLUGIN_ROOT}/skills/obsidian-project-kb-core/scripts/project_kb.py" note-lifecycle --cwd "$PWD" --mode "$action" --note "$target"
 ```
 
 If `action=rename`, also pass `--dest "$dest"`.
+
+Note archive means moving a canonical note into:
+
+```text
+Research/{project-slug}/Archive/
+```

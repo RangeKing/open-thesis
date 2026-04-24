@@ -8,20 +8,28 @@ updated: {{timestamp}}
 
 # Index
 
-## Sources
+## Curated Index
+
+- Add human-maintained entry points here.
+- Keep this section concise and reader-first.
+
+## Auto Index
+<!-- BEGIN AUTO INDEX -->
+### Sources
 - None yet.
 
-## Knowledge
+### Knowledge
 - None yet.
 
-## Experiments
+### Experiments
 - None yet.
 
-## Results
+### Results
 - None yet.
 
-## Writing
+### Writing
 - None yet.
 
-## Maps
+### Maps
 - None yet.
+<!-- END AUTO INDEX -->

@@ -2,33 +2,33 @@
 
 Claude Scholar 内置了 Obsidian 研究知识库工作流，不需要 MCP，也不需要 API key。
 
-## 能做什么
+## 这套工作流提供什么
 
-Obsidian 在这里不是“文献库插件”，而是整个科研项目的默认知识库，可以统一沉淀：
+Obsidian 在这里不是单纯的论文库，而是研究项目的默认知识层，可以统一沉淀：
 
 - 稳定的项目背景与研究问题
-- 论文笔记与文献综述
-- 实验设计、runbook 与结果总结
-- 每日研究日志、scratch note 与 sync queue
-- 论文草稿、汇报、proposal、rebuttal 等写作资产
-- 不适合继续留在主工作面的归档知识
+- 论文笔记与文献综合
+- 实验 runbook 与结果总结
+- 每日研究日志、scratch notes 与同步队列
+- 草稿、slides、proposal、rebuttal 等写作资产
+- 不应继续留在主工作面的历史知识
 
-## 依赖
+## Requirements
 
-### 必需
+### Required
 - 一个本地 Obsidian vault 路径
-- 在环境变量里设置 `OBSIDIAN_VAULT_PATH`，或在 bootstrap 时显式传入
+- 通过环境变量设置 `OBSIDIAN_VAULT_PATH`，或在 bootstrap 时显式传入
 
-### 可选
+### Optional
 - 安装并打开 Obsidian Desktop，便于跳转与查看
-- 提供官方 `obsidian` CLI，用于 open/search/daily 等辅助动作
-- 设置 `OBSIDIAN_VAULT_NAME`，便于生成更稳定的 `obsidian://` 链接和 CLI targeting
+- 可用的 `obsidian` CLI，用于 open/search/daily 等辅助操作
+- `OBSIDIAN_VAULT_NAME`，便于生成更干净的 `obsidian://` 链接和 CLI targeting
 
 ## 内置 skills
 
 Claude Scholar 内置了面向项目作用域的 Obsidian KB 工作流。
 
-默认工作流最相关的是：
+默认主线最相关的是：
 
 - `obsidian-project-kb-core`
 - `obsidian-source-ingestion`
@@ -36,15 +36,15 @@ Claude Scholar 内置了面向项目作用域的 Obsidian KB 工作流。
 - `obsidian-kb-artifacts`
 - `defuddle`
 
-仓库里可能仍保留一些可选的 graph-oriented 辅助 skills，但当前默认工作流**不依赖** `.base`、MCP 或任何 API 服务。默认会维护的图谱产物只有 `Maps/literature.canvas`；额外的 `.base` 视图或 project/experiment canvas 都需要显式触发。
+默认工作流不依赖 `.base`、MCP 或 API 服务。默认自动维护的图谱产物只有 `Maps/literature.canvas`；其他 `.base` 视图或项目/实验 canvas 都是 explicit-only。
 
 ## 默认行为
 
 当 Claude Scholar 运行在一个包含 `.claude/project-memory/registry.yaml` 的仓库里时，应默认把这个仓库视为已经绑定到 Obsidian 项目知识库，并在任务过程中自动维护它。
 
-如果仓库还没有绑定，但具备科研项目特征（如 `.git`、`README.md`、`docs/`、`notes/`、`plan/`、`results/`、`outputs/`、`src/`、`scripts/`），则应自动 bootstrap 一个项目知识库。
+如果仓库还没有绑定，但看起来像研究项目（例如包含 `.git`、`README.md`、`docs/`、`notes/`、`plan/`、`results/`、`outputs/`、`src/` 或 `scripts/`），Claude Scholar 应自动 bootstrap 一个项目知识库。
 
-## Vault 中的项目结构
+## Vault 中的默认目录结构
 
 ```text
 Research/{project-slug}/
@@ -52,6 +52,12 @@ Research/{project-slug}/
   01-Plan.md
   02-Index.md
   Sources/
+    Papers/
+    Web/
+    Docs/
+    Data/
+    Interviews/
+    Notes/
   Knowledge/
   Experiments/
   Results/
@@ -61,64 +67,51 @@ Research/{project-slug}/
   Maps/
   Archive/
   _system/
+    registry.md
+    schema.md
+    lint-report.md
 ```
 
-常见自动生成文件包括：
+常见生成文件包括：
 
 - `02-Index.md`
 - `_system/registry.md`
 - `_system/schema.md`
 - `_system/lint-report.md`
-- `.claude/project-memory/<project_id>.md`
-- `Maps/literature.canvas` when literature workflow needs it
+- `.claude/project-memory/{project_id}.md`
+- 文献工作流需要时生成 `Maps/literature.canvas`
 
-## 仓库内 memory 绑定
+## Repo-local binding metadata
 
-每个科研仓库会在本地维护：
+每个研究仓库都会在本地维护：
 
 ```text
 .claude/project-memory/
   registry.yaml
-  <project_id>.md
+  {project_id}.md
 ```
 
-- `registry.yaml` 保存 repo ↔ vault 的绑定关系
-- `<project_id>.md` 保存 assistant 用于增量同步的项目 memory
+- `registry.yaml` 存 repo ↔ vault 的绑定关系
+- `{project_id}.md` 存 assistant-facing 的运行时项目记忆
 
 ## 笔记语言
 
 生成和同步笔记时，语言按以下优先级解析：
-1. 项目配置 `.claude/project-memory/registry.yaml` 中的 `note_language`
+1. `.claude/project-memory/registry.yaml` 中的项目配置
 2. 环境变量 `OBSIDIAN_NOTE_LANGUAGE`
-3. 默认值 `en`
+3. 默认 `en`
 
-说明：`registry.yaml` 仍然只是 repo-local 的运行时绑定文件；项目内可见真值仍然是 `_system/registry.md`。
+注意：`registry.yaml` 仍然只是 repo-local runtime binding 文件。项目内真正可见的 source of truth 仍然是 `_system/registry.md`。
 
 支持的值：
 - `en`
 - `zh-CN`
 
-项目级示例：
-
-```json
-{
-  "projects": {
-    "my-project": {
-      "project_id": "my-project",
-      "vault_root": "/path/to/vault/Research/my-project",
-      "note_language": "zh-CN"
-    }
-  }
-}
-```
-
-同步时会同时兼容英文和中文 section heading，因此切换配置后，历史英文/中文笔记都可以继续安全更新。
-
-## 主要命令
+## 主命令
 
 - `/kb-init` — 初始化 vault-first 项目知识库
 - `/kb-status` — 汇总当前已绑定 KB 的状态
-- `/kb-ingest` — 将新的 source material 路由到 canonical note
+- `/kb-ingest` — 将新的 source material 路由到 canonical notes
 - `/kb-log` — 更新当天 `Daily/` 和相关项目表面
 - `/kb-sync` — 运行确定性的 KB 维护并重同步项目表面
 - `/kb-links` — 修复或增强 canonical notes 之间的 wikilink
@@ -129,14 +122,14 @@ Research/{project-slug}/
 - `/kb-map` — 在默认 literature canvas 之外按需生成 artifact
 - `/kb-literature-review` — 从 `Sources/Papers` 合成文献并写入 `Knowledge`、`Writing`、`Maps/literature.canvas`
 
-## 已绑定仓库的最小自动维护
+## 已绑定仓库的最小维护面
 
-当仓库已经通过 `.claude/project-memory/registry.yaml` 绑定后，Claude Scholar 默认应采用保守的自动维护策略：
+当仓库已经通过 `.claude/project-memory/registry.yaml` 绑定时，Claude Scholar 应保持保守维护：
 
-- 当本轮对话改变研究状态时，至少检查 `Daily/YYYY-MM-DD.md`，
-- 只有顶层项目状态真正变化时才更新 `00-Hub.md`，
-- 只要项目状态变化就更新 `.claude/project-memory/<project_id>.md`，
-- `Knowledge/`、`Experiments/`、`Results/`、`Writing/` 仍保持 agent-first，而不是每轮自动重写。
+- 只要研究状态发生变化，就检查 `Daily/YYYY-MM-DD.md`
+- 只有项目顶层状态真正变化时才更新 `00-Hub.md`
+- 只要项目状态变化，就更新 `.claude/project-memory/{project_id}.md`
+- `Knowledge/`、`Experiments/`、`Results/`、`Writing/` 默认保持 agent-first，而不是每轮都自动重写
 
 ## 可选的 Obsidian CLI 安装
 
@@ -155,77 +148,35 @@ obsidian search query="diffusion" limit=5
 
 如果提示 `Command line interface is not enabled`，通常说明 shell 路径已经配置好，但 Obsidian 应用内的开关还没打开。
 
-## 生命周期操作
+## Lifecycle actions
 
 ### Detach
 - 停止自动同步
-- 保留 vault 中的内容
-- 保留项目 memory 文件
+- 保留 vault 内容
+- 保留 project memory 文件
 
-### Archive（默认）
-- 将项目移动到 `Archive/`
-- 禁止继续同步
-- 保留项目 memory，后续可重新启用
+### Archive
+- **note archive**：把 canonical note 移到 `Research/{project-slug}/Archive/`
+- **project archive**：把整个项目移到 `Research/_archived/{project-slug}-{date}/`
+- archive 会保留历史记录；project archive 会同时禁用同步
 
 ### Purge
-- 永久删除绑定、项目 memory、以及 vault 中对应项目目录
-- 只有用户明确要求永久删除时才使用
+- 永久删除 binding、project memory 和 vault 中的项目目录
+- 只有在用户明确要求永久删除时才使用
 
-## 可选 CLI / URI
+## 可选的 CLI 与 URI 用法
 
-Claude Scholar 可选利用官方 Obsidian CLI 与 URI：
+Claude Scholar 可选使用官方 Obsidian CLI 与 URI：
 
 - CLI 文档：<https://help.obsidian.md/cli>
 - URI 文档：<https://help.obsidian.md/uri>
 
-示例：
+## Troubleshooting
 
-```bash
-obsidian help
-obsidian search query="diffusion" limit=10
-obsidian daily:append content="- [ ] Follow up on experiment"
-```
-
-```text
-obsidian://open?vault=My%20Vault&file=Research%2Fproject-slug%2F00-Hub
-obsidian://search?vault=My%20Vault&query=%23experiment
-```
-
-## 常见问题
-
-| 问题 | 解决方案 |
+| 问题 | 解决方式 |
 |------|----------|
-| Bootstrap 提示缺少 vault path | 设置 `OBSIDIAN_VAULT_PATH`，或在 bootstrap 时显式传入 |
-| 项目反复被重新导入 | 检查 `.claude/project-memory/registry.yaml` 是否存在且 repo_root 是否正确 |
-| 还看到 `Views/`、`Concepts/`、`Datasets/` 被写成默认结构 | 这通常来自旧文档或旧项目生成版本；当前默认工作流使用的是上面的精简结构，默认图谱只保留 `Maps/literature.canvas` |
-| CLI 命令不可用 | 先检查 `Settings -> General -> Advanced -> Command line interface` 是否已开启；否则继续使用 filesystem-only 同步即可 |
-| “移除项目知识”太激进 | 优先使用 archive 或 detach；purge 仅用于永久删除 |
-
-## Windows 使用方案
-
-如果你在 WSL 里运行 Claude Scholar，但想用 **Windows 原生 Obsidian** 获得更稳定的窗口行为，推荐使用下面的双份方案：
-
-- `WSL vault` 作为 **source of truth**：`<repo-root>/obsidian-vault`
-- `Windows 本地目录` 作为镜像副本：例如 `<wsl-mounted-windows-vault-path>`
-- Windows Obsidian 只打开 **Windows 本地镜像目录**
-
-同步脚本：
-
-```bash
-bash scripts/sync_obsidian_to_windows.sh \
-  --windows-path <wsl-mounted-windows-vault-path>
-```
-
-首次建议先预览：
-
-```bash
-bash scripts/sync_obsidian_to_windows.sh \
-  --windows-path <wsl-mounted-windows-vault-path> \
-  --dry-run
-```
-
-说明：
-
-- 默认会把 WSL vault 同步到 Windows 镜像，并删除镜像里已经不存在于源目录的文件。
-- 如果你不想自动删除镜像中的多余文件，可以追加 `--no-delete`。
-- 这个方案的核心是：**我继续在 WSL 内维护 vault，你在 Windows 上稳定打开镜像副本。**
+| Bootstrap 缺少 vault path | 设置 `OBSIDIAN_VAULT_PATH` 或显式传入 vault path |
+| 项目反复重新导入 | 检查 `.claude/project-memory/registry.yaml` 是否存在且 repo root 正确 |
+| vault 里仍出现旧目录拓扑 | 那通常来自旧文档或旧项目生成；当前默认结构以上述目录为准，默认只自动维护 `Maps/literature.canvas` |
+| CLI 命令失败 | 检查 `Settings -> General -> Advanced -> Command line interface` 是否已打开；否则继续使用 filesystem-only sync |
+| “删除项目知识” 看起来过于危险 | 优先使用 archive 或 detach；purge 仅用于永久删除 |

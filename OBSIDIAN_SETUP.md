@@ -52,6 +52,12 @@ Research/{project-slug}/
   01-Plan.md
   02-Index.md
   Sources/
+    Papers/
+    Web/
+    Docs/
+    Data/
+    Interviews/
+    Notes/
   Knowledge/
   Experiments/
   Results/
@@ -61,6 +67,9 @@ Research/{project-slug}/
   Maps/
   Archive/
   _system/
+    registry.md
+    schema.md
+    lint-report.md
 ```
 
 Key generated files commonly include:
@@ -69,7 +78,7 @@ Key generated files commonly include:
 - `_system/registry.md`
 - `_system/schema.md`
 - `_system/lint-report.md`
-- `.claude/project-memory/<project_id>.md`
+- `.claude/project-memory/{project_id}.md`
 - `Maps/literature.canvas` when literature workflow needs it
 
 ## Repository-local memory binding
@@ -79,11 +88,11 @@ Each research repo gets a local binding under:
 ```text
 .claude/project-memory/
   registry.yaml
-  <project_id>.md
+  {project_id}.md
 ```
 
 - `registry.yaml` stores the repo ↔ vault binding
-- `<project_id>.md` stores the assistant-facing project memory for incremental syncs
+- `{project_id}.md` stores the assistant-facing project memory for incremental syncs
 
 ## Note language
 
@@ -135,7 +144,7 @@ When a repo is already bound through `.claude/project-memory/registry.yaml`, Cla
 
 - always verify `Daily/YYYY-MM-DD.md` when the turn changes research state,
 - update `00-Hub.md` only when top-level project status actually changes,
-- update `.claude/project-memory/<project_id>.md` whenever project state changes,
+- update `.claude/project-memory/{project_id}.md` whenever project state changes,
 - keep `Knowledge/`, `Experiments/`, `Results/`, and `Writing/` agent-first rather than automatically rewriting them every turn.
 
 ## Optional Obsidian CLI installation
@@ -162,10 +171,10 @@ If you see `Command line interface is not enabled`, the shell path is fine but t
 - keep vault content
 - keep project memory file
 
-### Archive (default for “remove this project’s knowledge”)
-- move the project under `Archive/`
-- disable syncing
-- keep project memory for future reactivation
+### Archive
+- **note archive** moves a canonical note into `Research/{project-slug}/Archive/`
+- **project archive** moves the whole project into `Research/_archived/{project-slug}-{date}/`
+- archive keeps history and disables syncing for project-level archive
 
 ### Purge
 - permanently delete the binding, project memory, and vault project folder
@@ -197,7 +206,7 @@ obsidian://search?vault=My%20Vault&query=%23experiment
 |-------|----------|
 | Bootstrap fails with missing vault path | Set `OBSIDIAN_VAULT_PATH` or pass a vault path explicitly |
 | Project keeps re-importing | Check `.claude/project-memory/registry.yaml` exists and points to the correct repo root |
-| The vault still shows `Views/`, `Concepts/`, or `Datasets/` as defaults | Those are from older docs or older project generations; the current default workflow uses the compact structure above and only keeps `Maps/literature.canvas` by default |
+| The vault still shows older topologies | Those are from older docs or older project generations; the current default workflow uses the structure above and only keeps `Maps/literature.canvas` by default |
 | CLI commands fail | Check that `Settings -> General -> Advanced -> Command line interface` is enabled; otherwise continue with filesystem-only sync |
 | “Remove project knowledge” is too destructive | Use archive or detach; purge is only for permanent deletion |
 
@@ -212,16 +221,13 @@ If you run Claude Scholar inside WSL but prefer opening Obsidian through native 
 Sync with:
 
 ```bash
-bash scripts/sync_obsidian_to_windows.sh \
-  --windows-path <wsl-mounted-windows-vault-path>
+bash scripts/sync_obsidian_to_windows.sh   --windows-path <wsl-mounted-windows-vault-path>
 ```
 
 Preview first if needed:
 
 ```bash
-bash scripts/sync_obsidian_to_windows.sh \
-  --windows-path <wsl-mounted-windows-vault-path> \
-  --dry-run
+bash scripts/sync_obsidian_to_windows.sh   --windows-path <wsl-mounted-windows-vault-path>   --dry-run
 ```
 
 By default the sync deletes mirror-only files that no longer exist in the WSL source. Add `--no-delete` if you want to keep extra files in the Windows mirror.

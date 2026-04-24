@@ -454,6 +454,8 @@ Use Obsidian as the project-scoped durable knowledge surface, not just as a note
 | Command | `/kb-map` | Generate or repair explicit-only KB artifacts beyond the default literature canvas. |
 | Command | `/kb-literature-review` | Generate literature synthesis from `Sources/Papers` into `Knowledge`, `Writing`, and `Maps/literature.canvas`. |
 
+Legacy `/obsidian-*` commands remain as deprecated aliases for one transition window. They forward to the `/kb-*` surface and do not restore the old directory layout.
+
 **How it works**
 - bind an existing repo to an Obsidian vault,
 - route stable knowledge into `Sources / Knowledge / Experiments / Results / Results/Reports / Writing / Daily / Maps`,

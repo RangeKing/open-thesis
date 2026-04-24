@@ -2,16 +2,18 @@
 
 ## Project lifecycle
 
-- `detach`: remove repo binding, keep vault project content
-- `archive`: move the project root under vault archive storage and disable sync
-- `purge`: delete binding metadata and project root permanently
+- `detach`: remove or disable repo binding, keep vault project content in place
+- `archive`: move the entire project to `Research/_archived/{project-slug}-{date}/` and disable sync
+- `purge`: permanently delete binding metadata and the vault project root
 
 ## Note lifecycle
 
-- `archive`: move note into `Archive/`, repair links, update registry and index
-- `rename`: move note in place, repair links, update registry and index
-- `purge`: permanently delete note, repair links, update registry and index
+- `archive`: move a canonical note into `Research/{project-slug}/Archive/`, repair links, update registry and index
+- `rename`: rename or move a canonical note in place, repair links, update registry and index, and do not create archive history
+- `purge`: permanently delete a canonical note, repair links, and record the removal in archive history when appropriate
 
-Defaults:
-- “remove project knowledge” means archive, not purge
-- archive retains history in `_system/registry.md`
+## Defaults
+
+- “remove project knowledge” means `archive`, not `purge`
+- note archive history remains visible in `_system/registry.md`
+- archived notes may still be referenced for historical context, but they are not active canonical notes

@@ -38,7 +38,7 @@ _system/
 - `_system/registry.md` is the only visible project registry.
 - `02-Index.md` is a human navigation note, not a registry mirror.
 - `Maps/` is a derived-artifact area; do not generate non-essential canvases by default.
-- `Results/Reports/` is preserved for round and batch experiment reports.
+- `Results/Reports/` is the default subdirectory for round and batch experiment reports.
 
 ## Responsibilities
 

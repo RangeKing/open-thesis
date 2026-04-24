@@ -35,7 +35,7 @@ _system/
 
 Defaults:
 - `Sources/Papers/` is the only default paper-note directory.
-- `Results/Reports/` is reserved for round or batch experiment reports.
+- `Results/Reports/` is the default subdirectory for round or batch experiment reports.
 - `Maps/` contains derived artifacts only.
 - `Daily/` is preserved by default.
 
