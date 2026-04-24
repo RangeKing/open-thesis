@@ -48,6 +48,9 @@ NOTE_KIND_TO_FOLDER = {
     'map': 'Maps',
 }
 
+AUTO_INDEX_BEGIN = '<!-- BEGIN AUTO INDEX -->'
+AUTO_INDEX_END = '<!-- END AUTO INDEX -->'
+
 
 @dataclass(frozen=True)
 class Binding:
@@ -657,7 +660,8 @@ def update_index(project_root: Path) -> None:
             auto_lines.append('- None yet.')
         auto_lines.append('')
 
-    auto_block = '<!-- BEGIN AUTO INDEX -->\n' + '\n'.join(auto_lines).rstrip() + '\n<!-- END AUTO INDEX -->'
+    managed_note = 'Managed block. Refresh with `/kb-sync` or `/kb-index`. Put hand-written navigation in **Curated Index**, not inside the markers below.'
+    auto_block = AUTO_INDEX_BEGIN + '\n' + '\n'.join(auto_lines).rstrip() + '\n' + AUTO_INDEX_END
     index_path = project_root / '02-Index.md'
     content = read_text(index_path)
 
@@ -674,21 +678,37 @@ def update_index(project_root: Path) -> None:
             '- Add human-maintained entry points here.',
             '',
             '## Auto Index',
+            '',
+            managed_note,
             auto_block,
             '',
         ]).rstrip() + '\n'
     else:
         content = set_frontmatter_value(content, 'updated', now_iso())
-        if '<!-- BEGIN AUTO INDEX -->' in content and '<!-- END AUTO INDEX -->' in content:
+        if AUTO_INDEX_BEGIN in content and AUTO_INDEX_END in content:
             content = re.sub(
-                r'<!-- BEGIN AUTO INDEX -->[\s\S]*?<!-- END AUTO INDEX -->',
+                rf'{re.escape(AUTO_INDEX_BEGIN)}[\s\S]*?{re.escape(AUTO_INDEX_END)}',
                 auto_block,
                 content,
                 count=1,
             )
         else:
-            append_block = '\n\n## Auto Index\n' + auto_block + '\n'
-            content = content.rstrip() + append_block
+            auto_section = '\n'.join([
+                '## Auto Index',
+                '',
+                managed_note,
+                auto_block,
+                '',
+            ]).rstrip() + '\n'
+            if re.search(r'(?m)^## Auto Index\s*$', content):
+                content = re.sub(
+                    r'(?ms)^## Auto Index\s*\n.*?(?=^## |\Z)',
+                    auto_section,
+                    content,
+                    count=1,
+                ).rstrip() + '\n'
+            else:
+                content = content.rstrip() + '\n\n' + auto_section
 
     write_text(index_path, content.rstrip() + '\n')
 

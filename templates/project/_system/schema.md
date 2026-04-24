@@ -40,3 +40,6 @@ Durable insights discovered in `Daily/` should be promoted into `Knowledge/`, `E
 
 ## Map Rules
 `Maps/` contains derived navigation artifacts only. Do not treat maps as the project source of truth.
+
+## Cross-project Rules
+Do not move notes, merge registries, or synthesize across multiple `Research/{project-slug}/` roots unless the user asks for explicit cross-project work.

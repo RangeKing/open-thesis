@@ -14,6 +14,9 @@ updated: {{timestamp}}
 - Keep this section concise and reader-first.
 
 ## Auto Index
+
+Managed block. Refresh with `/kb-sync` or `/kb-index`. Put hand-written navigation in **Curated Index**, not inside the markers below.
+
 <!-- BEGIN AUTO INDEX -->
 ### Sources
 - None yet.
@@ -32,4 +35,5 @@ updated: {{timestamp}}
 
 ### Maps
 - None yet.
+
 <!-- END AUTO INDEX -->
