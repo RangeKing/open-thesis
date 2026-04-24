@@ -160,7 +160,6 @@ const KEYWORD_SKILL_MAP = [
   { keywords: /\b(ablation)\b|实验结果|results.*analysis|统计检验|消融实验|科学绘图|实验统计/i, skills: ['results-analysis'] },
   { keywords: /\b(experiment.?report|results.?report|retrospective|wrap.?up)\b|实验报告|实验总结|实验复盘|结果总结/i, skills: ['results-report'] },
   { keywords: /\b(poster|presentation|promote)\b|海报|演讲|推广/i, skills: ['post-acceptance'] },
-  { keywords: /\b(plan|planning)\b|规划|计划/i, skills: ['planning-with-files'] },
   { keywords: /\b(verify|verification)\b|验证/i, skills: ['verification-loop'] },
   { keywords: /\b(self.?review)\b|自审|论文检查/i, skills: ['paper-self-review'] },
   { keywords: /\b(anti.?ai|humanize)\b|去.*ai.*痕迹|AI写作/i, skills: ['writing-anti-ai'] },
@@ -186,8 +185,8 @@ const binding = common.getProjectMemoryBinding(cwd);
 const isResearchPrompt = common.promptLooksResearchRelated(userPrompt);
 
 if (binding.bound && isResearchPrompt) {
-  if (SKILL_LIST.includes('obsidian-project-memory')) {
-    suggestedSkills.push('obsidian-project-memory');
+  if (SKILL_LIST.includes('obsidian-project-kb-core')) {
+    suggestedSkills.push('obsidian-project-kb-core');
   }
   if (/\b(zotero|collection|doi|arxiv|citation)\b|zotero|文献|参考文献|collection/i.test(userPrompt) &&
       SKILL_LIST.includes('zotero-obsidian-bridge')) {
@@ -213,7 +212,7 @@ const suggestedHint = dedupedSuggestedSkills.length > 0
   : '';
 
 const boundRepoHint = binding.bound && isResearchPrompt
-  ? `\n**Bound Obsidian repo detected**: ${binding.projectId || 'unknown-project'}\nUse lightweight curator behavior by default: keep \`Daily/YYYY-MM-DD.md\` and \`.claude/project-memory/<project_id>.md\` in sync when this turn changes research state, and touch \`00-Hub.md\` only when top-level project status really changes. Consider the \`research-knowledge-curator-obsidian\` agent when the task spans plans, papers, experiments, results, or writing.\n`
+  ? `\n**Bound Obsidian repo detected**: ${binding.projectId || 'unknown-project'}\nUse lightweight curator behavior by default: keep \`Daily/YYYY-MM-DD.md\` and \`.claude/project-memory/<project_id>.md\` in sync when this turn changes research state, and touch \`00-Hub.md\` only when top-level project status really changes. Prefer \`obsidian-project-kb-core\` by default, and add \`obsidian-source-ingestion\`, \`obsidian-literature-workflow\`, or \`obsidian-kb-artifacts\` only when the task clearly needs them.\n`
   : '';
 
 // Generate output

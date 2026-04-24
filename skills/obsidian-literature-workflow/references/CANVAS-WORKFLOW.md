@@ -7,7 +7,7 @@
 ## Purpose
 
 Provide a default Obsidian literature graph that:
-- keeps `Papers/` as the canonical paper-note surface,
+- keeps `Sources/Papers/` as the canonical paper-note surface,
 - keeps `Knowledge/` as the canonical synthesis surface,
 - visualizes paper-to-paper and paper-to-knowledge relationships,
 - stays lightweight enough to refresh after each major Zotero ingestion.
@@ -15,7 +15,7 @@ Provide a default Obsidian literature graph that:
 ## Default behavior
 
 - Use paper-note frontmatter and wikilinks as the primary graph source.
-- Use `Papers/*.md` and relevant `Knowledge/*.md` as file nodes.
+- Use `Sources/Papers/*.md` and relevant `Knowledge/*.md` as file nodes.
 - Create `.canvas` by default for literature ingestion and review workflows.
 - Treat Mermaid or markdown graph notes as optional legacy companions, not the default graph artifact.
 - Prefer argument-map structure with `paper`, `claim`, `method`, and `gap` nodes over raw all-to-all paper linking.

@@ -21,25 +21,9 @@
 
 ## 最新ニュース
 
-- **2026-03-31**: **Zotero smart-importワークフロー文書を整合** — 最新の`zotero-mcp`公開インターフェースに合わせて、Claude Scholarの研究向けドキュメントを更新しました。`zotero_add_items_by_identifier`を標準の論文インポート経路として明示し、`zotero_reconcile_collection_duplicates`を標準的なインポート後クリーンアップ手順に位置づけ、source-awareなPDF cascadeの挙動もより正確に説明し直しました。公開機能と内部診断機能の境界も整理しています。
-- **2026-03-31**: **READMEの導入案内を刷新** — Claude Scholarが特にコンピュータサイエンスおよびAI研究者に適していることを明確にし、インストール後すぐ使える実践的な導入シナリオを追加しました。前提条件やブランチ案内も整理し、「既存のローカルmdファイルは手動でマージする必要がある」点をより明確にしました。
-- **2026-03-31**: **インストーラーとhooksの挙動を整理** — インストーラーは既存のローカル`CLAUDE.md` / `CLAUDE.zh-CN.md`を保持しつつ、リポジトリ版をsidecarファイルとして追加するようになりました。あわせて、デフォルトhooksの要約出力も整理し、temp filesやuncommitted filesのノイズを抑えつつ、より安全な書き込みガードは維持しています。
-- **2026-03-31**: **日本語ドキュメントを追加** — メインREADMEに加え、`CLAUDE`、`MCP_SETUP`、`OBSIDIAN_SETUP`の日本語版も追加し、リポジトリ全体の多言語ドキュメント導線をより充実させました。
-
-<details>
-<summary>過去の更新履歴を表示</summary>
-
-- **2026-02-25**: **Codex CLI**サポート — [OpenAI Codex CLI](https://github.com/openai/codex)をサポートする`codex`ブランチを追加。config.toml、40スキル、14エージェント、サンドボックスセキュリティ
-- **2026-02-23**: `setup.sh`インストーラー追加 — 既存の`~/.claude`へのバックアップ対応インクリメンタルアップデート、`settings.json`の自動バックアップ、hooks/mcpServers/pluginsの追加的マージ
-- **2026-02-21**: **OpenCode**サポート — [OpenCode](https://github.com/opencode-ai/opencode)を代替CLIとしてサポート。OpenCode対応設定は`opencode`ブランチ
-- **2026-02-20**: バイリンガル設定 — `CLAUDE.md`を国際的な可読性のため英語に翻訳。中国語バックアップとして`CLAUDE.zh-CN.md`を追加
-- **2026-02-15**: Zotero MCP連携 — `/zotero-review`と`/zotero-notes`コマンドを追加、`research-ideation`スキルにZotero連携ガイドを追加、`literature-reviewer`エージェントにZotero MCPサポート
-- **2026-02-14**: Hooks最適化 — `security-guard`を2段階システムに再構築、`skill-forced-eval`が6カテゴリ分類+サイレントスキャンモードに、`session-start`は上位5件表示に制限、`session-summary`に30日ログ自動クリーンアップ追加、`stop-summary`で追加/変更/削除を個別カウント表示
-- **2026-02-11**: 大規模アップデート — 新スキル10個、新エージェント7個、リサーチワークフローコマンド8個、新ルール2個を追加。CLAUDE.mdを再構成。89ファイル変更
-- **2026-01-26**: 全HooksをクロスプラットフォームNode.jsに書き直し。README全面改訂。ML論文執筆ナレッジベース拡充。PR #1をマージ
-- **2026-01-25**: プロジェクトオープンソース化、v1.0.0リリース。25スキル、2エージェント、30以上のコマンド、5 Shell Hooks、2ルールを搭載
-
-</details>
+- **2026-04-22**: **軽量なコア指示、既定 agent の整理、安全なインストール管理、汎用的な論文発見フロー** — 常時読み込まれる大きな `CLAUDE.md` / `AGENTS.md` をコンパクトなコア指示に置き換え、既定 agent 集合を主経路に必要なものへ整理し、install state に基づく安全なアンインストールを追加し、`daily-paper-generator` を汎用 topic 向けの arXiv / bioRxiv 検索と Top 10 -> Top 3 -> Top 1 の固定選定フローへ拡張し、利用頻度の低い `planning-with-files` skill を削除しました。
+- **2026-04-15**: **pubfig と pubtab という 2 つの Python package を導入** — [`pubfig`](https://github.com/Galaxy-Dawn/pubfig) を論文品質の科学図向け Python package、[`pubtab`](https://github.com/Galaxy-Dawn/pubtab) を出版品質の比較表と Excel↔LaTeX 作業向け Python package として位置づけ、論文図、比較表、書き出し制御、最終確認までの作業経路をより明確にしました。
+- **2026-04-15**: **publication-chart-skill を Claude Scholar に統合** — [`pubfig`](https://github.com/Galaxy-Dawn/pubfig) + [`pubtab`](https://github.com/Galaxy-Dawn/pubtab) を `publication-chart-skill` としてまとめてリポジトリに追加し、Claude Scholar の分析・執筆スタックの接続点として位置づけました。これにより、論文品質の図表作業を汎用分析や文章作成用 skill に混ぜず、明示的な受け渡しで扱えるようになりました。
 
 ## クイックナビゲーション
 
@@ -47,7 +31,7 @@
 |---|---|
 | [Claude Scholarとは](#claude-scholarとは) | プロジェクトの位置づけとターゲットユースケース |
 | [コアワークフロー](#コアワークフロー) | アイデア創出から出版までのエンドツーエンド研究パイプライン |
-| [クイックスタート](#クイックスタート) | フル、ミニマル、選択的モードでのインストール |
+| [クイックスタート](#クイックスタート) | フル、ミニマル、選択的、プラグインマーケットプレイス経由のインストール |
 | [使い始めのシナリオ](#使い始めのシナリオ) | インストール後の代表的な使い始め方を見る |
 | [連携ツール](#連携ツール) | ZoteroとObsidianのワークフロー統合 |
 | [主要ワークフロー](#主要ワークフロー) | 研究・開発の主要ワークフロー一覧 |
@@ -89,7 +73,7 @@ Claude Scholarは特に以下のような方に適しています:
 - **アイデア創出**: 漠然としたトピックを具体的な研究課題、研究ギャップ、初期計画に変換
 - **文献**: Zoteroコレクションを通じて論文を検索、インポート、整理、読解
 - **論文ノート**: 論文を構造化されたリーディングノートと再利用可能な知見に変換
-- **ナレッジベース**: `Papers / Knowledge / Experiments / Results / Writing`にわたる永続的な知識をObsidianにルーティング。ラウンドレベルの実験レポートは`Results/Reports/`に保存
+- **ナレッジベース**: `Sources / Knowledge / Experiments / Results / Results/Reports / Writing / Daily / Maps`にわたる永続的な知識をObsidianにルーティング
 - **実験**: 仮説、実験ライン、実行履歴、知見、次のアクションを追跡
 - **分析**: `results-analysis`で厳密な統計、科学的図表、分析アーティファクトを生成
 - **レポート**: `results-report`で実験後の完全なレポートを作成し、Obsidianに書き戻し
@@ -133,6 +117,19 @@ git pull --ff-only
 bash scripts/setup.sh
 ```
 
+アンインストールする場合:
+
+```bash
+cd /tmp/claude-scholar
+bash scripts/uninstall.sh
+```
+
+インストーラーは次のファイルも書き込みます:
+- `~/.claude/.claude-scholar-manifest.txt`: Claude Scholar が実際に管理するファイル一覧
+- `~/.claude/.claude-scholar-install-state`: 安全なアンインストールに使う ownership メタデータ
+
+アンインストーラーは install state に記録されたファイルと settings エントリだけを削除し、現在のリポジトリ内容から所有権を推測しません。
+
 ### オプション2: ミニマルインストール
 
 研究にフォーカスした最小限のサブセットのみをインストール:
@@ -170,6 +167,35 @@ cp rules/agents.md ~/.claude/rules/
 ```
 
 **インストール後**: 選択的/手動インストールでは`settings.json`の自動マージは行われません。`settings.json.template`から実際に必要なhooksやMCPエントリのみをコピーしてください。既に独自の`~/.claude/CLAUDE.md`や`~/.claude/CLAUDE.zh-CN.md`をお持ちの場合は、上書きせずに関連セクションをマージしてください。
+
+### オプション4: プラグインマーケットプレイス経由のインストール
+
+**ステップ1: プラグインをインストール**
+
+```bash
+/plugin marketplace add Galaxy-Dawn/claude-scholar
+/plugin install claude-scholar@claude-scholar
+```
+
+これにより、skills、commands、agents、hooks が自動で読み込まれます。インストール時に、適用範囲として user（全プロジェクト）または project（単一プロジェクト）を選択できます。
+
+**ステップ2: ルールをインストール（必須）**
+
+Claude Code のプラグインは rules を自動配布できないため、手動で追加してください:
+
+```bash
+git clone https://github.com/Galaxy-Dawn/claude-scholar.git /tmp/claude-scholar
+
+# ユーザー全体（全プロジェクト）
+mkdir -p ~/.claude/rules
+cp /tmp/claude-scholar/rules/*.md ~/.claude/rules/
+
+# あるいはプロジェクト単位（現在のプロジェクトのみ）
+mkdir -p .claude/rules
+cp /tmp/claude-scholar/rules/*.md .claude/rules/
+```
+
+**インストール後**: プラグインインストールでは `CLAUDE.md` の自動読み込みや `settings.json` の自動設定は行われません。既に独自の `~/.claude/CLAUDE.md` や `~/.claude/CLAUDE.zh-CN.md` をお持ちの場合は、プラグインが自動適用すると考えず、Claude Scholar 側の関連セクションを手動でマージしてください。Zotero MCP などの連携が必要な場合は、[連携ツール](#連携ツール) セクションを参照してください。
 
 ## 使い始めのシナリオ
 
@@ -248,12 +274,14 @@ Claude Scholarは以下のプラットフォームをサポートしています
 ### Obsidian
 
 ファイルシステムファーストの研究ナレッジベースとしてObsidianを利用できます:
-- `Papers/`
+- `Sources/`
+- `Knowledge/`
 - `Experiments/`
 - `Results/`
 - `Results/Reports/`
 - `Writing/`
 - `Daily/`
+- `Maps/`
 
 詳細は [OBSIDIAN_SETUP.ja-JP.md](./OBSIDIAN_SETUP.ja-JP.md) を参照。
 
@@ -295,7 +323,7 @@ Claude Scholarは以下のプラットフォームをサポートしています
 | Skill | `git-workflow` | ブランチ管理、コミット規約、安全なコラボレーションワークフローを適用 |
 | Skill | `bug-detective` | スタックトレース、シェルエラー、コードパスの問題を体系的にデバッグ |
 | Agent | `code-reviewer` | 変更されたコードの正確性、保守性、実装品質をレビュー |
-| Agent | `dev-planner` | 複雑なエンジニアリング作業を具体的な実装ステップに分解 |
+| Agent | `tdd-guide` | 明示的に TDD が必要な場面で、絞ったテスト駆動の実装ガイドを出す。 |
 | Command | `/plan` | コーディング前に実装計画を作成・改善 |
 | Command | `/commit` | 現在の変更に対してConventional Commitを準備 |
 | Command | `/code-review` | 現在のコード変更に対するフォーカスレビューを実行 |
@@ -403,24 +431,34 @@ Claude Scholarは以下のプラットフォームをサポートしています
 
 ### Obsidianプロジェクトナレッジベース
 
-Obsidianを単なるノートダンプではなく、プロジェクト知識の永続的なシンクとして使用。
+Obsidianを単なるノート置き場ではなく、project-scoped な durable knowledge surface として使う。
 
 | 種類 | 名前 | 概要 |
 |---|---|---|
-| Skill | `obsidian-project-memory` | プロジェクトレベルのObsidianナレッジベースを維持し、書き戻すべき永続的知識を判断 |
-| Skill | `obsidian-project-bootstrap` | 新規または既存の研究プロジェクト用にObsidianナレッジベースを初期化 |
-| Skill | `obsidian-research-log` | 日々の研究進捗、計画、アイデア、TODOをナレッジベースに記録 |
-| Skill | `obsidian-experiment-log` | 実験セットアップ、実行履歴、結果、フォローアップアクションをObsidianに記録 |
-| Command | `/obsidian-ingest` | 新しいMarkdownファイルやフォルダをナレッジベースの適切な場所に取り込み |
-| Command | `/obsidian-note` | 検索、リネーム、アーカイブ、パージなど単一ノートのライフサイクルを管理 |
-| Command | `/obsidian-views` | `.base`ファイルなどのオプショナルObsidianビューを生成・更新 |
+| Skill | `obsidian-project-kb-core` | プロジェクトスコープのKBに対する初期化、ルーティング、registry、index、daily、lifecycleを統括 |
+| Skill | `obsidian-source-ingestion` | 外部資料を `Sources/Papers`、`Sources/Web`、`Sources/Docs`、`Sources/Data`、`Sources/Interviews`、`Sources/Notes` に取り込む |
+| Skill | `obsidian-literature-workflow` | `Sources/Papers` から `Knowledge`、`Writing`、`Maps/literature.canvas` へ進む文献ワークフローを担当 |
+| Skill | `obsidian-kb-artifacts` | wikilink、registry表、canvas、明示指定の `.base`、リンク修復などの Obsidian ネイティブ成果物を扱う |
+| Command | `/kb-init` | `Research/{project-slug}/` 配下に vault-first KB を初期化 |
+| Command | `/kb-status` | バインド済みプロジェクトKBの現在状態を要約 |
+| Command | `/kb-ingest` | 新しい source material を正しい canonical note にルーティング |
+| Command | `/kb-log` | 当日の `Daily/` と関連サーフェスを保守的に更新 |
+| Command | `/kb-sync` | 決定論的な KB メンテナンスを実行し、registry・index・daily・runtime binding 状態を更新 |
+| Command | `/kb-links` | canonical KB notes 間の wikilink を修復または強化 |
+| Command | `/kb-promote` | Daily や source note の安定した内容を canonical note に昇格 |
+| Command | `/kb-index` | 人間向けナビゲーションページ `02-Index.md` を再生成 |
+| Command | `/kb-lint` | 決定論的なKB健全性チェックを実行し `_system/lint-report.md` を更新 |
+| Command | `/kb-archive` | KBオブジェクトの archive、detach、purge、rename を行い、リンクと registry を整合させる |
+| Command | `/kb-map` | 既定の literature canvas 以外のKB artifactを明示要求時に生成または修復 |
+| Command | `/kb-literature-review` | `Sources/Papers` から文献統合を作り、`Knowledge`、`Writing`、`Maps/literature.canvas` に書き戻す |
 
 **仕組み**
 - 既存リポジトリをObsidian Vaultにバインド
-- `Papers / Knowledge / Experiments / Results / Writing`に安定した知識をルーティング（ラウンドレベル実験レポートは`Results/Reports/`に保存）
-- `Daily/`とプロジェクトメモリを保守的に更新
-- 新しいMarkdownファイルを正しい正規の保存先に取り込み
-- オプションで追加のビューやキャンバスを生成
+- 安定した知識を `Sources / Knowledge / Experiments / Results / Results/Reports / Writing / Daily / Maps` にルーティング
+- `Daily/` と repo-local binding metadata を保守的に更新
+- 新しい source material を正しい canonical note に取り込む
+- 追加の `.base` や canvas は明示要求時のみ生成
+- 決定論的な再同期には `/kb-sync`、単独のリンク修復には `/kb-links` を使う
 
 **ノート言語設定**
 
@@ -497,9 +535,9 @@ Claude Scholar自身のスキルに対する自己改善ループ。
 
 - [MCP_SETUP.ja-JP.md](./MCP_SETUP.ja-JP.md) — Zotero/ブラウザMCPセットアップ（日本語）
 - [OBSIDIAN_SETUP.ja-JP.md](./OBSIDIAN_SETUP.ja-JP.md) — Obsidianナレッジベースワークフロー（日本語）
-- [CLAUDE.ja-JP.md](./CLAUDE.ja-JP.md) — 完全なローカル設定、スキル一覧、ワークフロー詳細（日本語）
-- [CLAUDE.md](./CLAUDE.md) — ローカル設定（英語版）
-- [CLAUDE.zh-CN.md](./CLAUDE.zh-CN.md) — ローカル設定（中国語版）
+- [CLAUDE.ja-JP.md](./CLAUDE.ja-JP.md) — 軽量な Claude Code コア指示の日本語版
+- [CLAUDE.md](./CLAUDE.md) — 軽量な Claude Code コア指示（英語版）
+- [CLAUDE.zh-CN.md](./CLAUDE.zh-CN.md) — 軽量コア指示の中国語版補助ファイル
 - [settings.json.template](./settings.json.template) — hooks/plugins/MCP用のオプション設定テンプレート
 
 ## プロジェクトルール

@@ -90,11 +90,11 @@ class NoteRecord:
 
 
 def load_project_kb_module() -> Any:
-    script_dir = Path(__file__).resolve().parents[2] / "obsidian-project-memory" / "scripts"
+    script_dir = Path(__file__).resolve().parents[2] / "obsidian-project-kb-core" / "scripts"
     sys.path.insert(0, str(script_dir))
-    import project_kb  # type: ignore
+    import kb_common  # type: ignore
 
-    return project_kb
+    return kb_common
 
 
 def parse_args() -> argparse.Namespace:
@@ -324,7 +324,7 @@ def looks_like_literature_knowledge(note: NoteRecord) -> bool:
     key = note.note_relpath.lower()
     if any(token in key for token in ("literature", "paper", "method", "survey", "gap", "related")):
         return True
-    return any(target.startswith("Papers/") for target in note.wikilinks)
+    return any(target.startswith("Sources/Papers/") for target in note.wikilinks)
 
 
 def select_knowledge_notes(
@@ -615,7 +615,7 @@ def main() -> None:
 
     papers = [
         note
-        for note in collect_notes(binding.project_root / "Papers", "Papers", binding.vault_path, PAPER_LIMIT)
+        for note in collect_notes(binding.project_root / "Sources" / "Papers", "Papers", binding.vault_path, PAPER_LIMIT)
         if note.canvas_visibility != "hidden"
     ]
     all_knowledge = collect_notes(

@@ -17,30 +17,19 @@ Located in `~/.claude/agents/`:
 
 | Agent | Purpose | When to Use |
 |-------|---------|-------------|
-| architect | System architecture and design patterns | Architectural decisions, new module design |
-| build-error-resolver | Fix build and type errors with minimal diffs | When build fails or type errors occur |
 | code-reviewer | Code quality, security, and maintainability review | After writing or modifying code |
-| refactor-cleaner | Dead code cleanup and consolidation | Code maintenance, removing unused code |
-| tdd-guide | Test-driven development workflow | New features, bug fixes requiring tests |
-| bug-analyzer | Deep code execution flow analysis and root cause investigation | Debugging complex issues across multiple files |
-| dev-planner | Implementation planning and task breakdown | Complex features, multi-step refactoring |
-
-### Design & Content
-
-| Agent | Purpose | When to Use |
-|-------|---------|-------------|
-| ui-sketcher | ASCII interface design and user story generation | UI/UX planning, wireframing |
-| story-generator | Content and narrative generation | Creating documentation narratives, examples |
+| tdd-guide | Test-driven development workflow | When the user explicitly wants test-first implementation |
 
 ## Automatic Agent Invocation
 
 Use agents proactively without waiting for user request:
 
 1. Code just written/modified → **code-reviewer**
-2. Build failure → **build-error-resolver**
-3. Complex feature request → **dev-planner** then **architect**
-4. Bug report → **bug-analyzer**
-5. New feature with tests → **tdd-guide**
+2. New literature survey or topic exploration → **literature-reviewer**
+3. Rebuttal drafting → **rebuttal-writer**
+4. Writing-pattern mining from strong papers → **paper-miner**
+5. Kaggle workflow mining → **kaggle-miner**
+6. Explicit test-first implementation request → **tdd-guide**
 
 ## Parallel Task Execution
 
@@ -50,8 +39,8 @@ ALWAYS use parallel Task execution for independent operations:
 # GOOD: Parallel execution
 Launch 3 agents in parallel:
 1. Agent 1: code-reviewer on auth module
-2. Agent 2: bug-analyzer on payment flow
-3. Agent 3: refactor-cleaner on utils
+2. Agent 2: literature-reviewer on baseline papers
+3. Agent 3: paper-miner on a target venue paper
 
 # BAD: Sequential when unnecessary
 First agent 1, then agent 2, then agent 3

@@ -22,25 +22,9 @@
 
 ## 最新动态
 
-- **2026-03-31**: **Zotero smart-import 工作流文档完成对齐** — 围绕最新 `zotero-mcp` 的公开能力，系统更新了 Claude Scholar 的研究工作流文档：将 `zotero_add_items_by_identifier` 明确为默认论文导入入口，把 `zotero_reconcile_collection_duplicates` 设为标准导入后清理步骤，更准确地说明了来源感知 PDF cascade，同时把公开工具与内部诊断能力的边界重新讲清楚了。
-- **2026-03-31**: **README 上手路径完成刷新** — 明确了 Claude Scholar 尤其适合计算机科学与 AI 研究者，在安装说明后补充了更贴近真实使用的上手场景，进一步收紧了 prerequisite / 分支说明，并把“如果用户本地已有 md 文件，需要手动 merge”这件事写得更明确。
-- **2026-03-31**: **安装器与 hooks 行为进一步收口** — 安装器现在会保留已有的本地 `CLAUDE.md` / `CLAUDE.zh-CN.md`，并把仓库版本作为 sidecar 文件安装；同时默认 hooks 的摘要输出进一步降噪，减少 temp files / uncommitted files 的噪声，同时保留更安全的写入守卫边界。
-- **2026-03-31**: **日文文档补齐** — 为主 README 以及 `CLAUDE`、`MCP_SETUP`、`OBSIDIAN_SETUP` 补充了日文文档，使仓库的多语言文档入口更完整。
-
-<details>
-<summary>查看历史更新日志</summary>
-
-- **2026-02-25**: **Codex CLI** 支持 — 新增 `codex` 分支，支持 [OpenAI Codex CLI](https://github.com/openai/codex)，包含 config.toml、40 个 skills、14 个 agents 和 sandbox 安全机制
-- **2026-02-23**: 新增 `setup.sh` 安装脚本 — 面向已有 `~/.claude` 的带备份增量更新，自动备份 `settings.json`，以追加方式合并 hooks/mcpServers/plugins
-- **2026-02-21**: **OpenCode** 支持 — Claude Scholar 现已支持 [OpenCode](https://github.com/opencode-ai/opencode) 作为替代 CLI；切换到 `opencode` 分支获取兼容配置
-- **2026-02-20**: 双语配置 — 将 `CLAUDE.md` 翻译为英文以便国际用户阅读；新增 `CLAUDE.zh-CN.md` 作为中文备份；中文用户可通过 `cp CLAUDE.zh-CN.md CLAUDE.md` 切换回中文版
-- **2026-02-15**: Zotero MCP 集成 — 新增 `/zotero-review` 和 `/zotero-notes` 命令，更新 `research-ideation` skill 添加 Zotero 集成指南，增强 `literature-reviewer` agent 支持 Zotero MCP 自动论文导入、集合管理、全文阅读和引用导出
-- **2026-02-14**: Hooks 优化 — `security-guard` 重构为两层系统（Block + Confirm），`skill-forced-eval` 按 6 类分组并切换为静默扫描模式，`session-start` 限制显示前 5 项，`session-summary` 新增 30 天日志自动清理，`stop-summary` 分别显示新增/修改/删除计数；移除废弃的 shell 脚本（lib/common.sh、lib/platform.sh）
-- **2026-02-11**: 大版本更新 — 新增 10 个 skills（research-ideation、results-analysis、citation-verification、review-response、paper-self-review、post-acceptance、daily-coding、frontend-design、ui-ux-pro-max、web-design-reviewer）、7 个 agents、8 个研究工作流命令、2 条新规则（security、experiment-reproducibility）；重构 CLAUDE.md；涉及 89 个文件
-- **2026-01-26**: 所有 Hooks 重写为跨平台 Node.js 版本；README 完全重写；扩展 ML 论文写作知识库；合并 PR #1（跨平台支持）
-- **2026-01-25**: 项目正式开源，v1.0.0 发布，包含 25 个 skills（architecture-design、bug-detective、git-workflow、kaggle-learner、scientific-writing 等）、2 个 agents（paper-miner、kaggle-miner）、30+ 个命令（含 SuperClaude 命令套件）、5 个 Shell Hooks、2 条规则（coding-style、agents）
-
-</details>
+- **2026-04-22**: **精简核心指令、裁剪默认 agents、安全安装生命周期与通用论文发现流程** — 将大型 always-on `CLAUDE.md` / `AGENTS.md` 改为紧凑核心指令，裁剪默认 agent 集合并保留主链路所需的核心 agents，新增基于 install state 的安全卸载支持，将 `daily-paper-generator` 扩展为面向通用 topic 的 arXiv / bioRxiv 检索与 Top 10 -> Top 3 -> Top 1 固定筛选流程，并删除低使用率的 `planning-with-files` skill。
+- **2026-04-15**: **提出 pubfig 与 pubtab 两个 Python package** — 推出了 [`pubfig`](https://github.com/Galaxy-Dawn/pubfig)（用于论文级 scientific figures）和 [`pubtab`](https://github.com/Galaxy-Dawn/pubtab)（用于 publication-ready tables 与 Excel↔LaTeX workflows）两个独立 Python package，为研究者提供更清晰的论文图、benchmark 表、导出控制与最终 QA 生产路径。
+- **2026-04-15**: **将 publication-chart-skill 融入 Claude Scholar** — 把 [`pubfig`](https://github.com/Galaxy-Dawn/pubfig) + [`pubtab`](https://github.com/Galaxy-Dawn/pubtab) 封装成 `publication-chart-skill`，加入仓库，并接到 Claude Scholar 的分析/写作边界里，让论文级图表工作有了明确的 handoff 路径，而不是继续混在通用分析或 prose skill 里。
 
 ## 快速导航
 
@@ -90,7 +74,7 @@ Claude Scholar 当前尤其适合：
 - **研究构思**：把模糊主题收敛成具体研究问题、研究空白和初步计划。
 - **文献工作流**：通过 Zotero 文献集合检索、导入、组织并阅读论文。
 - **论文笔记**：把论文转成结构化阅读笔记和可复用论点。
-- **知识库沉淀**：将稳定知识写入 Obsidian，并按 `Papers / Knowledge / Experiments / Results / Writing` 路由整理，具体轮次的实验报告存放在 `Results/Reports/` 下。
+- **知识库沉淀**：将稳定知识写入 Obsidian，并按 `Sources / Knowledge / Experiments / Results / Results/Reports / Writing / Daily / Maps` 路由整理。
 - **实验推进**：跟踪假设、实验线、运行历史、关键发现和下一步动作。
 - **严格分析**：使用 `results-analysis` 生成严谨统计、真实科研图和分析产物。
 - **结果报告**：使用 `results-report` 生成完整实验复盘报告，并写回 Obsidian。
@@ -133,6 +117,19 @@ cd /tmp/claude-scholar
 git pull --ff-only
 bash scripts/setup.sh
 ```
+
+以后如果要卸载：
+
+```bash
+cd /tmp/claude-scholar
+bash scripts/uninstall.sh
+```
+
+安装器现在还会写入：
+- `~/.claude/.claude-scholar-manifest.txt`：记录 Claude Scholar 实际管理的文件
+- `~/.claude/.claude-scholar-install-state`：记录安全卸载所需的 ownership 元数据
+
+卸载脚本只会删除 install state 中明确记录的文件和 settings 条目，不会再根据当前 repo 工作树去猜测所有权。
 
 ### 选项 2：最小化安装
 
@@ -279,11 +276,10 @@ Claude Scholar 目前面向以下 CLI 工作流：
 
 适合这些场景：
 - 维护以文件系统为核心的项目知识库
-- 管理 `Papers/`
+- 管理 `Sources/` 与 `Knowledge/`
 - 管理 `Experiments/`
-- 管理 `Results/`
-- 管理 `Results/Reports/`
-- 管理 `Writing/` 与 `Daily/`
+- 管理 `Results/` 与 `Results/Reports/`
+- 管理 `Writing/`、`Daily/` 与 `Maps/`
 
 详见 [OBSIDIAN_SETUP.zh-CN.md](./OBSIDIAN_SETUP.zh-CN.md)。
 
@@ -325,7 +321,7 @@ Claude Scholar 目前面向以下 CLI 工作流：
 | Skill | `git-workflow` | 约束分支规范、commit 规范和更安全的协作流程。 |
 | Skill | `bug-detective` | 系统化排查 stack trace、shell 报错和代码路径问题。 |
 | Agent | `code-reviewer` | 审查改动代码的正确性、可维护性和实现质量。 |
-| Agent | `dev-planner` | 把复杂工程任务拆成可执行的实现步骤。 |
+| Agent | `tdd-guide` | 当任务明确需要 TDD 路径时，提供聚焦的测试驱动实现指导。 |
 | Command | `/plan` | 在编码前创建或细化实现计划。 |
 | Command | `/commit` | 为当前改动生成符合规范的 commit。 |
 | Command | `/code-review` | 对当前代码改动执行一次聚焦审查。 |
@@ -433,24 +429,36 @@ Claude Scholar 目前面向以下 CLI 工作流：
 
 ### Obsidian 项目知识库
 
-把 Obsidian 当作稳定科研知识的沉淀中心，而不是随手堆放笔记的地方。
+把 Obsidian 当作项目作用域的稳定知识层，而不是随手堆放笔记的地方。
 
 | 类型 | 名字 | 一句话解释 |
 |---|---|---|
-| Skill | `obsidian-project-memory` | 维护项目级 Obsidian 知识库，并决定哪些稳定知识需要写回。 |
-| Skill | `obsidian-project-bootstrap` | 为新项目或已有科研项目初始化对应的 Obsidian 知识库结构。 |
-| Skill | `obsidian-research-log` | 将每日研究进展、计划、想法和 TODO 写入知识库。 |
-| Skill | `obsidian-experiment-log` | 在 Obsidian 中记录实验设置、运行过程、结果和后续动作。 |
-| Command | `/obsidian-ingest` | 把新的 Markdown 文件或目录整理并纳入正确的知识库位置。 |
-| Command | `/obsidian-note` | 对单个 note 执行查找、重命名、归档或删除等生命周期操作。 |
-| Command | `/obsidian-views` | 生成或刷新可选的 Obsidian 视图文件，例如 `.base`。 |
+| Skill | `obsidian-project-kb-core` | 负责项目级 KB 的初始化、路由、registry、index、daily 和 lifecycle。 |
+| Skill | `obsidian-source-ingestion` | 把外部材料写入 `Sources/Papers`、`Sources/Web`、`Sources/Docs`、`Sources/Data`、`Sources/Interviews` 或 `Sources/Notes`。 |
+| Skill | `obsidian-literature-workflow` | 管理从 `Sources/Papers` 到 `Knowledge`、`Writing`、`Maps/literature.canvas` 的文献工作流。 |
+| Skill | `obsidian-kb-artifacts` | 处理 wikilink、registry 表格、canvas、可选 `.base` 和 link repair 等 Obsidian 原生产物。 |
+| Command | `/kb-init` | 在 `Research/{project-slug}/` 下初始化 vault-first KB。 |
+| Command | `/kb-status` | 汇总当前已绑定项目 KB 的状态。 |
+| Command | `/kb-ingest` | 将新的 source material 路由到正确的 canonical 位置。 |
+| Command | `/kb-log` | 保守更新当天 `Daily/` 和相关项目表面。 |
+| Command | `/kb-sync` | 运行确定性的 KB 维护，刷新 registry、index、daily 和运行时绑定状态。 |
+| Command | `/kb-links` | 修复或增强 canonical KB notes 之间的 wikilink。 |
+| Command | `/kb-promote` | 将 Daily 或 source note 中稳定的内容提升为 canonical note。 |
+| Command | `/kb-index` | 重建 `02-Index.md` 这个人类导航页。 |
+| Command | `/kb-lint` | 运行确定性的 KB 健康检查并更新 `_system/lint-report.md`。 |
+| Command | `/kb-archive` | 归档、detach、purge 或重命名 KB 对象，并保持链接与 registry 一致。 |
+| Command | `/kb-map` | 在默认 literature canvas 之外，按需生成或修复显式请求的 KB artifact。 |
+| Command | `/kb-literature-review` | 从 `Sources/Papers` 生成文献综合，并写入 `Knowledge`、`Writing` 和 `Maps/literature.canvas`。 |
+
+旧的 `/obsidian-*` 命令会在一个过渡窗口内保留为 deprecated alias。它们只转发到 `/kb-*`，不会恢复旧目录语义。
 
 **工作方式**
 - 将已有 repo 绑定到 Obsidian vault
-- 把稳定知识路由进 `Papers / Knowledge / Experiments / Results / Writing`，具体轮次的实验报告存放在 `Results/Reports/` 下
-- 以保守方式维护 `Daily/` 和项目记忆
-- 把新的 Markdown 文件分类并合并进正确的规范笔记
-- 按需生成额外视图和 canvas
+- 把稳定知识路由进 `Sources / Knowledge / Experiments / Results / Results/Reports / Writing / Daily / Maps`
+- 以保守方式维护 `Daily/` 和 repo-local binding metadata
+- 把新的 source material 路由进正确的 canonical note
+- 只有在显式请求时才生成额外的 `.base` 或 canvas
+- 用 `/kb-sync` 做确定性重同步，用 `/kb-links` 做独立的 link repair
 
 **笔记语言配置**
 
@@ -527,8 +535,8 @@ Claude Scholar 也内置了自我改进的 skill 工作流。
 
 - [MCP_SETUP.zh-CN.md](./MCP_SETUP.zh-CN.md) — Zotero / 浏览器 MCP 配置
 - [OBSIDIAN_SETUP.zh-CN.md](./OBSIDIAN_SETUP.zh-CN.md) — Obsidian 项目知识库工作流
-- [CLAUDE.md](./CLAUDE.md) — 完整本地配置、技能列表与工作流说明
-- [CLAUDE.zh-CN.md](./CLAUDE.zh-CN.md) — 中文版主配置文档
+- [CLAUDE.md](./CLAUDE.md) — 轻量版 Claude Code 核心指令
+- [CLAUDE.zh-CN.md](./CLAUDE.zh-CN.md) — 轻量核心指令的中文 companion 文件
 - [settings.json.template](./settings.json.template) — hooks / plugins / MCP 的可选模板
 
 ## 项目规则

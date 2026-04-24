@@ -136,6 +136,37 @@ function getRepoRoot(cwd) {
 }
 
 /**
+ * Parse simple YAML frontmatter from a Markdown file.
+ * Supports the project-memory binding metadata shape.
+ * @param {string} filePath
+ * @returns {Object|null}
+ */
+function parseFrontmatterFile(filePath) {
+  try {
+    const content = fs.readFileSync(filePath, 'utf8');
+    const match = content.match(/^---\n([\s\S]*?)\n---/);
+    if (!match) return null;
+
+    const data = {};
+    for (const line of match[1].split('\n')) {
+      const parts = line.match(/^([A-Za-z0-9_]+):\s*(.*)$/);
+      if (!parts) continue;
+      const key = parts[1];
+      let value = parts[2].trim();
+
+      if (value === 'true') value = true;
+      else if (value === 'false') value = false;
+      else value = value.replace(/^['"]|['"]$/g, '');
+
+      data[key] = value;
+    }
+    return data;
+  } catch {
+    return null;
+  }
+}
+
+/**
  * Detect whether the current repository is bound to Obsidian project memory
  * @param {string} cwd - Current working directory
  * @returns {Object} Binding info
@@ -159,29 +190,27 @@ function getProjectMemoryBinding(cwd) {
     };
   }
 
-  let registry = null;
-  try {
-    registry = JSON.parse(fs.readFileSync(registryPath, 'utf8'));
-  } catch {
-    registry = null;
-  }
-
   let project = null;
-  if (registry && registry.projects && typeof registry.projects === 'object') {
-    const projects = Object.values(registry.projects);
-    project = projects.find(item =>
-      Array.isArray(item.repo_roots) &&
-      item.repo_roots.some(root => repoRoot === root || cwd.startsWith(root))
-    ) || projects[0] || null;
-  }
-
   let memoryPath = null;
-  if (project && project.project_id) {
-    memoryPath = path.join(projectMemoryDir, `${project.project_id}.md`);
-  } else if (fs.existsSync(projectMemoryDir)) {
-    const memoryFiles = fs.readdirSync(projectMemoryDir).filter(name => name.endsWith('.md'));
-    if (memoryFiles.length > 0) {
-      memoryPath = path.join(projectMemoryDir, memoryFiles[0]);
+
+  if (fs.existsSync(projectMemoryDir)) {
+    const memoryFiles = fs.readdirSync(projectMemoryDir)
+      .filter(name => name.endsWith('.md'))
+      .map(name => path.join(projectMemoryDir, name));
+
+    for (const candidate of memoryFiles) {
+      const frontmatter = parseFrontmatterFile(candidate);
+      if (!frontmatter) continue;
+      if (frontmatter.repo_root && (frontmatter.repo_root === repoRoot || cwd.startsWith(frontmatter.repo_root))) {
+        project = frontmatter;
+        memoryPath = candidate;
+        break;
+      }
+    }
+
+    if (!memoryPath && memoryFiles.length > 0) {
+      memoryPath = memoryFiles[0];
+      project = parseFrontmatterFile(memoryPath) || null;
     }
   }
 

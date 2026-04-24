@@ -20,27 +20,12 @@
 
   <p><em>Branch note</em>: the <code>main</code> branch is the Claude Code workflow. If you use Codex CLI, please see the <a href="https://github.com/Galaxy-Dawn/claude-scholar/tree/codex"><code>codex</code> branch</a>. If you use OpenCode, please see the <a href="https://github.com/Galaxy-Dawn/claude-scholar/tree/opencode"><code>opencode</code> branch</a>.</p>
 
+
 ## Recent News
 
-- **2026-03-31**: **Zotero smart-import workflow docs aligned** — updated Claude Scholar's research-facing docs around the latest `zotero-mcp` public surface: `zotero_add_items_by_identifier` is now the default paper-import path, `zotero_reconcile_collection_duplicates` is the standard post-import cleanup step, source-aware PDF cascade behavior is documented more accurately, and public vs internal diagnostics are now clearly separated.
-- **2026-03-31**: **README onboarding refreshed** — clarified that Claude Scholar is especially well-suited to computer science and AI researchers, added practical getting-started scenarios after installation, improved prerequisite and branch guidance, and made the “existing local md files must be manually merged” expectation much more explicit.
-- **2026-03-31**: **Installer and hook behavior tightened** — the installer now preserves existing local `CLAUDE.md` / `CLAUDE.zh-CN.md` files while installing repo-managed sidecar copies, and the default hook summaries were trimmed to reduce noisy temp-file / uncommitted-file output while keeping safer write-guard behavior.
-- **2026-03-31**: **Japanese documentation added** — added Japanese docs for the main README plus `CLAUDE`, `MCP_SETUP`, and `OBSIDIAN_SETUP`, so the repository now has a more complete multilingual documentation surface.
-
-<details>
-<summary>View older changelog</summary>
-
-- **2026-02-25**: **Codex CLI** support — added `codex` branch supporting [OpenAI Codex CLI](https://github.com/openai/codex) with config.toml, 40 skills, 14 agents, and sandbox security
-- **2026-02-23**: Added `setup.sh` installer — backup-aware incremental updates for existing `~/.claude`, auto-backup `settings.json`, additive hooks/mcpServers/plugins merge
-- **2026-02-21**: **OpenCode** support — Claude Scholar now supports [OpenCode](https://github.com/opencode-ai/opencode) as an alternative CLI; switch to the `opencode` branch for OpenCode-compatible configuration
-- **2026-02-20**: Bilingual config — translated `CLAUDE.md` to English for international readability; added `CLAUDE.zh-CN.md` as Chinese backup; Chinese users can switch with `cp CLAUDE.zh-CN.md CLAUDE.md`
-- **2026-02-15**: Zotero MCP integration — added `/zotero-review` and `/zotero-notes` commands, updated `research-ideation` skill with Zotero integration guide, enhanced `literature-reviewer` agent with Zotero MCP support for automated paper import, collection management, full-text reading, and citation export
-- **2026-02-14**: Hooks optimization — restructured `security-guard` to two-tier system (Block + Confirm), `skill-forced-eval` now groups skills into 6 categories with silent scan mode, `session-start` limits display to top 5, `session-summary` adds 30-day log auto-cleanup, `stop-summary` shows separate added/modified/deleted counts; removed deprecated shell scripts (lib/common.sh, lib/platform.sh)
-- **2026-02-11**: Major update — added 10 new skills (research-ideation, results-analysis, citation-verification, review-response, paper-self-review, post-acceptance, daily-coding, frontend-design, ui-ux-pro-max, web-design-reviewer), 7 new agents, 8 research workflow commands, 2 new rules (security, experiment-reproducibility); restructured CLAUDE.md; 89 files changed
-- **2026-01-26**: Rewrote all Hooks to cross-platform Node.js; completely rewrote README; expanded ML paper writing knowledge base; merged PR #1 (cross-platform support)
-- **2026-01-25**: Project open-sourced, v1.0.0 released with 25 skills (architecture-design, bug-detective, git-workflow, kaggle-learner, scientific-writing, etc.), 2 agents (paper-miner, kaggle-miner), 30+ commands (including SuperClaude suite), 5 Shell Hooks, and 2 rules (coding-style, agents)
-
-</details>
+- **2026-04-22**: **Lean core, pruned default agents, safer install lifecycle, and cleaner paper discovery** — replaced large always-on `CLAUDE.md` / `AGENTS.md` files with compact core instructions, pruned the default agent set to the retained core agents, added safe install-state based uninstall support, generalized `daily-paper-generator` to broader topics with arXiv / bioRxiv support and a fixed Top 10 -> Top 3 -> Top 1 selection flow, and removed the low-use `planning-with-files` skill.
+- **2026-04-15**: **pubfig and pubtab introduced** — introduced [`pubfig`](https://github.com/Galaxy-Dawn/pubfig), a Python package for publication-grade scientific figures, and [`pubtab`](https://github.com/Galaxy-Dawn/pubtab), a Python package for publication-ready tables and Excel↔LaTeX workflows. Together they provide a cleaner production stack for paper figures, benchmark tables, export control, and final artifact QA.
+- **2026-04-15**: **publication-chart-skill integrated into Claude Scholar** — wrapped [`pubfig`](https://github.com/Galaxy-Dawn/pubfig) + [`pubtab`](https://github.com/Galaxy-Dawn/pubtab) into `publication-chart-skill`, added the skill to the repository, and connected it to Claude Scholar's analysis and writing boundaries so publication-grade figure/table work now has an explicit handoff route instead of being mixed into general analysis or prose skills.
 
 ## Quick Navigation
 
@@ -90,7 +75,7 @@ It can still help in other research settings, but its current workflow design is
 - **Ideation**: turn a vague topic into concrete questions, research gaps, and an initial plan.
 - **Literature**: search, import, organize, and read papers through Zotero collections.
 - **Paper notes**: convert papers into structured reading notes and reusable claims.
-- **Knowledge base**: route durable knowledge into Obsidian across `Papers / Knowledge / Experiments / Results / Writing`, with round-level experiment reports stored under `Results/Reports/`.
+- **Knowledge base**: route durable knowledge into Obsidian across `Sources / Knowledge / Experiments / Results / Results/Reports / Writing / Daily / Maps`.
 - **Experiments**: track hypotheses, experiment lines, run history, findings, and next actions.
 - **Analysis**: generate strict statistics, real scientific figures, and analysis artifacts with `results-analysis`.
 - **Reporting**: produce a complete post-experiment report with `results-report`, then write it back into Obsidian.
@@ -133,6 +118,19 @@ cd /tmp/claude-scholar
 git pull --ff-only
 bash scripts/setup.sh
 ```
+
+To uninstall later:
+
+```bash
+cd /tmp/claude-scholar
+bash scripts/uninstall.sh
+```
+
+The installer now writes:
+- `~/.claude/.claude-scholar-manifest.txt` for the exact files managed by Claude Scholar
+- `~/.claude/.claude-scholar-install-state` for install ownership metadata used by safe uninstall
+
+The uninstaller removes only files and settings entries recorded in that install state. It does not guess ownership from the current repo checkout.
 
 ### Option 2: Minimal Installation
 
@@ -278,12 +276,14 @@ See [MCP_SETUP.md](./MCP_SETUP.md).
 ### Obsidian
 
 Use Obsidian when you want Claude Scholar to maintain a filesystem-first research knowledge base:
-- `Papers/`
+- `Sources/`
+- `Knowledge/`
 - `Experiments/`
 - `Results/`
 - `Results/Reports/`
 - `Writing/`
 - `Daily/`
+- `Maps/`
 
 See [OBSIDIAN_SETUP.md](./OBSIDIAN_SETUP.md).
 
@@ -325,7 +325,7 @@ Maintainable ML project structure for experiment code and iteration.
 | Skill | `git-workflow` | Enforce branch hygiene, commit conventions, and safer collaboration workflows. |
 | Skill | `bug-detective` | Debug stack traces, shell failures, and code-path issues systematically. |
 | Agent | `code-reviewer` | Review modified code for correctness, maintainability, and implementation quality. |
-| Agent | `dev-planner` | Break complex engineering work into concrete implementation steps. |
+| Agent | `tdd-guide` | Provide focused test-driven implementation guidance when a TDD path is explicitly needed. |
 | Command | `/plan` | Create or refine an implementation plan before coding. |
 | Command | `/commit` | Prepare a conventional commit for the current changes. |
 | Command | `/code-review` | Run a focused review on the current code changes. |
@@ -433,24 +433,36 @@ These workflows run in the background to strengthen the primary workflows.
 
 ### Obsidian Project Knowledge Base
 
-Use Obsidian as the durable sink for project knowledge, not just as a note dump.
+Use Obsidian as the project-scoped durable knowledge surface, not just as a note dump.
 
 | Type | Name | One-line explanation |
 |---|---|---|
-| Skill | `obsidian-project-memory` | Maintain the project-level Obsidian knowledge base and decide what durable knowledge should be written back. |
-| Skill | `obsidian-project-bootstrap` | Initialize an Obsidian knowledge base for a new or existing research project. |
-| Skill | `obsidian-research-log` | Record daily research progress, plans, ideas, and TODOs into the knowledge base. |
-| Skill | `obsidian-experiment-log` | Capture experiment setup, run history, outcomes, and follow-up actions in Obsidian. |
-| Command | `/obsidian-ingest` | Ingest a new Markdown file or folder into the correct place in the knowledge base. |
-| Command | `/obsidian-note` | Manage a single note lifecycle such as lookup, rename, archive, or purge. |
-| Command | `/obsidian-views` | Generate or refresh optional Obsidian views such as `.base` files. |
+| Skill | `obsidian-project-kb-core` | Main authority for project-scoped KB bootstrap, routing, registry, index, daily, and lifecycle updates. |
+| Skill | `obsidian-source-ingestion` | Ingest external material into `Sources/Papers`, `Sources/Web`, `Sources/Docs`, `Sources/Data`, `Sources/Interviews`, or `Sources/Notes`. |
+| Skill | `obsidian-literature-workflow` | Run the paper-note to synthesis workflow from `Sources/Papers` into `Knowledge`, `Writing`, and `Maps/literature.canvas`. |
+| Skill | `obsidian-kb-artifacts` | Handle Obsidian-native artifacts such as wikilinks, registry tables, canvas files, optional Bases, and link repair. |
+| Command | `/kb-init` | Initialize the vault-first KB under `Research/{project-slug}/`. |
+| Command | `/kb-status` | Summarize the current KB state from the bound project root. |
+| Command | `/kb-ingest` | Route new source material into the correct canonical KB destination. |
+| Command | `/kb-log` | Update the current Daily note and related project surfaces conservatively. |
+| Command | `/kb-sync` | Run deterministic KB maintenance to refresh registry, index, daily, and runtime binding state. |
+| Command | `/kb-links` | Repair or strengthen wikilinks among canonical KB notes. |
+| Command | `/kb-promote` | Promote durable content from Daily or source notes into canonical notes. |
+| Command | `/kb-index` | Regenerate `02-Index.md` as the human-readable project navigator. |
+| Command | `/kb-lint` | Run deterministic KB health checks and update `_system/lint-report.md`. |
+| Command | `/kb-archive` | Archive, detach, purge, or rename KB objects while keeping links and registry consistent. |
+| Command | `/kb-map` | Generate or repair explicit-only KB artifacts beyond the default literature canvas. |
+| Command | `/kb-literature-review` | Generate literature synthesis from `Sources/Papers` into `Knowledge`, `Writing`, and `Maps/literature.canvas`. |
+
+Legacy `/obsidian-*` commands remain as deprecated aliases for one transition window. They forward to the `/kb-*` surface and do not restore the old directory layout.
 
 **How it works**
 - bind an existing repo to an Obsidian vault,
-- route stable knowledge into `Papers / Knowledge / Experiments / Results / Writing`, with round-level experiment reports stored under `Results/Reports/`,
-- keep `Daily/` and project memory updated conservatively,
-- ingest new Markdown files into the correct canonical destination,
-- optionally generate extra views and canvases.
+- route stable knowledge into `Sources / Knowledge / Experiments / Results / Results/Reports / Writing / Daily / Maps`,
+- keep `Daily/` and repo-local binding metadata updated conservatively,
+- ingest new source material into the correct canonical destination,
+- only generate extra Bases or canvases on explicit request.
+- use `/kb-sync` for deterministic resyncs and `/kb-links` for standalone link repair.
 
 **Note language configuration**
 
@@ -527,8 +539,8 @@ Claude Scholar also contains a self-improvement loop for its own skills.
 
 - [MCP_SETUP.md](./MCP_SETUP.md) — Zotero/browser MCP setup
 - [OBSIDIAN_SETUP.md](./OBSIDIAN_SETUP.md) — Obsidian knowledge base workflow
-- [CLAUDE.md](./CLAUDE.md) — full local configuration, skill list, and workflow details
-- [CLAUDE.zh-CN.md](./CLAUDE.zh-CN.md) — Chinese version of the main configuration doc
+- [CLAUDE.md](./CLAUDE.md) — lightweight Claude Code core instructions
+- [CLAUDE.zh-CN.md](./CLAUDE.zh-CN.md) — Chinese companion for the lightweight core instructions
 - [settings.json.template](./settings.json.template) — optional settings template for hooks/plugins/MCP
 
 ## Project Rules

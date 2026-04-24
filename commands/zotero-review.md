@@ -19,13 +19,13 @@ Read and analyze papers in the Zotero collection "$collection", with analysis de
 ## Default target
 
 - **Preferred target**: the bound Obsidian project knowledge base
-- **Fallback target**: `literature-review.md` in the current working directory
+- **Fallback target**: `related-work-draft.md` in the current working directory
 
 ## Workflow
 
 ### Step 0: Resolve the project context
 
-1. If the current repo is already bound to Obsidian project memory, use that vault.
+1. If the current repo is already bound to an Obsidian project KB, use that project root.
 2. If the repo looks like a research project but is not bound yet, bootstrap it first.
 3. If there is no project binding, generate the review in the working directory.
 
@@ -45,7 +45,7 @@ Read and analyze papers in the Zotero collection "$collection", with analysis de
 Before high-level synthesis, ensure the collection has durable paper notes.
 
 If the project is Obsidian-bound:
-- create or update `Papers/*.md` canonical notes first
+- create or update `Sources/Papers/*.md` canonical notes first
 - keep one canonical paper note per paper whenever possible
 - align notes to the canonical schema (`Claim / Method / Evidence / Limitation / Direct relevance to repo / Relation to other papers`)
 - update the best matching `Knowledge/` literature synthesis notes
@@ -58,10 +58,10 @@ If not Obsidian-bound:
 ### Step 3: Synthesize across paper notes
 
 Create or update:
-- `Knowledge/Literature-Overview.md`
-- `Knowledge/Method-Families.md` when useful
-- `Knowledge/Research-Gaps.md` when useful
-- `Writing/literature-review.md` only when the user wants writing-facing synthesis
+- `Knowledge/Literature Overview.md`
+- `Knowledge/Method Taxonomy.md` when useful
+- `Knowledge/Research Gaps.md` when useful
+- `Writing/related-work-draft.md` only when the user wants writing-facing synthesis
 - `Writing/comparison-matrix.md` when useful
 
 The synthesis should include:
@@ -70,11 +70,11 @@ The synthesis should include:
 - key findings and tensions
 - research gaps
 - direct relevance to the current project
-- explicit links across `Papers/` and `Knowledge/`
+- explicit links across `Sources/Papers/` and `Knowledge/`
 
 ### Step 4: Push downstream only when justified
 
-- keep the default review surface in `Papers/`, `Knowledge/`, and `Maps/literature.canvas`
+- keep the default review surface in `Sources/Papers/`, `Knowledge/`, and `Maps/literature.canvas`
 - update `Writing/` when the user wants a manuscript-facing review or comparison narrative
 - only update `Experiments/` or `Results/` in a later project workflow when the user explicitly wants that handoff
 
@@ -82,7 +82,7 @@ The synthesis should include:
 
 Always update:
 - today's `Daily/YYYY-MM-DD.md`
-- repo-local project memory when project state changes
+- repo-local binding summary when project state changes
 
 ### Step 6: Final response
 
@@ -95,5 +95,5 @@ Include:
 ## Notes
 
 - Prefer the Obsidian-bound project workflow over loose markdown files when available.
-- Keep `Papers/` first-class; the review should be grounded in canonical paper notes rather than only one-shot synthesis.
+- Keep `Sources/Papers/` first-class; the review should be grounded in canonical paper notes rather than only one-shot synthesis.
 - The default graph artifact is `Maps/literature.canvas`.

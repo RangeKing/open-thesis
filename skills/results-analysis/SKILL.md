@@ -29,9 +29,10 @@ Do **not** use this skill to draft a paper `Results` section or a full experimen
 ### This skill is not responsible for
 - paper-ready `Results` prose,
 - manuscript narrative polishing,
+- paper-ready figure/table packaging with `pubfig` / `pubtab`,
 - project-level experiment retrospectives.
 
-If the user wants the complete post-experiment summary report, hand off to `results-report` after this bundle is ready.
+If the user wants the complete post-experiment summary report, hand off to `results-report` after this bundle is ready. If the user wants publication-grade figures/tables, export parameters, publication QA, or figure/table redesign, hand off to `publication-chart-skill`.
 
 ## Non-negotiable quality bar
 

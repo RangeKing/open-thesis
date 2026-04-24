@@ -31,10 +31,10 @@ class PaperNote:
 
 
 def load_project_kb_module() -> Any:
-    script_dir = Path(__file__).resolve().parents[2] / 'obsidian-project-memory' / 'scripts'
+    script_dir = Path(__file__).resolve().parents[2] / 'obsidian-project-kb-core' / 'scripts'
     sys.path.insert(0, str(script_dir))
-    import project_kb  # type: ignore
-    return project_kb
+    import kb_common  # type: ignore
+    return kb_common
 
 
 def parse_args() -> argparse.Namespace:
@@ -113,7 +113,7 @@ def extract_wikilinks(text: str) -> tuple[str, ...]:
 
 
 def collect_paper_notes(project_root: Path) -> list[PaperNote]:
-    papers_dir = project_root / 'Papers'
+    papers_dir = project_root / 'Sources' / 'Papers'
     notes: list[PaperNote] = []
     if not papers_dir.exists():
         return notes
@@ -125,7 +125,7 @@ def collect_paper_notes(project_root: Path) -> list[PaperNote]:
         notes.append(
             PaperNote(
                 title=title,
-                note_relpath=f'Papers/{path.name}',
+                note_relpath=f'Sources/Papers/{path.name}',
                 file_name=path.name,
                 concepts=tuple(frontmatter.get('concepts', [])),
                 methods=tuple(frontmatter.get('methods', [])),
@@ -164,7 +164,7 @@ def render_mermaid(notes: list[PaperNote]) -> str:
                 seen_edges.add(edge)
 
         related_targets = set(note.related_papers)
-        related_targets.update(target for target in note.wikilinks if target.startswith('Papers/'))
+        related_targets.update(target for target in note.wikilinks if target.startswith('Sources/Papers/'))
         for target in sorted(related_targets):
             target_note = paper_index.get(target)
             if not target_note:

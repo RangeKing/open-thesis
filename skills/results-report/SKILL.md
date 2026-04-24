@@ -26,6 +26,8 @@ This skill is for the stage **after** `results-analysis`.
 - limitations, failure cases, and next actions,
 - Obsidian write-back into `Results/Reports/`.
 
+When the task is to create or redesign paper-ready figures/tables themselves, rely on `publication-chart-skill` instead of expanding `results-report` into figure/table production.
+
 Do not replace strict analysis with confident prose. If the analysis bundle is missing, first identify the blocker and request or produce the missing bundle.
 
 ## Default output
@@ -150,7 +152,7 @@ If the repo is **not** bound:
 - keep the same filename contract,
 - explicitly say that no Obsidian write-back was attempted.
 
-Use `obsidian-project-memory` conventions only for bound repos. Internal experiment reports belong in `Results/Reports/`, not `Writing/`.
+Use `obsidian-project-kb-core` conventions only for bound repos. Internal experiment reports belong in `Results/Reports/`, not `Writing/`.
 
 ### 6. End with explicit next actions
 
