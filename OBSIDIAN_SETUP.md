@@ -26,18 +26,14 @@ Obsidian is treated as the default knowledge base for a research project, not ju
 
 ## Built-in skills
 
-Claude Scholar includes official Obsidian-oriented skills plus project-focused wrappers.
+Claude Scholar includes a project-scoped Obsidian KB workflow.
 
 Most relevant for the default workflow:
 
-- `obsidian-project-memory`
-- `obsidian-project-bootstrap`
-- `obsidian-research-log`
-- `obsidian-experiment-log`
+- `obsidian-project-kb-core`
+- `obsidian-source-ingestion`
 - `obsidian-literature-workflow`
-- `obsidian-project-lifecycle`
-- `obsidian-markdown`
-- `obsidian-cli`
+- `obsidian-kb-artifacts`
 - `defuddle`
 
 Some optional graph-oriented helpers may still exist in the repo, but the default workflow does **not** depend on `.base`, MCP, or API services. The main default graph artifact is `Maps/literature.canvas`; additional `.base` views or project/experiment canvases are explicit-only.
@@ -54,21 +50,27 @@ If the repository is not yet bound, but it looks like a research project (for ex
 Research/{project-slug}/
   00-Hub.md
   01-Plan.md
+  02-Index.md
+  Sources/
   Knowledge/
-  Papers/
   Experiments/
   Results/
+    Reports/
   Writing/
   Daily/
+  Maps/
   Archive/
+  _system/
 ```
 
 Key generated files commonly include:
 
-- `Knowledge/Source-Inventory.md`
-- `Knowledge/Codebase-Overview.md`
-- `Maps/literature.canvas`
+- `02-Index.md`
+- `_system/registry.md`
+- `_system/schema.md`
+- `_system/lint-report.md`
 - `.claude/project-memory/<project_id>.md`
+- `Maps/literature.canvas` when literature workflow needs it
 
 ## Repository-local memory binding
 
@@ -90,7 +92,7 @@ Generated and synced notes resolve their language with this priority:
 2. environment variable `OBSIDIAN_NOTE_LANGUAGE`
 3. default `en`
 
-Note: the file is currently named `registry.yaml` for historical reasons, but its on-disk format is JSON.
+Note: `registry.yaml` remains a repo-local runtime binding file. The visible project source of truth stays in `_system/registry.md`.
 
 Supported values:
 - `en`
@@ -114,15 +116,18 @@ Existing English and Chinese headings remain compatible during sync, so changing
 
 ## Main commands
 
-- `/obsidian-init` — bootstrap or import a project knowledge base
-- `/obsidian-ingest` — ingest a new Markdown file or directory via classify -> promote / merge / stage-to-daily
-- `/obsidian-sync` — force deterministic filesystem sync and refresh helper notes
-- `/obsidian-link` — repair or strengthen wikilinks across canonical notes
-- `/obsidian-review` — generate literature synthesis from project notes
-- `/obsidian-notes` — normalize paper notes and connect them to project context
-- `/obsidian-note` — archive / purge / rename a single canonical note
-- `/obsidian-project` — detach / archive / purge / rebuild
-- `/obsidian-views` — explicitly generate optional `.base` views (and optional extra canvases)
+- `/kb-init` — initialize the vault-first project KB
+- `/kb-status` — summarize the bound KB state
+- `/kb-ingest` — route new source material into canonical notes
+- `/kb-log` — update the current Daily note and related project surfaces
+- `/kb-sync` — run deterministic KB maintenance and resync project surfaces
+- `/kb-links` — repair or strengthen wikilinks among canonical notes
+- `/kb-promote` — promote durable content into canonical notes
+- `/kb-index` — rebuild `02-Index.md`
+- `/kb-lint` — run deterministic KB health checks and rewrite `_system/lint-report.md`
+- `/kb-archive` — archive, detach, purge, or rename KB objects
+- `/kb-map` — generate explicit-only artifact outputs beyond the default literature canvas
+- `/kb-literature-review` — synthesize literature from `Sources/Papers` into `Knowledge`, `Writing`, and `Maps/literature.canvas`
 
 ## Minimum bound-repo maintenance
 

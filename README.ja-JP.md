@@ -73,7 +73,7 @@ Claude Scholarは特に以下のような方に適しています:
 - **アイデア創出**: 漠然としたトピックを具体的な研究課題、研究ギャップ、初期計画に変換
 - **文献**: Zoteroコレクションを通じて論文を検索、インポート、整理、読解
 - **論文ノート**: 論文を構造化されたリーディングノートと再利用可能な知見に変換
-- **ナレッジベース**: `Papers / Knowledge / Experiments / Results / Writing`にわたる永続的な知識をObsidianにルーティング。ラウンドレベルの実験レポートは`Results/Reports/`に保存
+- **ナレッジベース**: `Sources / Knowledge / Experiments / Results / Results/Reports / Writing / Daily / Maps`にわたる永続的な知識をObsidianにルーティング
 - **実験**: 仮説、実験ライン、実行履歴、知見、次のアクションを追跡
 - **分析**: `results-analysis`で厳密な統計、科学的図表、分析アーティファクトを生成
 - **レポート**: `results-report`で実験後の完全なレポートを作成し、Obsidianに書き戻し
@@ -274,12 +274,14 @@ Claude Scholarは以下のプラットフォームをサポートしています
 ### Obsidian
 
 ファイルシステムファーストの研究ナレッジベースとしてObsidianを利用できます:
-- `Papers/`
+- `Sources/`
+- `Knowledge/`
 - `Experiments/`
 - `Results/`
 - `Results/Reports/`
 - `Writing/`
 - `Daily/`
+- `Maps/`
 
 詳細は [OBSIDIAN_SETUP.ja-JP.md](./OBSIDIAN_SETUP.ja-JP.md) を参照。
 
@@ -429,24 +431,34 @@ Claude Scholarは以下のプラットフォームをサポートしています
 
 ### Obsidianプロジェクトナレッジベース
 
-Obsidianを単なるノートダンプではなく、プロジェクト知識の永続的なシンクとして使用。
+Obsidianを単なるノート置き場ではなく、project-scoped な durable knowledge surface として使う。
 
 | 種類 | 名前 | 概要 |
 |---|---|---|
-| Skill | `obsidian-project-memory` | プロジェクトレベルのObsidianナレッジベースを維持し、書き戻すべき永続的知識を判断 |
-| Skill | `obsidian-project-bootstrap` | 新規または既存の研究プロジェクト用にObsidianナレッジベースを初期化 |
-| Skill | `obsidian-research-log` | 日々の研究進捗、計画、アイデア、TODOをナレッジベースに記録 |
-| Skill | `obsidian-experiment-log` | 実験セットアップ、実行履歴、結果、フォローアップアクションをObsidianに記録 |
-| Command | `/obsidian-ingest` | 新しいMarkdownファイルやフォルダをナレッジベースの適切な場所に取り込み |
-| Command | `/obsidian-note` | 検索、リネーム、アーカイブ、パージなど単一ノートのライフサイクルを管理 |
-| Command | `/obsidian-views` | `.base`ファイルなどのオプショナルObsidianビューを生成・更新 |
+| Skill | `obsidian-project-kb-core` | プロジェクトスコープのKBに対する初期化、ルーティング、registry、index、daily、lifecycleを統括 |
+| Skill | `obsidian-source-ingestion` | 外部資料を `Sources/Papers`、`Sources/Web`、`Sources/Docs`、`Sources/Data`、`Sources/Interviews`、`Sources/Notes` に取り込む |
+| Skill | `obsidian-literature-workflow` | `Sources/Papers` から `Knowledge`、`Writing`、`Maps/literature.canvas` へ進む文献ワークフローを担当 |
+| Skill | `obsidian-kb-artifacts` | wikilink、registry表、canvas、明示指定の `.base`、リンク修復などの Obsidian ネイティブ成果物を扱う |
+| Command | `/kb-init` | `Research/{project-slug}/` 配下に vault-first KB を初期化 |
+| Command | `/kb-status` | バインド済みプロジェクトKBの現在状態を要約 |
+| Command | `/kb-ingest` | 新しい source material を正しい canonical note にルーティング |
+| Command | `/kb-log` | 当日の `Daily/` と関連サーフェスを保守的に更新 |
+| Command | `/kb-sync` | 決定論的な KB メンテナンスを実行し、registry・index・daily・runtime binding 状態を更新 |
+| Command | `/kb-links` | canonical KB notes 間の wikilink を修復または強化 |
+| Command | `/kb-promote` | Daily や source note の安定した内容を canonical note に昇格 |
+| Command | `/kb-index` | 人間向けナビゲーションページ `02-Index.md` を再生成 |
+| Command | `/kb-lint` | 決定論的なKB健全性チェックを実行し `_system/lint-report.md` を更新 |
+| Command | `/kb-archive` | KBオブジェクトの archive、detach、purge、rename を行い、リンクと registry を整合させる |
+| Command | `/kb-map` | 既定の literature canvas 以外のKB artifactを明示要求時に生成または修復 |
+| Command | `/kb-literature-review` | `Sources/Papers` から文献統合を作り、`Knowledge`、`Writing`、`Maps/literature.canvas` に書き戻す |
 
 **仕組み**
 - 既存リポジトリをObsidian Vaultにバインド
-- `Papers / Knowledge / Experiments / Results / Writing`に安定した知識をルーティング（ラウンドレベル実験レポートは`Results/Reports/`に保存）
-- `Daily/`とプロジェクトメモリを保守的に更新
-- 新しいMarkdownファイルを正しい正規の保存先に取り込み
-- オプションで追加のビューやキャンバスを生成
+- 安定した知識を `Sources / Knowledge / Experiments / Results / Results/Reports / Writing / Daily / Maps` にルーティング
+- `Daily/` と repo-local binding metadata を保守的に更新
+- 新しい source material を正しい canonical note に取り込む
+- 追加の `.base` や canvas は明示要求時のみ生成
+- 決定論的な再同期には `/kb-sync`、単独のリンク修復には `/kb-links` を使う
 
 **ノート言語設定**
 

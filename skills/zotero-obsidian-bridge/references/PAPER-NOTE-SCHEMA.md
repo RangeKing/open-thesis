@@ -27,10 +27,10 @@ methods:
   - contrastive pretraining
 subfield: speech-transfer
 related_papers:
-  - "Papers/Another-Paper"
+  - "Sources/Papers/Another-Paper"
 linked_knowledge:
-  - "Knowledge/Literature-Overview"
-  - "Knowledge/Method-Families"
+  - "Knowledge/Literature Overview"
+  - "Knowledge/Method Taxonomy"
 argument_claims:
   - "Shared geometry exists but is fragile"
 argument_methods:
@@ -38,7 +38,7 @@ argument_methods:
 argument_gaps:
   - "Still needs speech-specific validation"
 paper_relationships:
-  - "Papers/Another-Paper::complements"
+  - "Sources/Papers/Another-Paper::complements"
 updated: 2026-03-16T00:00:00Z
 ---
 ```

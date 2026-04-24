@@ -74,7 +74,7 @@ Claude Scholar 当前尤其适合：
 - **研究构思**：把模糊主题收敛成具体研究问题、研究空白和初步计划。
 - **文献工作流**：通过 Zotero 文献集合检索、导入、组织并阅读论文。
 - **论文笔记**：把论文转成结构化阅读笔记和可复用论点。
-- **知识库沉淀**：将稳定知识写入 Obsidian，并按 `Papers / Knowledge / Experiments / Results / Writing` 路由整理，具体轮次的实验报告存放在 `Results/Reports/` 下。
+- **知识库沉淀**：将稳定知识写入 Obsidian，并按 `Sources / Knowledge / Experiments / Results / Results/Reports / Writing / Daily / Maps` 路由整理。
 - **实验推进**：跟踪假设、实验线、运行历史、关键发现和下一步动作。
 - **严格分析**：使用 `results-analysis` 生成严谨统计、真实科研图和分析产物。
 - **结果报告**：使用 `results-report` 生成完整实验复盘报告，并写回 Obsidian。
@@ -276,11 +276,10 @@ Claude Scholar 目前面向以下 CLI 工作流：
 
 适合这些场景：
 - 维护以文件系统为核心的项目知识库
-- 管理 `Papers/`
+- 管理 `Sources/` 与 `Knowledge/`
 - 管理 `Experiments/`
-- 管理 `Results/`
-- 管理 `Results/Reports/`
-- 管理 `Writing/` 与 `Daily/`
+- 管理 `Results/` 与 `Results/Reports/`
+- 管理 `Writing/`、`Daily/` 与 `Maps/`
 
 详见 [OBSIDIAN_SETUP.zh-CN.md](./OBSIDIAN_SETUP.zh-CN.md)。
 
@@ -430,24 +429,34 @@ Claude Scholar 目前面向以下 CLI 工作流：
 
 ### Obsidian 项目知识库
 
-把 Obsidian 当作稳定科研知识的沉淀中心，而不是随手堆放笔记的地方。
+把 Obsidian 当作项目作用域的稳定知识层，而不是随手堆放笔记的地方。
 
 | 类型 | 名字 | 一句话解释 |
 |---|---|---|
-| Skill | `obsidian-project-memory` | 维护项目级 Obsidian 知识库，并决定哪些稳定知识需要写回。 |
-| Skill | `obsidian-project-bootstrap` | 为新项目或已有科研项目初始化对应的 Obsidian 知识库结构。 |
-| Skill | `obsidian-research-log` | 将每日研究进展、计划、想法和 TODO 写入知识库。 |
-| Skill | `obsidian-experiment-log` | 在 Obsidian 中记录实验设置、运行过程、结果和后续动作。 |
-| Command | `/obsidian-ingest` | 把新的 Markdown 文件或目录整理并纳入正确的知识库位置。 |
-| Command | `/obsidian-note` | 对单个 note 执行查找、重命名、归档或删除等生命周期操作。 |
-| Command | `/obsidian-views` | 生成或刷新可选的 Obsidian 视图文件，例如 `.base`。 |
+| Skill | `obsidian-project-kb-core` | 负责项目级 KB 的初始化、路由、registry、index、daily 和 lifecycle。 |
+| Skill | `obsidian-source-ingestion` | 把外部材料写入 `Sources/Papers`、`Sources/Web`、`Sources/Docs`、`Sources/Data`、`Sources/Interviews` 或 `Sources/Notes`。 |
+| Skill | `obsidian-literature-workflow` | 管理从 `Sources/Papers` 到 `Knowledge`、`Writing`、`Maps/literature.canvas` 的文献工作流。 |
+| Skill | `obsidian-kb-artifacts` | 处理 wikilink、registry 表格、canvas、可选 `.base` 和 link repair 等 Obsidian 原生产物。 |
+| Command | `/kb-init` | 在 `Research/{project-slug}/` 下初始化 vault-first KB。 |
+| Command | `/kb-status` | 汇总当前已绑定项目 KB 的状态。 |
+| Command | `/kb-ingest` | 将新的 source material 路由到正确的 canonical 位置。 |
+| Command | `/kb-log` | 保守更新当天 `Daily/` 和相关项目表面。 |
+| Command | `/kb-sync` | 运行确定性的 KB 维护，刷新 registry、index、daily 和运行时绑定状态。 |
+| Command | `/kb-links` | 修复或增强 canonical KB notes 之间的 wikilink。 |
+| Command | `/kb-promote` | 将 Daily 或 source note 中稳定的内容提升为 canonical note。 |
+| Command | `/kb-index` | 重建 `02-Index.md` 这个人类导航页。 |
+| Command | `/kb-lint` | 运行确定性的 KB 健康检查并更新 `_system/lint-report.md`。 |
+| Command | `/kb-archive` | 归档、detach、purge 或重命名 KB 对象，并保持链接与 registry 一致。 |
+| Command | `/kb-map` | 在默认 literature canvas 之外，按需生成或修复显式请求的 KB artifact。 |
+| Command | `/kb-literature-review` | 从 `Sources/Papers` 生成文献综合，并写入 `Knowledge`、`Writing` 和 `Maps/literature.canvas`。 |
 
 **工作方式**
 - 将已有 repo 绑定到 Obsidian vault
-- 把稳定知识路由进 `Papers / Knowledge / Experiments / Results / Writing`，具体轮次的实验报告存放在 `Results/Reports/` 下
-- 以保守方式维护 `Daily/` 和项目记忆
-- 把新的 Markdown 文件分类并合并进正确的规范笔记
-- 按需生成额外视图和 canvas
+- 把稳定知识路由进 `Sources / Knowledge / Experiments / Results / Results/Reports / Writing / Daily / Maps`
+- 以保守方式维护 `Daily/` 和 repo-local binding metadata
+- 把新的 source material 路由进正确的 canonical note
+- 只有在显式请求时才生成额外的 `.base` 或 canvas
+- 用 `/kb-sync` 做确定性重同步，用 `/kb-links` 做独立的 link repair
 
 **笔记语言配置**
 

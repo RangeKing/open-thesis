@@ -75,7 +75,7 @@ It can still help in other research settings, but its current workflow design is
 - **Ideation**: turn a vague topic into concrete questions, research gaps, and an initial plan.
 - **Literature**: search, import, organize, and read papers through Zotero collections.
 - **Paper notes**: convert papers into structured reading notes and reusable claims.
-- **Knowledge base**: route durable knowledge into Obsidian across `Papers / Knowledge / Experiments / Results / Writing`, with round-level experiment reports stored under `Results/Reports/`.
+- **Knowledge base**: route durable knowledge into Obsidian across `Sources / Knowledge / Experiments / Results / Results/Reports / Writing / Daily / Maps`.
 - **Experiments**: track hypotheses, experiment lines, run history, findings, and next actions.
 - **Analysis**: generate strict statistics, real scientific figures, and analysis artifacts with `results-analysis`.
 - **Reporting**: produce a complete post-experiment report with `results-report`, then write it back into Obsidian.
@@ -276,12 +276,14 @@ See [MCP_SETUP.md](./MCP_SETUP.md).
 ### Obsidian
 
 Use Obsidian when you want Claude Scholar to maintain a filesystem-first research knowledge base:
-- `Papers/`
+- `Sources/`
+- `Knowledge/`
 - `Experiments/`
 - `Results/`
 - `Results/Reports/`
 - `Writing/`
 - `Daily/`
+- `Maps/`
 
 See [OBSIDIAN_SETUP.md](./OBSIDIAN_SETUP.md).
 
@@ -431,24 +433,34 @@ These workflows run in the background to strengthen the primary workflows.
 
 ### Obsidian Project Knowledge Base
 
-Use Obsidian as the durable sink for project knowledge, not just as a note dump.
+Use Obsidian as the project-scoped durable knowledge surface, not just as a note dump.
 
 | Type | Name | One-line explanation |
 |---|---|---|
-| Skill | `obsidian-project-memory` | Maintain the project-level Obsidian knowledge base and decide what durable knowledge should be written back. |
-| Skill | `obsidian-project-bootstrap` | Initialize an Obsidian knowledge base for a new or existing research project. |
-| Skill | `obsidian-research-log` | Record daily research progress, plans, ideas, and TODOs into the knowledge base. |
-| Skill | `obsidian-experiment-log` | Capture experiment setup, run history, outcomes, and follow-up actions in Obsidian. |
-| Command | `/obsidian-ingest` | Ingest a new Markdown file or folder into the correct place in the knowledge base. |
-| Command | `/obsidian-note` | Manage a single note lifecycle such as lookup, rename, archive, or purge. |
-| Command | `/obsidian-views` | Generate or refresh optional Obsidian views such as `.base` files. |
+| Skill | `obsidian-project-kb-core` | Main authority for project-scoped KB bootstrap, routing, registry, index, daily, and lifecycle updates. |
+| Skill | `obsidian-source-ingestion` | Ingest external material into `Sources/Papers`, `Sources/Web`, `Sources/Docs`, `Sources/Data`, `Sources/Interviews`, or `Sources/Notes`. |
+| Skill | `obsidian-literature-workflow` | Run the paper-note to synthesis workflow from `Sources/Papers` into `Knowledge`, `Writing`, and `Maps/literature.canvas`. |
+| Skill | `obsidian-kb-artifacts` | Handle Obsidian-native artifacts such as wikilinks, registry tables, canvas files, optional Bases, and link repair. |
+| Command | `/kb-init` | Initialize the vault-first KB under `Research/{project-slug}/`. |
+| Command | `/kb-status` | Summarize the current KB state from the bound project root. |
+| Command | `/kb-ingest` | Route new source material into the correct canonical KB destination. |
+| Command | `/kb-log` | Update the current Daily note and related project surfaces conservatively. |
+| Command | `/kb-sync` | Run deterministic KB maintenance to refresh registry, index, daily, and runtime binding state. |
+| Command | `/kb-links` | Repair or strengthen wikilinks among canonical KB notes. |
+| Command | `/kb-promote` | Promote durable content from Daily or source notes into canonical notes. |
+| Command | `/kb-index` | Regenerate `02-Index.md` as the human-readable project navigator. |
+| Command | `/kb-lint` | Run deterministic KB health checks and update `_system/lint-report.md`. |
+| Command | `/kb-archive` | Archive, detach, purge, or rename KB objects while keeping links and registry consistent. |
+| Command | `/kb-map` | Generate or repair explicit-only KB artifacts beyond the default literature canvas. |
+| Command | `/kb-literature-review` | Generate literature synthesis from `Sources/Papers` into `Knowledge`, `Writing`, and `Maps/literature.canvas`. |
 
 **How it works**
 - bind an existing repo to an Obsidian vault,
-- route stable knowledge into `Papers / Knowledge / Experiments / Results / Writing`, with round-level experiment reports stored under `Results/Reports/`,
-- keep `Daily/` and project memory updated conservatively,
-- ingest new Markdown files into the correct canonical destination,
-- optionally generate extra views and canvases.
+- route stable knowledge into `Sources / Knowledge / Experiments / Results / Results/Reports / Writing / Daily / Maps`,
+- keep `Daily/` and repo-local binding metadata updated conservatively,
+- ingest new source material into the correct canonical destination,
+- only generate extra Bases or canvases on explicit request.
+- use `/kb-sync` for deterministic resyncs and `/kb-links` for standalone link repair.
 
 **Note language configuration**
 

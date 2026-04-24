@@ -152,7 +152,7 @@ If the repo is **not** bound:
 - keep the same filename contract,
 - explicitly say that no Obsidian write-back was attempted.
 
-Use `obsidian-project-memory` conventions only for bound repos. Internal experiment reports belong in `Results/Reports/`, not `Writing/`.
+Use `obsidian-project-kb-core` conventions only for bound repos. Internal experiment reports belong in `Results/Reports/`, not `Writing/`.
 
 ### 6. End with explicit next actions
 

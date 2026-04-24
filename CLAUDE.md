@@ -75,7 +75,7 @@ Use the matching local skill or workflow when the task clearly fits:
 - Post-experiment reporting or retrospective summaries -> `results-report`
 - Paper drafting or academic writing -> `ml-paper-writing`
 - Reviewer response or rebuttal writing -> `review-response`
-- Bound research repo knowledge maintenance -> `obsidian-project-memory`
+- Bound research repo knowledge maintenance -> `obsidian-project-kb-core`
 
 For coding, debugging, architecture, review, and verification tasks, prefer the matching development skill instead of improvising.
 
@@ -83,7 +83,7 @@ For coding, debugging, architecture, review, and verification tasks, prefer the 
 
 ## Bound Repo / Obsidian Rule
 
-If the current repository is bound to an Obsidian project knowledge base, treat `obsidian-project-memory` as the default durable knowledge path.
+If the current repository is bound to an Obsidian project knowledge base, treat `obsidian-project-kb-core` as the default durable knowledge path.
 
 - Prefer updating existing canonical notes.
 - Keep write-back lightweight by default.

@@ -185,8 +185,8 @@ const binding = common.getProjectMemoryBinding(cwd);
 const isResearchPrompt = common.promptLooksResearchRelated(userPrompt);
 
 if (binding.bound && isResearchPrompt) {
-  if (SKILL_LIST.includes('obsidian-project-memory')) {
-    suggestedSkills.push('obsidian-project-memory');
+  if (SKILL_LIST.includes('obsidian-project-kb-core')) {
+    suggestedSkills.push('obsidian-project-kb-core');
   }
   if (/\b(zotero|collection|doi|arxiv|citation)\b|zotero|文献|参考文献|collection/i.test(userPrompt) &&
       SKILL_LIST.includes('zotero-obsidian-bridge')) {
@@ -212,7 +212,7 @@ const suggestedHint = dedupedSuggestedSkills.length > 0
   : '';
 
 const boundRepoHint = binding.bound && isResearchPrompt
-  ? `\n**Bound Obsidian repo detected**: ${binding.projectId || 'unknown-project'}\nUse lightweight curator behavior by default: keep \`Daily/YYYY-MM-DD.md\` and \`.claude/project-memory/<project_id>.md\` in sync when this turn changes research state, and touch \`00-Hub.md\` only when top-level project status really changes. Prefer \`obsidian-project-memory\` and related Obsidian skills when the task spans plans, papers, experiments, results, or writing.\n`
+  ? `\n**Bound Obsidian repo detected**: ${binding.projectId || 'unknown-project'}\nUse lightweight curator behavior by default: keep \`Daily/YYYY-MM-DD.md\` and \`.claude/project-memory/<project_id>.md\` in sync when this turn changes research state, and touch \`00-Hub.md\` only when top-level project status really changes. Prefer \`obsidian-project-kb-core\` by default, and add \`obsidian-source-ingestion\`, \`obsidian-literature-workflow\`, or \`obsidian-kb-artifacts\` only when the task clearly needs them.\n`
   : '';
 
 // Generate output
