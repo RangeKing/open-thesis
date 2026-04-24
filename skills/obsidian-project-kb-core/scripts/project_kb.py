@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import shutil
 import sys
 from pathlib import Path
@@ -313,6 +314,9 @@ def rewrite_project_references(project_root: Path, old_rel: str, new_rel: str | 
     for path in sorted(project_root.rglob('*')):
         if path.is_dir():
             continue
+        rel = str(path.relative_to(project_root)).replace(os.sep, '/')
+        if rel == '02-Index.md' or rel.startswith('_system/'):
+            continue
         if path.suffix == '.md':
             before = common.read_text(path)
             after = replace_links_in_text(before, old_rel, new_rel)
@@ -347,7 +351,7 @@ def note_lifecycle(binding: common.Binding, mode: str, note: str, dest: str = ''
         target_rel = str(target.relative_to(binding.project_root)).replace(os.sep, '/')
         rewritten = rewrite_project_references(binding.project_root, source_rel, target_rel)
         common.registry_add_or_update(binding.project_root, target_rel)
-        common.registry_remove_path(binding.project_root, source_rel, reason='renamed')
+        common.registry_remove_path(binding.project_root, source_rel, reason='renamed', record_archive=False)
         sync_registry(binding.project_root)
         common.update_index(binding.project_root)
         source_label = Path(source_rel).stem.replace('-', ' ')
@@ -381,6 +385,22 @@ def project_status(binding: common.Binding) -> dict[str, Any]:
     rows = common.parse_registry_md(common.registry_path(binding.project_root))
     daily_path = binding.project_root / 'Daily' / f'{common.today_str()}.md'
     lint_path = binding.project_root / '_system' / 'lint-report.md'
+    archived_refs = {row.get('Archived Path', '')[2:-2] for row in rows.get('Archive', []) if row.get('Archived Path', '').startswith('[[')}
+    active_notes_referencing_archived_notes = 0
+    experiments_with_only_archived_results = 0
+    for path in sorted(binding.project_root.rglob('*.md')):
+        rel = str(path.relative_to(binding.project_root)).replace(os.sep, '/')
+        if rel.startswith('Archive/') or rel.startswith('_system/'):
+            continue
+        refs = {match.strip() for match in re.findall(r'\[\[([^\]|#]+)', path.read_text(encoding='utf-8'))}
+        archived_hits = refs & archived_refs
+        if archived_hits:
+            active_notes_referencing_archived_notes += len(archived_hits)
+        if rel.startswith('Experiments/'):
+            has_active_result = bool(re.search(r'\[\[(Results/[^\]|#]+)', path.read_text(encoding='utf-8')))
+            has_archived_result = bool(re.search(r'\[\[(Archive/Results/[^\]|#]+)', path.read_text(encoding='utf-8')))
+            if has_archived_result and not has_active_result:
+                experiments_with_only_archived_results += 1
     return {
         'project_id': binding.project_id,
         'project_root': str(binding.project_root),
@@ -393,6 +413,8 @@ def project_status(binding: common.Binding) -> dict[str, Any]:
         'writing': len(rows.get('Writing', [])),
         'maps': len(rows.get('Maps', [])),
         'archive': len(rows.get('Archive', [])),
+        'experiments_with_only_archived_results': experiments_with_only_archived_results,
+        'active_notes_referencing_archived_notes': active_notes_referencing_archived_notes,
         'daily_note': str(daily_path) if daily_path.exists() else '',
         'lint_report': str(lint_path) if lint_path.exists() else '',
     }

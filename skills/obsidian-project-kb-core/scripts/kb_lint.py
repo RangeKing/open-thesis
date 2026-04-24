@@ -19,6 +19,7 @@ WIKILINK_RE = re.compile(r'\[\[([^\]|#]+)')
 SOURCE_LINK_RE = re.compile(r'\[\[(Sources/[^\]|#]+)')
 EXPERIMENT_LINK_RE = re.compile(r'\[\[(Experiments/[^\]|#]+)')
 RESULT_LINK_RE = re.compile(r'\[\[(Results/[^\]|#]+)')
+ARCHIVED_RESULT_LINK_RE = re.compile(r'\[\[(Archive/Results/[^\]|#]+)')
 
 
 def parse_args() -> argparse.Namespace:
@@ -65,6 +66,7 @@ def main() -> None:
                 knowledge_without_sources.append(note_ref)
 
     experiments_without_results: list[str] = []
+    experiments_with_only_archived_results: list[str] = []
     for row in rows.get('Experiments', []):
         target = row.get('Path', '')
         if not target.startswith('[['):
@@ -73,8 +75,12 @@ def main() -> None:
         note_path = binding.project_root / f'{note_ref}.md'
         if note_path.exists():
             text = note_path.read_text(encoding='utf-8')
-            if not RESULT_LINK_RE.search(text):
+            has_active_result = bool(RESULT_LINK_RE.search(text))
+            has_archived_result = bool(ARCHIVED_RESULT_LINK_RE.search(text))
+            if not has_active_result and not has_archived_result:
                 experiments_without_results.append(note_ref)
+            elif has_archived_result and not has_active_result:
+                experiments_with_only_archived_results.append(note_ref)
 
     result_refs = {row.get('Path', '')[2:-2] for row in rows.get('Results', []) if row.get('Path', '').startswith('[[')}
     results_without_experiments: list[str] = []
@@ -86,13 +92,18 @@ def main() -> None:
                 results_without_experiments.append(note_ref)
 
     archived_refs = {row.get('Archived Path', '')[2:-2] for row in rows.get('Archive', []) if row.get('Archived Path', '').startswith('[[')}
-    archived_active_refs: list[str] = []
-    active_md_files = [p for p in binding.project_root.rglob('*.md') if 'Archive/' not in str(p.relative_to(binding.project_root)).replace(os.sep, '/')]
+    active_notes_referencing_archived_notes: list[str] = []
+    active_md_files = []
+    for p in binding.project_root.rglob('*.md'):
+        rel = str(p.relative_to(binding.project_root)).replace(os.sep, '/')
+        if rel.startswith('Archive/') or rel.startswith('_system/'):
+            continue
+        active_md_files.append(p)
     for path in active_md_files:
         refs = note_refs_in_file(path)
         shared = sorted(ref for ref in refs if ref in archived_refs)
         for ref in shared:
-            archived_active_refs.append(f'{path.relative_to(binding.project_root).as_posix()} -> {ref}')
+            active_notes_referencing_archived_notes.append(f'{path.relative_to(binding.project_root).as_posix()} -> {ref}')
 
     daily_candidates: list[str] = []
     for daily_path in sorted((binding.project_root / 'Daily').glob('*.md')):
@@ -108,9 +119,10 @@ def main() -> None:
         ('Canvas issues', 'pass' if canvas_check['issue_count'] == 0 else 'warn', canvas_check['issue_count']),
         ('Knowledge without sources', 'pass' if not knowledge_without_sources else 'warn', len(knowledge_without_sources)),
         ('Experiments without results', 'pass' if not experiments_without_results else 'warn', len(experiments_without_results)),
+        ('Experiments with only archived results', 'pass' if not experiments_with_only_archived_results else 'warn', len(experiments_with_only_archived_results)),
         ('Results without experiments', 'pass' if not results_without_experiments else 'warn', len(results_without_experiments)),
         ('Daily promotion candidates', 'pass' if not daily_candidates else 'warn', len(daily_candidates)),
-        ('Archived notes still referenced', 'pass' if not archived_active_refs else 'warn', len(archived_active_refs)),
+        ('Active notes referencing archived notes', 'pass' if not active_notes_referencing_archived_notes else 'warn', len(active_notes_referencing_archived_notes)),
     ]
 
     lines = ['# Lint Report', '', f'Last checked: {common.now_iso()}', '', '## Summary', '', '| Check | Status | Count |', '|---|---|---|']
@@ -132,9 +144,10 @@ def main() -> None:
     add_issue_block('Canvas Issues', [f"{item['file']} -> {item['issue']}" for item in canvas_check['canvas_issues']])
     add_issue_block('Knowledge Notes Without Sources', knowledge_without_sources)
     add_issue_block('Experiments Without Results', experiments_without_results)
+    add_issue_block('Experiments With Only Archived Results', experiments_with_only_archived_results)
     add_issue_block('Results Without Experiments', results_without_experiments)
     add_issue_block('Daily Promotion Candidates', daily_candidates)
-    add_issue_block('Archived Notes Still Referenced', archived_active_refs)
+    add_issue_block('Active Notes Referencing Archived Notes', active_notes_referencing_archived_notes)
 
     lines.extend(['## Recommended Fixes', ''])
     fixes: list[str] = []
@@ -144,6 +157,8 @@ def main() -> None:
         fixes.append('Repair or remove broken wikilinks before the next sync.')
     if index_check['missing_count']:
         fixes.append('Update 02-Index.md so active canonical notes remain navigable.')
+    if experiments_with_only_archived_results:
+        fixes.append('Decide whether archived result links should stay historical or be promoted back into active Results.')
     if daily_candidates:
         fixes.append('Promote durable content from Daily into Knowledge, Experiments, Results, or Writing.')
     if not fixes:
@@ -163,9 +178,10 @@ def main() -> None:
         'missing_index_entries': index_check['missing_count'],
         'knowledge_without_sources': len(knowledge_without_sources),
         'experiments_without_results': len(experiments_without_results),
+        'experiments_with_only_archived_results': len(experiments_with_only_archived_results),
         'results_without_experiments': len(results_without_experiments),
         'daily_promotion_candidates': len(daily_candidates),
-        'archived_notes_still_referenced': len(archived_active_refs),
+        'active_notes_referencing_archived_notes': len(active_notes_referencing_archived_notes),
     }
     print(json.dumps(payload, ensure_ascii=False, indent=2))
 

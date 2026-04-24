@@ -452,7 +452,13 @@ def parse_registry_md(path: Path) -> dict[str, list[dict[str, str]]]:
                 columns = header
             continue
         row = parse_table_row(line, columns)
-        if row and row.get(columns[0], '') and '---' not in ''.join(row.values()):
+        if not row or '---' in ''.join(row.values()):
+            continue
+        if current_section == 'Archive':
+            if row.get('Old Path', '') or row.get('Archived Path', ''):
+                rows[current_section].append(row)
+            continue
+        if row.get(columns[0], ''):
             rows[current_section].append(row)
     return rows
 
@@ -601,21 +607,29 @@ def registry_archive(project_root: Path, old_rel: str, archived_rel: str, reason
     return {'updated': True, 'section': removed_section or 'Archive'}
 
 
-def registry_remove_path(project_root: Path, rel_path: str, reason: str = 'purge') -> None:
+def registry_remove_path(project_root: Path, rel_path: str, reason: str = 'purge', *, record_archive: bool = True) -> None:
     rows = parse_registry_md(registry_path(project_root))
     target = wikilink(rel_path)
+    removed_row = None
     for section in SECTION_ORDER:
         if section == 'Archive':
             continue
-        rows[section] = [row for row in rows[section] if row.get('Path') != target]
-    rows['Archive'].append({
-        'ID': '',
-        'Title': Path(rel_path).stem.title(),
-        'Old Path': wikilink(rel_path),
-        'Archived Path': '',
-        'Reason': reason,
-        'Archived At': now_iso(),
-    })
+        keep_rows = []
+        for row in rows[section]:
+            if row.get('Path') == target:
+                removed_row = row
+                continue
+            keep_rows.append(row)
+        rows[section] = keep_rows
+    if record_archive:
+        rows['Archive'].append({
+            'ID': removed_row.get('ID', '') if removed_row else '',
+            'Title': removed_row.get('Title', Path(rel_path).stem.title()) if removed_row else Path(rel_path).stem.title(),
+            'Old Path': wikilink(rel_path),
+            'Archived Path': '',
+            'Reason': reason,
+            'Archived At': now_iso(),
+        })
     write_registry(project_root, rows)
 
 

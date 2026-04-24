@@ -54,6 +54,8 @@ def main() -> None:
 
     for path in sorted(binding.project_root.rglob('*.md')):
         rel = str(path.relative_to(binding.project_root)).replace(os.sep, '/')
+        if rel.startswith('_system/'):
+            continue
         text = path.read_text(encoding='utf-8')
         for raw in WIKILINK_RE.findall(text):
             target = normalize_target(raw)
