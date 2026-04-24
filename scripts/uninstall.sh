@@ -7,7 +7,7 @@ STATE_FILE="$CLAUDE_DIR/.claude-scholar-install-state"
 BACKUP_ROOT="$CLAUDE_DIR/.claude-scholar-backups"
 UNINSTALL_STAMP="$(date +%Y%m%d-%H%M%S)"
 UNINSTALL_BACKUP_DIR="$BACKUP_ROOT/uninstall-$UNINSTALL_STAMP"
-COMPONENT_DIRS=(skills commands agents rules hooks scripts)
+COMPONENT_DIRS=(skills commands agents rules hooks scripts templates)
 LEGACY_MANAGED_PATHS=(
   "skills/planning-with-files/SKILL.md"
   "skills/planning-with-files/examples.md"

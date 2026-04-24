@@ -4,7 +4,7 @@ set -euo pipefail
 CLAUDE_DIR="$HOME/.claude"
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 SRC_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
-COMPONENTS=(skills commands agents rules hooks scripts)
+COMPONENTS=(skills commands agents rules hooks scripts templates)
 CLAUDE_MD_SIDECAR="CLAUDE.scholar.md"
 CLAUDE_ZH_MD_SIDECAR="CLAUDE.zh-CN.scholar.md"
 BACKUP_ROOT="$CLAUDE_DIR/.claude-scholar-backups"
