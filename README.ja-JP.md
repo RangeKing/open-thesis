@@ -21,9 +21,31 @@
 
 ## 最新ニュース
 
+- **2026-04-24**: **Vault-first Obsidian KB lifecycle を安定化** — Obsidian の project knowledge workflow を `Research/{project-slug}/`、`Sources/*`、`Results/Reports`、`02-Index.md`、`_system/registry.md` を中心に再構成しました。Claude Code の project binding は `.claude/project-memory/*` の runtime layer として残し、curated index block を保護し、旧入口の compatibility stub を戻し、`Maps/literature.canvas` 向け Canvas ルールも補強しました。
+- **2026-04-24**: **Project-scoped Obsidian KB workflow を統合** — 重複していた旧 Obsidian memory skills を `obsidian-project-kb-core`、`obsidian-source-ingestion`、`obsidian-literature-workflow`、`obsidian-kb-artifacts` に統合し、paper source を `Sources/Papers/` 配下へ移し、`02-Index.md` を registry mirror ではなく人間向け navigation page として位置づけました。
 - **2026-04-22**: **軽量なコア指示、既定 agent の整理、安全なインストール管理、汎用的な論文発見フロー** — 常時読み込まれる大きな `CLAUDE.md` / `AGENTS.md` をコンパクトなコア指示に置き換え、既定 agent 集合を主経路に必要なものへ整理し、install state に基づく安全なアンインストールを追加し、`daily-paper-generator` を汎用 topic 向けの arXiv / bioRxiv 検索と Top 10 -> Top 3 -> Top 1 の固定選定フローへ拡張し、利用頻度の低い `planning-with-files` skill を削除しました。
-- **2026-04-15**: **pubfig と pubtab という 2 つの Python package を導入** — [`pubfig`](https://github.com/Galaxy-Dawn/pubfig) を論文品質の科学図向け Python package、[`pubtab`](https://github.com/Galaxy-Dawn/pubtab) を出版品質の比較表と Excel↔LaTeX 作業向け Python package として位置づけ、論文図、比較表、書き出し制御、最終確認までの作業経路をより明確にしました。
-- **2026-04-15**: **publication-chart-skill を Claude Scholar に統合** — [`pubfig`](https://github.com/Galaxy-Dawn/pubfig) + [`pubtab`](https://github.com/Galaxy-Dawn/pubtab) を `publication-chart-skill` としてまとめてリポジトリに追加し、Claude Scholar の分析・執筆スタックの接続点として位置づけました。これにより、論文品質の図表作業を汎用分析や文章作成用 skill に混ぜず、明示的な受け渡しで扱えるようになりました。
+- **2026-04-15**: **pubfig と pubtab という 2 つの Python package を導入** — [`pubfig`](https://github.com/Galaxy-Dawn/pubfig) を論文品質の scientific figures 向け Python package、[`pubtab`](https://github.com/Galaxy-Dawn/pubtab) を publication-ready な tables と Excel↔LaTeX workflows 向け Python package として打ち出し、論文図、benchmark 表、書き出し制御、最終 QA までの生産経路をより明確にしました。
+- **2026-04-15**: **publication-chart-skill を Claude Scholar に統合** — [`pubfig`](https://github.com/Galaxy-Dawn/pubfig) + [`pubtab`](https://github.com/Galaxy-Dawn/pubtab) を `publication-chart-skill` としてまとめてリポジトリに追加し、Claude Scholar の分析/執筆スタックの boundary に接続しました。これにより、論文品質の図表作業を汎用分析や prose skill に混ぜず、明示的な handoff で扱えるようになりました。
+
+<details>
+<summary>過去の更新履歴を表示</summary>
+
+- **2026-03-31**: **Zotero smart-importワークフロー文書を整合** — 最新の`zotero-mcp`公開インターフェースに合わせて、Claude Scholarの研究向けドキュメントを更新しました。`zotero_add_items_by_identifier`を標準の論文インポート経路として明示し、`zotero_reconcile_collection_duplicates`を標準的なインポート後クリーンアップ手順に位置づけ、source-awareなPDF cascadeの挙動もより正確に説明し直しました。公開機能と内部診断機能の境界も整理しています。
+- **2026-03-31**: **READMEの導入案内を刷新** — Claude Scholarが特にコンピュータサイエンスおよびAI研究者に適していることを明確にし、インストール後すぐ使える実践的な導入シナリオを追加しました。前提条件やブランチ案内も整理し、「既存のローカルmdファイルは手動でマージする必要がある」点をより明確にしました。
+- **2026-03-31**: **インストーラーとhooksの挙動を整理** — インストーラーは既存のローカル`AGENTS.md`を保持しつつ、リポジトリ版を`AGENTS.scholar.md`として追加するようになりました。あわせて、デフォルトhooksの要約出力も整理し、temp filesやuncommitted filesのノイズを抑えつつ、より安全な書き込みガードは維持しています。
+- **2026-03-31**: **日本語ドキュメントを追加** — メインREADMEに加え、`AGENTS`、`MCP_SETUP`、`OBSIDIAN_SETUP`の日本語版も追加し、OpenCodeブランチ全体の多言語ドキュメント導線をより充実させました。
+
+- **2026-02-25**: **Codex CLI** サポート — `codex` 分岐を追加し、[OpenAI Codex CLI](https://github.com/openai/codex) をサポート。config.toml、40 個の skills、14 個の agents、sandbox 安全機構を含む
+- **2026-02-23**: `setup.sh` インストーラー追加 — 既存 `~/.opencode` 向けのバックアップ付き増分更新、`opencode.jsonc` の自動バックアップ、`agent/mcp/permission/plugin` の追加入力マージに対応
+- **2026-02-21**: **OpenCode** サポート — Claude Scholar は [OpenCode](https://github.com/opencode-ai/opencode) を代替 CLI としてサポート。互換設定は `opencode` 分岐で提供
+- **2026-02-20**: バイリンガル文書 — 英文と中文の入口文書を整備し、異なる読者層が読みやすいよう改善
+- **2026-02-15**: Zotero MCP 統合 — `/zotero-review` と `/zotero-notes` を追加し、`research-ideation` skill に Zotero ガイドを追加、`literature-reviewer` agent を Zotero MCP 対応へ強化
+- **2026-02-14**: Hooks 最適化 — `security-guard` を二層化し、`skill-forced-eval` を 6 分類 + 静音スキャンへ変更、`session-start` を上位 5 件表示に制限、`session-summary` に 30 日ログ自動清理を追加、`stop-summary` で追加/変更/削除を分離表示
+- **2026-02-11**: 大型アップデート — 10 個の skills、7 個の agents、8 個の研究ワークフロー command、2 個の新ルールを追加し、主設定文書を再構成
+- **2026-01-26**: すべての Hooks をクロスプラットフォーム Node.js 版へ書き換え、README を全面更新、ML 論文執筆知識ベースを拡張
+- **2026-01-25**: プロジェクト正式公開、v1.0.0 リリース
+
+</details>
 
 ## クイックナビゲーション
 
