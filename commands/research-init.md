@@ -1,6 +1,6 @@
 ---
 name: research-init
-description: Initialize a research project with Zotero-integrated literature review. Creates Zotero collections, searches and imports papers, analyzes content, and generates literature review and research proposal.
+description: Initialize a research project with Zotero-integrated literature review. Creates Zotero collections, searches and imports papers, analyzes content, and generates research question cards, literature review, and research proposal.
 args:
   - name: topic
     description: Research topic or keywords
@@ -10,7 +10,7 @@ args:
     required: false
     default: focused
   - name: output_type
-    description: Output type (review/proposal/both)
+    description: Output type (review/proposal/both). All modes produce research-question-card.md and references.bib; review adds literature-review.md; proposal adds research-proposal.md.
     required: false
     default: both
 tags: [Research, Literature Review, Zotero, Paper Search]
@@ -157,15 +157,43 @@ When in doubt between a full-paper source and an abstract-only page for the same
    - Unexplored application domains
    - Contradictions in research findings
 2. Identify 2-3 concrete research gaps
-3. Formulate potential research questions
+3. Formulate 2-3 potential research questions as Research Question Cards:
+
+   ```md
+   ## Research Question Card
+
+   Question:
+   Type: exploratory | confirmatory | applied
+   Hypothesis:
+   Why it matters:
+   Current evidence:
+   Missing evidence:
+   What would support it:
+   What would falsify it:
+   Minimal next action:
+   Decision: explore | read more | run experiment | stop
+   ```
+
+4. Select one card as the default direction for `research-proposal.md`. If none is ready for a proposal, state that the next action is `read more` or `explore` instead of forcing a proposal narrative.
 
 ### Step 5: Generate Outputs
 
 Generate corresponding files based on output_type "$output_type":
 
-1. **literature-review.md** - Structured literature review with real citations from Zotero
-2. **research-proposal.md** - Research proposal (generated when output_type is "proposal" or "both")
-3. **references.bib** - BibTeX references from Zotero data
+Output matrix:
+
+| output_type | Always generated | Additional generated files |
+|---|---|---|
+| `review` | `research-question-card.md`, `references.bib` | `literature-review.md` |
+| `proposal` | `research-question-card.md`, `references.bib` | `research-proposal.md` if a selected card is ready |
+| `both` | `research-question-card.md`, `references.bib` | `literature-review.md`; `research-proposal.md` if a selected card is ready |
+
+File contracts:
+
+1. **research-question-card.md** - 2-3 candidate Research Question Cards plus the selected default card and minimal next action
+2. **literature-review.md** - Structured literature review with real citations from Zotero (generated for `review` and `both`)
+3. **research-proposal.md** - Research proposal derived from the selected Research Question Card (generated for `proposal` and `both` only when the selected card is ready)
+4. **references.bib** - BibTeX references from Zotero data
    - **Primary method**: Use Zotero REST API with `?format=bibtex` to export accurate, complete BibTeX entries
      ```
      GET https://api.zotero.org/users/{user_id}/collections/{collection_key}/items?format=bibtex
@@ -174,6 +202,13 @@ Generate corresponding files based on output_type "$output_type":
    - **Fallback**: Construct BibTeX manually from `zotero_get_item_metadata` metadata (note: volume, issue, pages, and publisher fields are not available via this tool — entries will be incomplete)
 
 Use TodoWrite to track progress throughout the workflow.
+
+At the end, summarize:
+- selected question,
+- current evidence,
+- missing evidence,
+- minimal next action,
+- whether the next decision is `explore`, `read more`, `run experiment`, or `stop`.
 
 ## Error Handling
 
@@ -196,7 +231,8 @@ Before finishing, verify:
 - [ ] PDFs attached for available open-access papers
 - [ ] Full-text analysis completed for core papers
 - [ ] Gap analysis identifies at least 2-3 concrete research gaps
-- [ ] Output files generated: `literature-review.md`, `references.bib`, and optionally `research-proposal.md`
+- [ ] Research Question Cards generated with support criteria, falsification criteria, and minimal next action
+- [ ] Output files generated according to the output matrix for `review`, `proposal`, or `both`
 - [ ] All citations in review correspond to actual Zotero library entries
 
 ## Output Files
@@ -205,6 +241,7 @@ The command generates the following files:
 
 ```
 {project_dir}/
+├── research-question-card.md # Candidate questions, hypotheses, evidence needs, and selected next action
 ├── literature-review.md      # Structured literature review (with Zotero citations)
 ├── research-proposal.md      # Research proposal (if requested)
 └── references.bib            # BibTeX references

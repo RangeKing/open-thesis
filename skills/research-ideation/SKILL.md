@@ -6,7 +6,7 @@ version: 0.1.0
 
 # Research Ideation
 
-Supports the complete workflow for the research project initiation phase, from literature review to research question definition, method selection, and research planning.
+Supports the complete workflow for the research project initiation phase, from vague idea to a traceable research contract: research question, hypothesis, evidence needs, falsification criteria, method selection, and next action.
 
 ## Core Features
 
@@ -55,6 +55,7 @@ Formulate specific research questions based on literature analysis:
 - Apply SMART principles to formulate questions
 - Evaluate importance, novelty, and feasibility
 - Define research objectives and expected contributions
+- Write a `Research Question Card` that states the hypothesis, current evidence, missing evidence, support criteria, falsification criteria, and minimal next action
 
 ### 5. Method Selection
 
@@ -87,12 +88,13 @@ Use the research-ideation skill in the following situations:
 ### Typical Workflow
 
 ```
-Research interest → Idea brainstorming (5W1H) → Literature review → Gap analysis → Define question → Select method → Create plan
+Research interest → Idea brainstorming (5W1H) → Research Question Card → Literature review → Gap analysis → Hypothesis → Select method or experiment → Decision
 ```
 
 **Output Files:**
+- `research-question-card.md` - Research question, hypothesis, evidence needs, falsification criteria, and next action
 - `literature-review.md` - Structured literature review
-- `research-proposal.md` - Research proposal (including question, method, plan)
+- `research-proposal.md` - Research proposal derived from a selected Research Question Card
 - `references.bib` - References in BibTeX format
 - Zotero collection with organized papers and PDFs
 
@@ -112,9 +114,10 @@ ml-paper-writing (Paper writing)
 
 ### Data Flow
 
-- **research-ideation output** → Guides experiment design and method selection
-- **Experimental results** → results-analysis for statistical analysis
-- **Analysis results** → Related Work and Methods sections of ml-paper-writing
+- **Research Question Card** → Guides literature scope, experiment design, and method selection
+- **Evidence Records** → Feed literature synthesis, project knowledge, and later claim audit
+- **Experimental results** → results-analysis for statistical analysis and claim candidates
+- **Analysis results** → results-report and ml-paper-writing with explicit evidence limits
 
 ### Zotero Integration
 
@@ -172,6 +175,12 @@ Detailed methodology guides, loaded on demand:
   - Question type classification (exploratory, confirmatory, applied)
   - Evaluation criteria (importance, novelty, feasibility)
   - Defining research objectives and contributions
+
+- **`references/research-contract.md`** - Research Contract
+  - Research Question Card template
+  - Evidence Record template
+  - Claim Candidate template
+  - Claim strength rules
 
 - **`references/method-selection-guide.md`** - Method Selection Guide
   - Common research method classification

@@ -125,7 +125,22 @@ Summarize:
 - key findings,
 - strongest supported comparisons,
 - main caveats,
-- what changed in the experimental understanding.
+- what changed in the experimental understanding,
+- claim candidates that may later be used in reports or manuscript writing.
+
+Each claim candidate should use this shape:
+
+```md
+## Claim Candidates
+
+- Claim:
+  - Source evidence:
+  - Allowed wording:
+  - Forbidden stronger wording:
+  - Uncertainty:
+  - Next check:
+  - Decision: keep | weaken | revise | discard
+```
 
 #### `stats-appendix.md`
 Record:
@@ -157,6 +172,8 @@ Do not finish until all are true:
 - [ ] real figures exist when data exists,
 - [ ] each figure has an interpretation note,
 - [ ] limitations and blockers are explicit,
+- [ ] each supported or strong claim candidate has evidence, uncertainty, and allowed wording,
+- [ ] over-strong manuscript wording is explicitly blocked when evidence is insufficient,
 - [ ] no manuscript-style `Results` draft is included.
 
 ## Output structure
@@ -202,6 +219,7 @@ Load only what is needed:
 - `references/figure-interpretation.md` - how to explain figures with evidence
 - `references/analysis-depth.md` - move from observation to mechanism and decision
 - `references/common-pitfalls.md` - common analysis and reporting failures
+- `../research-ideation/references/research-contract.md` - shared claim candidate and claim strength contract
 
 ## Example files
 

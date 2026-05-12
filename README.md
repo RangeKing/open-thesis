@@ -93,6 +93,10 @@ It can still help in other research settings, but its current workflow design is
 
 ## Core Workflow
 
+Claude Scholar routes research work through a traceable path:
+`question -> evidence -> experiment -> analysis -> claim -> writing`.
+Each stage should preserve what is known, what is uncertain, and what decision should happen next.
+
 - **Ideation**: turn a vague topic into concrete questions, research gaps, and an initial plan.
 - **Literature**: search, import, organize, and read papers through Zotero collections.
 - **Paper notes**: convert papers into structured reading notes and reusable claims.
@@ -320,7 +324,7 @@ End-to-end research startup from idea generation to literature management.
 |---|---|---|
 | Skill | `research-ideation` | Turn vague topics into structured questions, gap analysis, and an initial research plan. |
 | Agent | `literature-reviewer` | Search, classify, and synthesize papers into an actionable literature picture. |
-| Command | `/research-init` | Start a new topic from literature search to Zotero organization and proposal drafting. |
+| Command | `/research-init` | Start a new topic from literature search to Zotero organization, research question cards, and proposal drafting when evidence is sufficient. |
 | Command | `/zotero-review` | Review an existing Zotero collection and generate a structured literature synthesis. |
 | Command | `/zotero-notes` | Batch-read a Zotero collection and create structured paper reading notes. |
 
@@ -332,6 +336,7 @@ End-to-end research startup from idea generation to literature management.
 - **Research Question & Planning**: convert the review into concrete questions, initial hypotheses, and next-step planning.
 
 **Typical output**
+- research question cards with hypotheses, evidence needs, falsification criteria, and next actions
 - literature review notes
 - structured Zotero collection
 - project proposal / research direction draft
@@ -412,6 +417,7 @@ Quality assurance before submission.
 **How it works**
 - **Structure Check**: logical flow, section balance, and narrative coherence.
 - **Logic Validation**: claim-evidence alignment, assumption clarity, and argument consistency.
+- **Claim Audit**: verify that main claims are supported by evidence, weaken over-strong language, and preserve uncertainty when needed.
 - **Citation Audit**: reference correctness and completeness.
 - **Figure Quality**: caption completeness, readability, and accessibility.
 - **Compliance**: page limits, formatting, and disclosure requirements.
