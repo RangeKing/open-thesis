@@ -1,6 +1,6 @@
 ---
 name: mine-writing-patterns
-description: Read one or more papers and update the available paper-miner writing memory with reusable writing patterns, structure signals, reusable phrasing, venue-specific signals, and rebuttal-friendly language.
+description: Read one or more papers and update the active installed paper-miner writing memory with reusable writing patterns, structure signals, reusable phrasing, venue-specific signals, and rebuttal-friendly language.
 args:
   - name: source
     description: Paper source path, URL, arXiv link, or a short description of the target papers
@@ -23,8 +23,6 @@ Always write mined knowledge into the active installed skill memory, not the rep
 ```text
 ~/.claude/skills/ml-paper-writing/references/knowledge/paper-miner-writing-memory.md
 ```
-
-For non-Claude runtimes, use the equivalent installed skill home for that branch/runtime. Do not update `skills/ml-paper-writing/...` inside the source checkout unless the user explicitly says they are maintaining the repository package itself.
 
 This command does **not** create project-specific writing memory unless the user explicitly asks for a project-local writing memory.
 
@@ -100,8 +98,6 @@ The canonical write target is the active installed skill memory:
 ~/.claude/skills/ml-paper-writing/references/knowledge/paper-miner-writing-memory.md
 ```
 
-If that file is unavailable in the current runtime, use the configured installed skill home for the active runtime and state the exact path in the final summary. Do not silently fall back to the repository checkout.
-
 Update one or more of these sections:
 - `Writing patterns mined`
 - `Structure signals`
@@ -109,6 +105,8 @@ Update one or more of these sections:
 - `Venue-specific signals`
 - `How this helps our writing`
 - `Source index`
+
+If that file is unavailable in the current runtime, use the configured installed skill home for the active runtime and state the exact path in the final summary. Do not silently fall back to the repository checkout.
 
 Do not create project-local writing memory.
 Do not scatter the mined result across multiple maintained knowledge files.
