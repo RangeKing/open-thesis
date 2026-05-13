@@ -22,6 +22,7 @@
 
 ## 最新动态
 
+- **2026-05-13**: **证据门槛研究工作流与 `Sources/Papers` 路由完成收紧** — 新增共享的 `research-contract.md`，统一 Evidence Records、claim strength 和 Claim Promotion Gate；将研究构思、Zotero 导入、文献综合、结果报告、论文写作与 rebuttal 工作流接入同一证据契约；并明确项目论文源笔记先放在 `Sources/Papers`，通过证据门槛后再进入 `Knowledge` 或 `Writing`。
 - **2026-04-24**: **项目级 Obsidian KB 工作流完成合并** — 将 Obsidian 项目知识管理重构为以 vault 为中心的工作流，把旧的重叠记忆技能合并为四个核心技能，保留仓库本地的项目绑定元数据作为运行时层，并把项目导航改成人类优先，而不是机器注册表清单。
 - **2026-04-22**: **精简核心指令、裁剪默认 agents、安全安装生命周期与通用论文发现流程** — 将大型常驻 `CLAUDE.md` / `AGENTS.md` 改为紧凑核心指令，裁剪默认 agent 集合并保留主链路所需的核心 agents，新增基于安装状态的安全卸载支持，将 `daily-paper-generator` 扩展为面向通用主题的 arXiv / bioRxiv 检索与 Top 10 -> Top 3 -> Top 1 固定筛选流程，并删除低使用率的 `planning-with-files` skill。
 - **2026-04-15**: **提出 pubfig 与 pubtab 两个 Python 包** — 推出了 [`pubfig`](https://github.com/Galaxy-Dawn/pubfig)（用于论文级科研图）和 [`pubtab`](https://github.com/Galaxy-Dawn/pubtab)（用于可发表表格与 Excel↔LaTeX 转换流程）两个独立 Python 包，为研究者提供更清晰的论文图、基准表、导出控制与最终 QA 生产路径。

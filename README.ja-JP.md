@@ -21,6 +21,7 @@
 
 ## 最新ニュース
 
+- **2026-05-13**: **根拠ゲート付き研究ワークフローと `Sources/Papers` ルーティングを整理** — Evidence Records、claim strength、Claim Promotion Gate を共有する `research-contract.md` を追加しました。研究アイデア出し、Zotero 取り込み、文献統合、結果レポート、論文執筆、rebuttal ワークフローを同じ根拠契約に接続し、プロジェクトの論文ソースノートはまず `Sources/Papers` に置き、根拠ゲートを通った主張だけを `Knowledge` や `Writing` へ進める方針を明確にしました。
 - **2026-04-24**: **プロジェクト単位の Obsidian KB ワークフローを統合** — Obsidian のプロジェクト知識管理を vault 中心のワークフローとして再構成し、重複していた記憶系スキルを 4 つの中核スキルに統合しました。リポジトリ内のプロジェクト紐付けメタデータは実行時レイヤーとして残し、プロジェクトナビゲーションは機械向けの登録表ではなく、人間が読みやすい形にしました。
 - **2026-04-22**: **軽量なコア指示、既定 agent の整理、安全なインストール管理、汎用的な論文発見フロー** — 常時読み込まれる大きな `CLAUDE.md` / `AGENTS.md` をコンパクトなコア指示に置き換え、既定 agent 集合を主経路に必要なものへ整理し、インストール状態に基づく安全なアンインストールを追加しました。`daily-paper-generator` は汎用トピック向けの arXiv / bioRxiv 検索と Top 10 -> Top 3 -> Top 1 の固定選定フローへ拡張し、利用頻度の低い `planning-with-files` skill を削除しました。
 - **2026-04-15**: **pubfig と pubtab という 2 つの Python パッケージを導入** — [`pubfig`](https://github.com/Galaxy-Dawn/pubfig) を論文品質の科学図向け、[`pubtab`](https://github.com/Galaxy-Dawn/pubtab) を発表可能な表と Excel↔LaTeX 変換向けの Python パッケージとして打ち出し、論文図、ベンチマーク表、書き出し制御、最終 QA までの生産経路をより明確にしました。
