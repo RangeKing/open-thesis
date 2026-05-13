@@ -15,6 +15,8 @@ Use this skill to produce a **strict analysis bundle**:
 - `figure-catalog.md`
 - `figures/`
 
+When the user asks for review, audit, no-write, dry-run, or when inputs are incomplete, use **read-only audit mode** instead of producing files or figures. In that mode, output only valid/invalid statistics, blockers, claim candidates, and what evidence is missing. If invoked by `/analyze-results`, the command layer may write a blocker summary, but this skill should not create figures, reports, or polished conclusions from incomplete evidence.
+
 Do **not** use this skill to draft a paper `Results` section or a full experiment wrap-up report. Those belong to `ml-paper-writing` or `results-report`.
 
 ## Core contract
@@ -38,6 +40,7 @@ If the user wants the complete post-experiment summary report, hand off to `resu
 
 1. **Prefer real figures over figure specs.**
    If the data can be read, generate real figures. Do not stop at “recommended visualization”.
+   Exception: in read-only audit mode, do not generate figures; describe what figure would be valid after evidence is complete.
 2. **Never fabricate statistics.**
    If sample size, seeds, or raw metrics are missing, state the blocker clearly.
 3. **Report complete statistics.**
@@ -65,7 +68,8 @@ Validate:
 - missing values or silent failures,
 - comparability across methods.
 
-If the comparison is not statistically valid, say so before continuing.
+If the comparison is not statistically valid, say so before continuing. Do not treat repeated `subject × task` rows, folds, windows, trials, or seeds as independent units unless the design justifies it.
+Common blocker: a `subject × task` summary table is usually a repeated-measure summary, not an independent subject-level sample. If subjects have multiple task rows or missing task cells, state that before any significance or winner claim.
 
 ### 2. Lock the comparison questions
 
@@ -198,6 +202,24 @@ For every major figure, answer all three questions:
 
 If a figure cannot answer question 3, it is probably decorative rather than scientific.
 
+## Read-only audit mode
+
+Use this mode when:
+- the user asks to audit or review existing artifacts,
+- the environment is read-only,
+- the user forbids file writes or figure generation,
+- core evidence is missing.
+
+Return:
+- analysis questions,
+- valid statistics,
+- invalid or unsafe statistics,
+- claim candidates with allowed and forbidden wording,
+- blockers before report/figure generation.
+
+Do not create `analysis-output/`, figures, or reports in this mode.
+Quarantine any statistics file whose interpretation contradicts its own p-value, test method, unit of analysis, or comparison family. Do not reuse that file for claim wording until provenance is checked.
+
 ## Failure mode policy
 
 When inputs are incomplete, say so explicitly.
@@ -207,6 +229,8 @@ Examples:
 - no comparable baseline outputs -> no significance claim,
 - no readable logs -> cannot generate dynamics figure,
 - too few runs -> effect size may be unstable; report this limitation.
+- unclear unit of analysis -> no winner claim or significance claim,
+- analysis file with contradictory interpretation -> quarantine it until provenance is checked.
 
 Never replace missing evidence with confident prose.
 

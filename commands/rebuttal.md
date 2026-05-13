@@ -26,7 +26,7 @@ args:
 此命令将启动完整的rebuttal撰写工作流：
 
 1. **获取审稿意见** - 读取或接收审稿意见
-2. **分析和分类** - 将意见分类为Major/Minor/Typo/Misunderstanding
+2. **分析和分类** - 将意见拆成 atomic objections，并分类为Major/Minor/Typo/Misunderstanding
 3. **制定策略** - 为每条意见选择响应策略
 4. **撰写rebuttal** - 生成结构化的回复文档
 5. **语气优化** - 确保专业、礼貌的表达
@@ -47,8 +47,9 @@ args:
 
 ### 步骤 2: 分析和分类
 
-使用`rebuttal-writer` agent进行分析：
+优先使用`review-response` skill；如果当前 runtime 提供 `rebuttal-writer` agent，可以用它辅助分析：
 - 按审稿人分组意见
+- 拆分每条 atomic objection
 - 分类为Major/Minor/Typo/Misunderstanding
 - 识别优先级
 
@@ -67,6 +68,7 @@ args:
 - 为每条意见撰写Response和Changes
 - 包含具体的位置引用
 - 提供证据和理由
+- 每条 response 必须包含 evidence anchor：paper location、result table、figure、analysis artifact、citation、Evidence Record ID、planned experiment status，或 `unresolved`
 
 ### 步骤 5: 语气优化
 
@@ -128,7 +130,7 @@ args:
 
 ### 重要原则
 
-1. **不使用代码解析** - 审稿意见分析通过自然语言理解完成，不使用自动化脚本
+1. **覆盖优先** - 可以使用人工阅读或脚本辅助统计 atomic objections；不要因为自然语言总结而漏掉具体意见
 2. **保持专业语气** - 所有回复都要礼貌、尊重、有理有据
 3. **提供具体证据** - 每个回复都要包含具体的位置引用和证据
 4. **完整性检查** - 确保所有审稿意见都得到回应
@@ -143,7 +145,7 @@ args:
 
 ### Agent调用
 
-此命令会自动调用`rebuttal-writer` agent来执行rebuttal撰写任务。
+如果当前 runtime 提供 `rebuttal-writer` agent，可以调用它来执行 rebuttal 撰写任务。若 agent 不可用，直接按 `review-response` skill 和本命令流程完成，不要阻塞。
 
 ## 相关命令
 

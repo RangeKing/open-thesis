@@ -29,7 +29,7 @@ Systematically search, analyze, and synthesize related literature:
 - Search via WebSearch across academic databases (arXiv, Google Scholar, etc.)
 - Screen and evaluate paper quality
 - Identify research trends and gaps
-- Generate structured literature reviews
+- Generate structured literature reviews from evidence-labeled sources
 - **Zotero Integration**: Papers are automatically added to Zotero via DOI, organized into topic-based collections, and open-access PDFs are auto-attached for full-text reading
 
 ### 3. Gap Analysis
@@ -56,6 +56,7 @@ Formulate specific research questions based on literature analysis:
 - Evaluate importance, novelty, and feasibility
 - Define research objectives and expected contributions
 - Write a `Research Question Card` that states the hypothesis, current evidence, missing evidence, support criteria, falsification criteria, and minimal next action
+- Apply the proposal readiness gate before turning a card into a polished proposal
 
 ### 5. Method Selection
 
@@ -88,15 +89,15 @@ Use the research-ideation skill in the following situations:
 ### Typical Workflow
 
 ```
-Research interest → Idea brainstorming (5W1H) → Research Question Card → Literature review → Gap analysis → Hypothesis → Select method or experiment → Decision
+Research interest → Idea brainstorming (5W1H) → Research Question Card → Evidence Records → Gap analysis → Proposal readiness gate → Select method or experiment → Decision
 ```
 
-**Output Files:**
-- `research-question-card.md` - Research question, hypothesis, evidence needs, falsification criteria, and next action
-- `literature-review.md` - Structured literature review
-- `research-proposal.md` - Research proposal derived from a selected Research Question Card
-- `references.bib` - References in BibTeX format
-- Zotero collection with organized papers and PDFs
+**Conditional Outputs:**
+- `research-question-card.md` - Always generate this for research startup or intake.
+- `literature-review.md` - Generate only when evidence-labeled sources are sufficient for synthesis.
+- `research-proposal.md` - Generate only when a selected Research Question Card passes the evidence gate.
+- `references.bib` - Generate only when reliable citation metadata exists.
+- Zotero collection with organized papers and PDFs - Create only when Zotero is configured, writable, and the user is not asking for dry-run/audit mode.
 
 ## Integration with Other Systems
 
@@ -115,7 +116,8 @@ ml-paper-writing (Paper writing)
 ### Data Flow
 
 - **Research Question Card** → Guides literature scope, experiment design, and method selection
-- **Evidence Records** → Feed literature synthesis, project knowledge, and later claim audit
+- **Evidence Records** → Carry source type, claim strength, and allowed/forbidden wording into literature synthesis, project knowledge, and later claim audit
+- **Proposal Readiness Gate** → Prevents abstract-only or webpage-placeholder evidence from becoming a polished proposal
 - **Experimental results** → results-analysis for statistical analysis and claim candidates
 - **Analysis results** → results-report and ml-paper-writing with explicit evidence limits
 

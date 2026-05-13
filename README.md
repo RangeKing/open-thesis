@@ -324,7 +324,7 @@ End-to-end research startup from idea generation to literature management.
 |---|---|---|
 | Skill | `research-ideation` | Turn vague topics into structured questions, gap analysis, and an initial research plan. |
 | Agent | `literature-reviewer` | Search, classify, and synthesize papers into an actionable literature picture. |
-| Command | `/research-init` | Start a new topic from literature search to Zotero organization, research question cards, and proposal drafting when evidence is sufficient. |
+| Command | `/research-init` | Start a new topic with literature search, Zotero organization, research question cards, and proposal drafting only when the evidence gate passes. |
 | Command | `/zotero-review` | Review an existing Zotero collection and generate a structured literature synthesis. |
 | Command | `/zotero-notes` | Batch-read a Zotero collection and create structured paper reading notes. |
 
@@ -334,12 +334,13 @@ End-to-end research startup from idea generation to literature management.
 - **PDF & Full Text**: attach PDFs when available, read full text when possible, and fall back to abstract-level analysis when necessary.
 - **Gap Analysis**: identify literature, methodological, application, interdisciplinary, or temporal gaps.
 - **Research Question & Planning**: convert the review into concrete questions, initial hypotheses, and next-step planning.
+- **Evidence Gate**: keep weak sources, project hypotheses, and missing evidence explicit before promoting a claim into `Knowledge`, `Writing`, or a proposal.
 
 **Typical output**
 - research question cards with hypotheses, evidence needs, falsification criteria, and next actions
 - literature review notes
 - structured Zotero collection
-- project proposal / research direction draft
+- project proposal only when the selected question has enough verified evidence; otherwise a research direction / intake draft
 
 ### 2. ML Project Development
 
@@ -371,10 +372,11 @@ Strict analysis of experimental results with scientific figures and report-ready
 |---|---|---|
 | Skill | `results-analysis` | Produce a strict analysis bundle with rigorous statistics, real scientific figures, and analysis artifacts. |
 | Skill | `results-report` | Turn analysis artifacts into a complete post-experiment report with decisions, limitations, and next actions. |
-| Command | `/analyze-results` | Run the full experiment workflow in one shot: strict analysis first, then final report generation. |
+| Command | `/analyze-results` | Run a blocker-first experiment workflow: validate evidence, run strict analysis when possible, then generate a report only when the bundle is sufficient. |
 
 **How it works**
 - **Data Processing**: read experiment logs, metrics files, and result directories.
+- **Blocker-First Gate**: lock unit of analysis, primary metric, seeds/folds/runs, provenance, and comparison family before producing claims.
 - **Statistical Testing**: run strict statistical checks such as t-test / ANOVA / Wilcoxon where appropriate.
 - **Visualization**: generate real scientific figures with interpretation guidance, not just vague plotting suggestions.
 - **Ablation & Comparison**: analyze component contribution, performance tradeoffs, and stability.
@@ -386,6 +388,7 @@ Strict analysis of experimental results with scientific figures and report-ready
 - `figure-catalog.md`
 - `figures/`
 - post-experiment summary report in Obsidian `Results/Reports/`
+- blocker summary / audit note when evidence is incomplete
 
 ### 4. Paper Writing
 
@@ -398,12 +401,13 @@ Systematic academic writing from structure setup to draft refinement.
 | Skill | `writing-anti-ai` | Reduce robotic phrasing and improve clarity, rhythm, and human academic tone. |
 | Skill | `latex-conference-template-organizer` | Clean messy conference templates into an Overleaf-ready writing structure. |
 | Agent | `paper-miner` | Mine strong papers for reusable writing patterns, structure, and venue expectations. |
-| Command | `/mine-writing-patterns` | Read a paper and merge reusable writing knowledge into the global paper-miner writing memory. |
+| Command | `/mine-writing-patterns` | Read a paper and merge reusable writing knowledge into the active installed paper-miner writing memory. |
 
 **How it works**
 - **Template Preparation**: clean conference templates into an Overleaf-ready structure.
 - **Citation Verification**: verify references, metadata, and claim-citation alignment.
-- **Systematic Writing**: draft sections from repo context, experiment evidence, and literature notes.
+- **Systematic Writing**: draft sections from repo context, experiment evidence, and literature notes, while keeping unsupported claims marked instead of polished.
+- **Claim Ledger**: every contribution, result, and contrast should trace to evidence or remain explicitly speculative.
 - **Style Refinement**: reduce robotic phrasing and improve rhythm, clarity, and tone.
 
 ### 5. Paper Self-Review
@@ -429,14 +433,14 @@ Submission preparation and review response workflow.
 | Type | Name | One-line explanation |
 |---|---|---|
 | Skill | `review-response` | Structure reviewer comments into an evidence-based rebuttal workflow. |
-| Agent | `rebuttal-writer` | Draft professional, respectful, and strategically organized rebuttal text. |
-| Command | `/rebuttal` | Generate a complete rebuttal draft from review comments and evidence. |
+| Agent | `rebuttal-writer` | Optional specialist for professional, respectful, and strategically organized rebuttal text when available. |
+| Command | `/rebuttal` | Generate an evidence-anchored rebuttal draft from review comments, with unresolved points marked instead of hidden. |
 
 **How it works**
 - **Pre-submission Checks**: venue-specific formatting, anonymization, and checklist requirements.
 - **Review Analysis**: classify reviewer comments into actionable categories.
 - **Response Strategy**: decide whether to accept, defend, clarify, or propose new experiments.
-- **Rebuttal Writing**: generate structured, evidence-based responses with professional tone.
+- **Rebuttal Writing**: generate structured responses with professional tone, evidence anchors, and explicit unresolved items.
 
 ### 7. Post-Acceptance Processing
 
@@ -479,7 +483,7 @@ Use Obsidian as the project-scoped durable knowledge surface, not just as a note
 | Command | `/kb-lint` | Run deterministic KB health checks and update `_system/lint-report.md`. |
 | Command | `/kb-archive` | Archive, detach, purge, or rename KB objects while keeping links and registry consistent. |
 | Command | `/kb-map` | Generate or repair explicit-only KB artifacts beyond the default literature canvas. |
-| Command | `/kb-literature-review` | Generate literature synthesis from `Sources/Papers` into `Knowledge`, `Writing`, and `Maps/literature.canvas`. |
+| Command | `/kb-literature-review` | Generate evidence-gated literature synthesis from `Sources/Papers` into `Knowledge`, optional `Writing`, and `Maps/literature.canvas`. |
 
 Legacy `/obsidian-*` commands remain as deprecated aliases for one transition window. They forward to the `/kb-*` surface and do not restore the old directory layout.
 
@@ -488,6 +492,7 @@ Legacy `/obsidian-*` commands remain as deprecated aliases for one transition wi
 - route stable knowledge into `Sources / Knowledge / Experiments / Results / Results/Reports / Writing / Daily / Maps`,
 - keep `Daily/` and repo-local binding metadata updated conservatively,
 - ingest new source material into the correct canonical destination,
+- keep abstract-only and webpage-placeholder sources from supporting durable claims,
 - only generate extra Bases or canvases on explicit request.
 - use `/kb-sync` for deterministic resyncs and `/kb-links` for standalone link repair.
 

@@ -38,7 +38,7 @@ Read and analyze papers in the Zotero collection "$collection", with analysis de
    - call `mcp__zotero__zotero_get_item_fulltext` when available
    - use abstract metadata as fallback when PDF full text is unavailable
 4. If MCP transport fails but a local `zotero-mcp` checkout is available, use the local Python fallback instead of aborting.
-5. Treat Zotero `webpage` items as valid literature entries when they still expose meaningful metadata or full text.
+5. Treat Zotero `webpage` items as weak-source entries unless they clearly expose full paper metadata and useful full text. Abstract-only or placeholder pages can appear in coverage summaries, but cannot support `Knowledge`, `Writing`, manuscript, or rebuttal claims.
 
 ### Step 2: Ensure detailed paper notes exist
 
@@ -61,8 +61,8 @@ Create or update:
 - `Knowledge/Literature Overview.md`
 - `Knowledge/Method Taxonomy.md` when useful
 - `Knowledge/Research Gaps.md` when useful
-- `Writing/related-work-draft.md` only when the user wants writing-facing synthesis
-- `Writing/comparison-matrix.md` when useful
+- `Writing/related-work-draft.md` only when the user wants writing-facing synthesis and the promoted claims pass the evidence gate
+- `Writing/comparison-matrix.md` when useful and promoted claims pass the evidence gate
 
 The synthesis should include:
 - thematic grouping
@@ -71,11 +71,14 @@ The synthesis should include:
 - research gaps
 - direct relevance to the current project
 - explicit links across `Sources/Papers/` and `Knowledge/`
+- Evidence Record IDs, source type, claim strength, allowed wording, and forbidden stronger wording for claims that may later enter writing or rebuttal
+
+If core papers lack full text or Evidence Records, stop at a collection audit / claim map and state what is missing. Do not generate a polished related-work draft from weak notes.
 
 ### Step 4: Push downstream only when justified
 
 - keep the default review surface in `Sources/Papers/`, `Knowledge/`, and `Maps/literature.canvas`
-- update `Writing/` when the user wants a manuscript-facing review or comparison narrative
+- update `Writing/` only when the user wants a manuscript-facing review or comparison narrative and promoted claims pass the evidence gate
 - only update `Experiments/` or `Results/` in a later project workflow when the user explicitly wants that handoff
 
 ### Step 5: Minimal write-back

@@ -40,7 +40,7 @@ Read papers from the Zotero collection "$collection" and create or update detail
    - `mcp__zotero__zotero_get_annotations` when helpful
    - `mcp__zotero__zotero_get_notes` when helpful
 4. If MCP transport fails but a local `zotero-mcp` checkout is available, use the local Python fallback instead of stopping the pass.
-5. Treat Zotero `webpage` items as valid inputs when they still expose meaningful metadata or full text.
+5. Treat Zotero `webpage` items as weak-source inputs unless they clearly expose full paper metadata and useful full text. Abstract-only or placeholder pages must stay `To-Read` and cannot support `Knowledge` or `Writing` claims.
 
 ### Step 2: Create/update the canonical paper note
 
@@ -57,6 +57,7 @@ Each detailed note should contain:
 - `Relation to other papers`
 - `Knowledge links`
 - `Optional downstream hooks`
+- canonical `Evidence Record` with `Source type` and `Claim strength` when the paper has reusable claims
 
 Recommended frontmatter fields:
 - `title`, `authors`, `year`, `venue`, `doi`, `url`, `citekey`, `zotero_key`
@@ -70,6 +71,8 @@ Prefer updating the existing note over creating a sibling note.
 After the paper-note pass:
 - update a collection inventory note when the source is a named collection
 - record item -> canonical note mapping and coverage counts such as `16 / 16`
+- verify coverage against expected Zotero keys, DOI values, or arXiv IDs when the user supplied them
+- label abstract-only and webpage-placeholder items separately in the inventory
 - synthesize durable literature knowledge under `Knowledge/`, for example:
   - `Knowledge/Literature Overview.md`
   - `Knowledge/Method Taxonomy.md`
@@ -89,8 +92,9 @@ This rebuilds `Maps/literature.canvas` from paper-note and knowledge-note links.
 
 ### Step 5: Optional synthesis outputs
 
-- If `format=comparison`, also update `Writing/comparison-matrix.md`.
-- If the paper batch already supports a thematic synthesis, update `Writing/related-work-draft.md`.
+- If `format=comparison` and promoted claims pass the evidence gate, also update `Writing/comparison-matrix.md`.
+- If the paper batch already supports a thematic synthesis and promoted claims pass the evidence gate, update `Writing/related-work-draft.md`.
+  If not, write only a coverage warning or claim map.
 
 ### Step 6: Minimal write-back
 
@@ -110,7 +114,7 @@ Include:
 
 If the repo is not bound to Obsidian:
 - create `reading-notes-{collection}.md`
-- if `format=comparison`, also create `comparison-matrix.md`
+- if `format=comparison` and promoted claims pass the evidence gate, also create `comparison-matrix.md`
 
 ## Notes
 
@@ -121,3 +125,4 @@ If the repo is not bound to Obsidian:
 - Do not create `Concepts/` or `Datasets/` trees by default.
 - Refresh `Maps/literature.canvas` by default after a substantial Zotero ingestion pass.
 - Treat `Experiments/` and `Results/` as later project workflows, not the default Zotero-import destination.
+- Do not let abstract-only or webpage-placeholder items support durable claims.
