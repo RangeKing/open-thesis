@@ -33,7 +33,7 @@
 
 - **2026-03-31**: **Zotero smart-import 工作流文档完成对齐** — 围绕最新 `zotero-mcp` 的公开能力，系统更新了 Claude Scholar 的研究工作流文档：将 `zotero_add_items_by_identifier` 明确为默认论文导入入口，把 `zotero_reconcile_collection_duplicates` 设为标准导入后清理步骤，更准确地说明了来源感知 PDF cascade，同时把公开工具与内部诊断能力的边界重新讲清楚了。
 - **2026-03-31**: **README 上手路径完成刷新** — 明确了 Claude Scholar 尤其适合计算机科学与 AI 研究者，在安装说明后补充了更贴近真实使用的上手场景，进一步收紧了前置条件和分支说明，并把“如果用户本地已有 md 文件，需要手动合并”这件事写得更明确。
-- **2026-03-31**: **安装器与 hooks 行为进一步收口** — 安装器现在会保留已有的本地 `AGENTS.md`，并把仓库版本作为 `AGENTS.scholar.md` 旁路文件安装；同时默认 hooks 的摘要输出进一步降噪，减少临时文件和未提交文件提示的噪声，同时保留更安全的写入守卫边界。
+- **2026-03-31**: **安装器与 hooks 行为进一步收口** — 安装器现在会保留已有的本地 `CLAUDE.md`，并把仓库版本作为 `CLAUDE.scholar.md` 旁路文件安装；同时默认 hooks 的摘要输出进一步降噪，减少临时文件和未提交文件提示的噪声，同时保留更安全的写入守卫边界。
 - **2026-03-31**: **日文文档补齐** — 为主 README 以及 `AGENTS`、`MCP_SETUP`、`OBSIDIAN_SETUP` 补充了日文文档，使 OpenCode 分支的多语言文档入口更完整。
 
 - **2026-02-25**: **Codex CLI** 支持 — 新增 `codex` 分支，支持 [OpenAI Codex CLI](https://github.com/openai/codex)，包含 config.toml、40 个 skills、14 个 agents 和 sandbox 安全机制

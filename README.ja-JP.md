@@ -32,7 +32,7 @@
 
 - **2026-03-31**: **Zotero smart-importワークフロー文書を整合** — 最新の`zotero-mcp`公開インターフェースに合わせて、Claude Scholarの研究向けドキュメントを更新しました。`zotero_add_items_by_identifier`を標準の論文インポート経路として明示し、`zotero_reconcile_collection_duplicates`を標準的なインポート後クリーンアップ手順に位置づけ、source-awareなPDF cascadeの挙動もより正確に説明し直しました。公開機能と内部診断機能の境界も整理しています。
 - **2026-03-31**: **READMEの導入案内を刷新** — Claude Scholarが特にコンピュータサイエンスおよびAI研究者に適していることを明確にし、インストール後すぐ使える実践的な導入シナリオを追加しました。前提条件やブランチ案内も整理し、「既存のローカルmdファイルは手動で統合する必要がある」点をより明確にしました。
-- **2026-03-31**: **インストーラーとhooksの挙動を整理** — インストーラーは既存のローカル`AGENTS.md`を保持しつつ、リポジトリ版を`AGENTS.scholar.md`として追加するようになりました。あわせて、デフォルトhooksの要約出力も整理し、temp filesやuncommitted filesのノイズを抑えつつ、より安全な書き込みガードは維持しています。
+- **2026-03-31**: **インストーラーとhooksの挙動を整理** — インストーラーは既存のローカル`CLAUDE.md`を保持しつつ、リポジトリ版を`CLAUDE.scholar.md`として追加するようになりました。あわせて、デフォルトhooksの要約出力も整理し、temp filesやuncommitted filesのノイズを抑えつつ、より安全な書き込みガードは維持しています。
 - **2026-03-31**: **日本語ドキュメントを追加** — メインREADMEに加え、`AGENTS`、`MCP_SETUP`、`OBSIDIAN_SETUP`の日本語版も追加し、OpenCodeブランチ全体の多言語ドキュメント導線をより充実させました。
 
 - **2026-02-25**: **Codex CLI** サポート — `codex` 分岐を追加し、[OpenAI Codex CLI](https://github.com/openai/codex) をサポート。config.toml、40 個の skills、14 個の agents、sandbox 安全機構を含む
