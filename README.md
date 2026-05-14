@@ -23,10 +23,10 @@
 
 ## Recent News
 
-- **2026-05-14**: **`expression-skill` promoted as the core communication layer, with the Nature writing stack expanded around it** — made [`expression-skill`](./skills/expression-skill/README.md) the explicit conclusion-first communication discipline for reporting, planning, file operations, and multi-step technical work; introduced [`nature-writing`](./skills/nature-writing/README.md) for section drafting and argument construction; refreshed [`nature-polishing`](./skills/nature-polishing/README.md) to the latest upstream article-pattern release; and kept [`nature-response`](./skills/nature-response/README.md) plus [`nature-data`](./skills/nature-data/README.md) in the journal-writing stack.
+- **2026-05-14**: **`expression-skill` made the communication core, `planning-with-files` restored as the default persistence layer, and the Nature writing stack expanded** — made [`expression-skill`](./skills/expression-skill/README.md) the explicit conclusion-first discipline for reporting, planning, file operations, and multi-step technical work; reintroduced [`planning-with-files`](./skills/planning-with-files/SKILL.md) as the default on-disk planning and progress-tracking workflow for complex tasks; introduced [`nature-writing`](./skills/nature-writing/README.md) for section drafting and argument construction; refreshed [`nature-polishing`](./skills/nature-polishing/README.md) to the latest upstream article-pattern release; and kept [`nature-response`](./skills/nature-response/README.md) plus [`nature-data`](./skills/nature-data/README.md) in the journal-writing stack.
 - **2026-05-13**: **Evidence-gated research workflow and `Sources/Papers` routing tightened** — added a shared `research-contract.md` for Evidence Records, claim strength, and Claim Promotion Gates; connected research ideation, Zotero ingestion, literature synthesis, results reporting, writing, and rebuttal workflows to that contract; and clarified that project paper notes live under `Sources/Papers` before promoted claims move into `Knowledge` or `Writing`.
 - **2026-04-24**: **Project-scoped Obsidian KB workflow consolidated** — rebuilt Obsidian project knowledge management into a vault-first workflow, consolidated the older overlapping memory skills into four focused skills, kept repo-local project binding metadata as a runtime layer, and made project navigation human-first instead of a machine registry dump.
-- **2026-04-22**: **Lean core, pruned default agents, safer install lifecycle, and cleaner paper discovery** — replaced large always-on `CLAUDE.md` / `AGENTS.md` files with compact core instructions, pruned the default agent set to the retained core agents, added safe install-state based uninstall support, generalized `daily-paper-generator` to broader topics with arXiv / bioRxiv support and a fixed Top 10 -> Top 3 -> Top 1 selection flow, and removed the low-use `planning-with-files` skill.
+- **2026-04-22**: **Lean core, pruned default agents, safer install lifecycle, and cleaner paper discovery** — replaced large always-on `CLAUDE.md` / `AGENTS.md` files with compact core instructions, pruned the default agent set to the retained core agents, added safe install-state based uninstall support, generalized `daily-paper-generator` to broader topics with arXiv / bioRxiv support and a fixed Top 10 -> Top 3 -> Top 1 selection flow.
 - **2026-04-15**: **pubfig and pubtab introduced** — introduced [`pubfig`](https://github.com/Galaxy-Dawn/pubfig), a Python package for publication-grade scientific figures, and [`pubtab`](https://github.com/Galaxy-Dawn/pubtab), a Python package for publication-ready tables and Excel↔LaTeX workflows. Together they provide a cleaner production stack for paper figures, benchmark tables, export control, and final artifact QA.
 
 <details>
@@ -552,13 +552,15 @@ Use a reusable communication layer when the task needs conclusion-first reportin
 | Type | Name | One-line explanation |
 |---|---|---|
 | Skill | [`expression-skill`](./skills/expression-skill/README.md) | Enforces conclusion-first, concrete, checkable communication for technical work, writing, documentation, file operations, and multi-step tasks. |
+| Skill | [`planning-with-files`](./skills/planning-with-files/SKILL.md) | Makes complex work persistent on disk with `task_plan.md`, `notes.md`, and deliverable files instead of relying only on transient chat context. |
 
 **How it works**
 - lead with the conclusion instead of narration,
 - prefer commands, paths, counts, checks, and observable behavior over abstract process language,
 - ask clarifying questions only when ambiguity changes the outcome,
 - surface risk, uncertainty, and destructive boundaries early,
-- keep long-running work visible with step / checkpoint style roadmarks.
+- keep long-running work visible with step / checkpoint style roadmarks,
+- persist multi-step work to disk with `task_plan.md` and `notes.md` instead of relying only on transient context.
 
 ### Knowledge Extraction Workflow
 

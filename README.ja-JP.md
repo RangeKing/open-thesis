@@ -21,10 +21,10 @@
 
 ## 最新ニュース
 
-- **2026-05-14**: **`expression-skill` を中核のコミュニケーション層に据え、その上で Nature 執筆スタックを拡張** — [`expression-skill`](./skills/expression-skill/README.md) を、報告・計画・ファイル操作・多段の技術作業における結論先行の表現規律として明示しました。あわせて、章構成の起草と論証構築向けに [`nature-writing`](./skills/nature-writing/README.md) を導入し、[`nature-polishing`](./skills/nature-polishing/README.md) を上流の最新 article-pattern 版へ更新し、[`nature-response`](./skills/nature-response/README.md) と [`nature-data`](./skills/nature-data/README.md) も journal-writing スタックに維持しています。
+- **2026-05-14**: **`expression-skill` を中核のコミュニケーション層に据え、`planning-with-files` を既定の永続 planning 層として戻し、Nature 執筆スタックも拡張** — [`expression-skill`](./skills/expression-skill/README.md) を、報告・計画・ファイル操作・多段の技術作業における結論先行の表現規律として明示しました。さらに [`planning-with-files`](./skills/planning-with-files/SKILL.md) を、複雑な作業で `task_plan.md` / `notes.md` を使う既定の on-disk planning / progress-tracking workflow として再導入しました。あわせて、章構成の起草と論証構築向けに [`nature-writing`](./skills/nature-writing/README.md) を導入し、[`nature-polishing`](./skills/nature-polishing/README.md) を上流の最新 article-pattern 版へ更新し、[`nature-response`](./skills/nature-response/README.md) と [`nature-data`](./skills/nature-data/README.md) も journal-writing スタックに維持しています。
 - **2026-05-13**: **根拠ゲート付き研究ワークフローと `Sources/Papers` ルーティングを整理** — Evidence Records、claim strength、Claim Promotion Gate を共有する `research-contract.md` を追加しました。研究アイデア出し、Zotero 取り込み、文献統合、結果レポート、論文執筆、rebuttal ワークフローを同じ根拠契約に接続し、プロジェクトの論文ソースノートはまず `Sources/Papers` に置き、根拠ゲートを通った主張だけを `Knowledge` や `Writing` へ進める方針を明確にしました。
 - **2026-04-24**: **プロジェクト単位の Obsidian KB ワークフローを統合** — Obsidian のプロジェクト知識管理を vault 中心のワークフローとして再構成し、重複していた記憶系スキルを 4 つの中核スキルに統合しました。リポジトリ内のプロジェクト紐付けメタデータは実行時レイヤーとして残し、プロジェクトナビゲーションは機械向けの登録表ではなく、人間が読みやすい形にしました。
-- **2026-04-22**: **軽量なコア指示、既定 agent の整理、安全なインストール管理、汎用的な論文発見フロー** — 常時読み込まれる大きな `CLAUDE.md` / `AGENTS.md` をコンパクトなコア指示に置き換え、既定 agent 集合を主経路に必要なものへ整理し、インストール状態に基づく安全なアンインストールを追加しました。`daily-paper-generator` は汎用トピック向けの arXiv / bioRxiv 検索と Top 10 -> Top 3 -> Top 1 の固定選定フローへ拡張し、利用頻度の低い `planning-with-files` skill を削除しました。
+- **2026-04-22**: **軽量なコア指示、既定 agent の整理、安全なインストール管理、汎用的な論文発見フロー** — 常時読み込まれる大きな `CLAUDE.md` / `AGENTS.md` をコンパクトなコア指示に置き換え、既定 agent 集合を主経路に必要なものへ整理し、インストール状態に基づく安全なアンインストールを追加しました。`daily-paper-generator` は汎用トピック向けの arXiv / bioRxiv 検索と Top 10 -> Top 3 -> Top 1 の固定選定フローへ拡張し。
 - **2026-04-15**: **pubfig と pubtab という 2 つの Python パッケージを導入** — [`pubfig`](https://github.com/Galaxy-Dawn/pubfig) を論文品質の科学図向け、[`pubtab`](https://github.com/Galaxy-Dawn/pubtab) を発表可能な表と Excel↔LaTeX 変換向けの Python パッケージとして打ち出し、論文図、ベンチマーク表、書き出し制御、最終 QA までの生産経路をより明確にしました。
 
 <details>
@@ -545,6 +545,7 @@ Obsidianを単なるノート置き場ではなく、プロジェクト単位で
 | 種類 | 名前 | 概要 |
 |---|---|---|
 | Skill | [`expression-skill`](./skills/expression-skill/README.md) | 技術作業、執筆、ドキュメント、ファイル操作、多段タスク向けに、結論先行で具体的かつ検証可能な表現規律を適用する |
+| Skill | [`planning-with-files`](./skills/planning-with-files/SKILL.md) | 複雑な作業を `task_plan.md`、`notes.md`、成果物ファイルへ持続化し、一時的な会話 context だけに依存しないようにする |
 
 **仕組み**
 - 経緯説明ではなく結論から始める
@@ -552,6 +553,7 @@ Obsidianを単なるノート置き場ではなく、プロジェクト単位で
 - 結果が変わるときだけ確認質問をする
 - リスク、不確実性、破壊的境界を早めに明示する
 - 長時間作業では step / checkpoint 形式の可視化された進捗目印を出す
+- 多段タスクでは `task_plan.md` と `notes.md` に計画と途中知見を残し、一時的な context だけに依存しない
 
 ### 知識抽出ワークフロー
 
