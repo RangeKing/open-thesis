@@ -80,18 +80,18 @@ if (gitInfo.is_repo) {
 }
 
 if (binding.bound) {
-  output += '🧠 Obsidian project memory: bound\n';
+  output += '🧠 Obsidian project KB: bound\n';
   output += `  - Project: ${binding.projectId || 'unknown'}\n`;
   output += `  - Status: ${binding.status || 'unknown'}\n`;
   output += `  - Auto-sync: ${binding.autoSync ? 'on' : 'off'}\n`;
   if (binding.vaultRoot) {
     output += `  - Vault root: ${binding.vaultRoot}\n`;
   }
-  output += '  - Suggested commands: /obsidian-sync, /obsidian-note\n\n';
+  output += '  - Suggested commands: /kb-status, /kb-sync, /kb-lint\n\n';
 } else if (researchCandidate.candidate) {
-  output += '🧠 Obsidian project memory: research repo candidate\n';
+  output += '🧠 Obsidian project KB: research repo candidate\n';
   output += `  - Detected markers: ${researchCandidate.markers.join(', ')}\n`;
-  output += '  - Suggested command: /obsidian-init\n\n';
+  output += '  - Suggested command: /kb-init\n\n';
 }
 
 // Package manager detection

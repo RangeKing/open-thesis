@@ -1,12 +1,12 @@
 ---
 name: analyze-results
-description: Run the full post-experiment workflow in one command: strict statistical analysis, real scientific figures, and a decision-oriented results report. Uses results-analysis + results-report as a two-stage workflow.
+description: Run a blocker-first post-experiment workflow: validate evidence, produce strict statistical analysis when possible, and generate a decision-oriented results report only when the analysis bundle is sufficient. Uses results-analysis + results-report as a gated two-stage workflow.
 args:
   - name: data_path
     description: Path to experimental results (CSV, JSON, logs, or directory)
     required: false
   - name: analysis_type
-    description: Type of analysis (full, comparison, ablation, visualization)
+    description: Type of analysis (full, comparison, ablation, visualization, audit)
     required: false
     default: full
   - name: purpose
@@ -24,9 +24,9 @@ tags: [Research, Analysis, Statistics, Visualization, Reporting]
 
 # Analyze Results Command
 
-一键执行**实验后分析 + 报告成稿**工作流。
+执行 **blocker-first 实验后分析 + 报告工作流**。
 
-这是用户默认应该使用的入口。
+这是用户默认应该使用的入口，但它不是无条件“一键成稿”。它必须先判断证据是否足够，再决定进入 strict analysis、read-only audit、figure generation 或 results report。
 
 如果你只是想“跑严格统计和科研图，不写总结报告”，才单独走 `results-analysis`。
 
@@ -54,13 +54,18 @@ tags: [Research, Analysis, Statistics, Visualization, Reporting]
 
 命令默认按以下顺序执行：
 
+0. **Blocker-first gate**
+   - 锁定 primary question、primary metric、unit of analysis、seed/run/fold/subject 数、raw provenance、comparison family
+   - 如果现有 stats table 的 p-value、interpretation、test method、unit of analysis 或 comparison family 互相矛盾，先 quarantine 该统计文件
+   - 如果这些信息不足，先输出 blocker summary 或 read-only audit，不生成完整报告
 1. **定位输入**
    - 找到实验目录、CSV/JSON、日志、图表原料与比较对象
 2. **Phase 1 严格分析**
    - 使用 `results-analysis`
+   - 当用户要求 no-write / audit，或输入不足以生成分析产物时，只输出 valid/invalid statistics、claim candidates 和 blockers
 3. **Phase 2 完整报告**
    - 使用 `results-report`
-   - 基于 Phase 1 产物写出完整实验总结报告
+   - 只在 Phase 1 产物包含 `analysis-report.md`、`stats-appendix.md`、`figure-catalog.md` 和必要 provenance 时生成完整实验总结报告
 4. **知识库回写**
    - 如果当前 repo 已绑定 Obsidian project memory，则写回 `Results/Reports/`、相关 `Experiments/`、`Daily/` 和 project memory
 5. **显式报告 blocker**
@@ -97,7 +102,7 @@ tags: [Research, Analysis, Statistics, Visualization, Reporting]
 | 参数 | 说明 |
 |------|------|
 | `data_path` | 实验结果路径，可为目录、CSV、JSON 或日志 |
-| `analysis_type` | `full` / `comparison` / `ablation` / `visualization` |
+| `analysis_type` | `full` / `comparison` / `ablation` / `visualization` / `audit` |
 | `purpose` | 报告用途 slug；默认自动推断，无法推断时需显式说明 |
 | `round` | 实验轮次；用于报告命名，未知时允许暂用 `r00` 并注明 |
 | `experiment_line` | 实验线 slug，如 `freezing`、`contrastive-adversarial` |
@@ -110,6 +115,7 @@ tags: [Research, Analysis, Statistics, Visualization, Reporting]
 | `comparison` | 模型对比 | 显著性检验 + effect size + 主对比图 | 哪个方案更值得继续 |
 | `ablation` | 消融实验 | 组件贡献分析 + 稳定性分析 | 哪个组件真正改变了结果 |
 | `visualization` | 图表优先 | 高质量科研图 + 图表解释 | 图驱动的结果复盘 |
+| `audit` | 只审查证据是否足够 | valid/invalid statistics、claim candidates、blockers | 不生成完整报告 |
 
 ## 输出产物
 
@@ -130,6 +136,13 @@ Results/Reports/
 └── YYYY-MM-DD--{experiment-line}--r{round}--{purpose}.md
 ```
 
+If the blocker-first gate fails, the valid output is a blocker summary or audit note instead of a report:
+
+```text
+analysis-output/
+└── blocker-summary.md
+```
+
 报告标题默认遵循：
 
 ```text
@@ -142,11 +155,15 @@ Results/Reports/
 - 必须优先生成真实科研图，而不是只写 visualization specs
 - 必须报告样本单位、seed/run 数、`95% CI`、effect size、multiple-comparison handling
 - 假设不满足时必须改用 non-parametric fallback 或显式说明不能做强推断
+- 如果 unit of analysis、primary metric、seed/fold/raw provenance 不清楚，不能生成显著性 claim 或 winner claim
+- 如果统计表内部解释和数值矛盾，必须 quarantine；不能把矛盾统计写进报告或图注
+- 当用户明确要求 audit/no-write，只做 read-only audit，不生成图和报告文件
 
 ### 报告生成
 - 报告必须基于 Phase 1 的真实证据，而不是凭印象总结
 - 报告必须覆盖：main findings、statistical validation、figure-by-figure interpretation、negative results、next actions
 - 报告默认是**内部实验总结报告**，不是论文 `Results` section
+- 如果缺少完整 analysis bundle，只能写 blocker summary；不能用 polished prose 替代缺失统计
 
 ### Obsidian 写回
 如果 repo 已绑定 Obsidian knowledge base，则至少执行：
@@ -176,8 +193,9 @@ Results/Reports/
 ## 成功标准
 
 完成后至少应满足：
-- 有 strict analysis bundle
-- 有命名规范正确的 results report
+- blocker-first gate 已完成，并明确说明是否可以进入报告阶段
+- 若证据充足，有 strict analysis bundle 和命名规范正确的 results report
+- 若证据不足，有 blocker summary / audit note，且没有伪造图表、统计或结论
 - 图表与文字解释一致
 - blocker 与限制被明确写出
-- 若 repo 绑定 Obsidian，知识库已完成最小写回
+- 若 repo 绑定 Obsidian，只有在证据足够时才完成最小写回

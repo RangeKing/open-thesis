@@ -1,222 +1,161 @@
 # Obsidianプロジェクトナレッジベース セットアップ
 
-Claude Scholarには、Obsidian研究ナレッジベースワークフローが内蔵されています。MCPやAPIキーは**不要**です。
+Claude Scholarには、Obsidian研究ナレッジベースワークフローが内蔵されています。MCPやAPIキーは不要です。
 
-## 提供される機能
+## このワークフローでできること
 
-Obsidianは単なる論文ライブラリではなく、研究プロジェクトのデフォルトナレッジベースとして扱われます。プロジェクトナレッジベースには以下を保存できます:
+Obsidianは単なる論文ライブラリではなく、研究プロジェクトの既定ナレッジレイヤとして扱われます。保存対象は次の通りです。
 
 - 安定したプロジェクト背景と研究課題
-- 論文ノートと文献合成
-- 実験ランブックと結果サマリー
-- デイリーリサーチログ、スクラッチノート、同期キュー
-- ドラフト、スライド、提案書、リバッタル素材などのライティングアセット
-- メインの作業面に残すべきでないアーカイブ済みプロジェクト知識
+- 論文ノートと文献統合
+- 実験 runbook と結果要約
+- 日次研究ログ、scratch notes、同期キュー
+- draft、slides、proposal、rebuttal などの執筆資産
+- 主作業面に残し続けるべきでない履歴知識
 
-## 要件
+## Requirements
 
-### 必須
-- ローカルのObsidian Vaultパス
-- 環境変数に`OBSIDIAN_VAULT_PATH`を設定、またはプロジェクトブートストラップ時に明示的に指定
+### Required
+- ローカルの Obsidian vault パス
+- `OBSIDIAN_VAULT_PATH` を環境変数で設定するか、bootstrap 時に明示的に渡すこと
 
-### 任意
-- ナビゲーション用にObsidian Desktopをインストールして開いておく
-- open/search/dailyアクション用に`obsidian` CLIが利用可能
-- よりクリーンな`obsidian://`リンクとCLIターゲティングのための`OBSIDIAN_VAULT_NAME`
+### Optional
+- ナビゲーション用に Obsidian Desktop をインストールして開いておくこと
+- open/search/daily 操作用の `obsidian` CLI
+- きれいな `obsidian://` リンクや CLI targeting 用の `OBSIDIAN_VAULT_NAME`
 
-## 内蔵スキル
+## 内蔵 skills
 
-Claude Scholarには公式のObsidian向けスキルとプロジェクトフォーカスのラッパーが含まれています。
+Claude Scholar には project-scoped な Obsidian KB workflow が含まれています。
 
-デフォルトワークフローで最も関連性の高いスキル:
+既定ワークフローの中心は次の skills です。
 
-- `obsidian-project-memory`
-- `obsidian-project-bootstrap`
-- `obsidian-research-log`
-- `obsidian-experiment-log`
+- `obsidian-project-kb-core`
+- `obsidian-source-ingestion`
 - `obsidian-literature-workflow`
-- `obsidian-project-lifecycle`
-- `obsidian-markdown`
-- `obsidian-cli`
+- `obsidian-kb-artifacts`
 - `defuddle`
 
-一部のグラフ指向ヘルパーがリポジトリに残っている場合がありますが、デフォルトワークフローは`.base`、MCP、APIサービスに**依存しません**。メインのデフォルトグラフアーティファクトは`Maps/literature.canvas`です。追加の`.base`ビューやプロジェクト/実験キャンバスは明示的な操作でのみ生成されます。
+既定ワークフローは `.base`、MCP、API サービスに依存しません。既定で自動保守されるグラフ artifact は `Maps/literature.canvas` のみで、追加の `.base` view や project / experiment canvas は explicit-only です。
 
-## デフォルトの動作
+## 既定の挙動
 
-Claude Scholarが`.claude/project-memory/registry.yaml`を含むリポジトリ内で実行されている場合、そのリポジトリをObsidianプロジェクトナレッジベースにバインド済みとして扱い、デフォルトで更新を行います。
+Claude Scholar が `.claude/project-memory/registry.yaml` を含むリポジトリ内で実行されている場合、そのリポジトリを Obsidian プロジェクトナレッジベースにバインド済みとして扱い、既定で更新を行います。
 
-リポジトリがまだバインドされていないが、研究プロジェクトのように見える場合（例えば`.git`、`README.md`、`docs/`、`notes/`、`plan/`、`results/`、`outputs/`、`src/`、または`scripts/`を含む場合）、Claude Scholarは自動的にプロジェクトナレッジベースをブートストラップします。
+まだバインドされていなくても、`.git`、`README.md`、`docs/`、`notes/`、`plan/`、`results/`、`outputs/`、`src/`、`scripts/` などから研究リポジトリらしいと判断できる場合は、自動で bootstrap します。
 
-## Vault内のプロジェクト構造
+## Vault 内の既定ディレクトリ構成
 
 ```text
 Research/{project-slug}/
   00-Hub.md
   01-Plan.md
+  02-Index.md
+  Sources/
+    Papers/
+    Web/
+    Docs/
+    Data/
+    Interviews/
+    Notes/
   Knowledge/
-  Papers/
   Experiments/
   Results/
+    Reports/
   Writing/
   Daily/
+  Maps/
   Archive/
+  _system/
+    registry.md
+    schema.md
+    lint-report.md
 ```
 
-一般的に生成される主要ファイル:
+よく生成されるファイルは次の通りです。
 
-- `Knowledge/Source-Inventory.md`
-- `Knowledge/Codebase-Overview.md`
-- `Maps/literature.canvas`
-- `.claude/project-memory/<project_id>.md`
+- `02-Index.md`
+- `_system/registry.md`
+- `_system/schema.md`
+- `_system/lint-report.md`
+- `.claude/project-memory/{project_id}.md`
+- 文献ワークフローで必要な場合の `Maps/literature.canvas`
 
-## リポジトリローカルのメモリバインディング
+## Repo-local binding metadata
 
-各研究リポジトリは以下にローカルバインディングを持ちます:
+各研究リポジトリは次を持ちます。
 
 ```text
 .claude/project-memory/
   registry.yaml
-  <project_id>.md
+  {project_id}.md
 ```
 
-- `registry.yaml`はリポジトリ↔Vaultのバインディングを保存
-- `<project_id>.md`はインクリメンタル同期用のアシスタント向けプロジェクトメモリを保存
+- `registry.yaml` は repo ↔ vault の binding を保持
+- `{project_id}.md` は assistant-facing な runtime project memory を保持
 
 ## ノート言語
 
-生成・同期されるノートの言語は以下の優先順位で決定されます:
-1. `.claude/project-memory/registry.yaml`のプロジェクト設定
-2. 環境変数`OBSIDIAN_NOTE_LANGUAGE`
-3. デフォルト`en`
+生成・同期ノートの言語は次の優先順位で決まります。
+1. `.claude/project-memory/registry.yaml` の project config
+2. 環境変数 `OBSIDIAN_NOTE_LANGUAGE`
+3. 既定値 `en`
 
-注: ファイルは歴史的な理由で`registry.yaml`という名前ですが、実際のディスク上のフォーマットはJSONです。
+注意：`registry.yaml` は repo-local runtime binding file のままです。プロジェクト内で見える source of truth は `_system/registry.md` です。
 
-サポートされる値:
-- `en`
-- `zh-CN`
+## 主なコマンド
 
-プロジェクトごとの設定例:
+- `/kb-init` — vault-first の project KB を初期化
+- `/kb-status` — バインド済み KB の状態を要約
+- `/kb-ingest` — 新しい source material を canonical notes にルーティング
+- `/kb-log` — 当日の `Daily/` と関連サーフェスを更新
+- `/kb-sync` — 決定論的な KB メンテナンスと再同期を実行
+- `/kb-links` — canonical notes 間の wikilink を修復または強化
+- `/kb-promote` — 安定した内容を canonical note に昇格
+- `/kb-index` — `02-Index.md` を再生成
+- `/kb-lint` — 決定論的な KB 健全性チェックを実行し `_system/lint-report.md` を更新
+- `/kb-archive` — KB オブジェクトを archive、detach、purge、rename する
+- `/kb-map` — 既定の literature canvas 以外の artifact を明示要求時に生成
+- `/kb-literature-review` — `Sources/Papers` から文献統合を生成し `Knowledge`、`Writing`、`Maps/literature.canvas` に反映する
 
-```json
-{
-  "projects": {
-    "my-project": {
-      "project_id": "my-project",
-      "vault_root": "/path/to/vault/Research/my-project",
-      "note_language": "zh-CN"
-    }
-  }
-}
-```
+## バインド済み repo の最小メンテナンス面
 
-既存の英語と中国語の見出しは同期時に互換性があるため、設定言語を変更しても既存のノートは壊れません。
+リポジトリが `.claude/project-memory/registry.yaml` で既にバインドされている場合、Claude Scholar は保守を保守的に行います。
 
-## 主要コマンド
+- 研究状態が変わったら `Daily/YYYY-MM-DD.md` を確認する
+- project のトップレベル状態が本当に変わったときだけ `00-Hub.md` を更新する
+- project 状態が変わったら `.claude/project-memory/{project_id}.md` を更新する
+- `Knowledge/`、`Experiments/`、`Results/`、`Writing/` は毎回自動で書き換えず agent-first を維持する
 
-- `/obsidian-init` — プロジェクトナレッジベースをブートストラップまたはインポート
-- `/obsidian-ingest` — 新しいMarkdownファイルまたはディレクトリを分類→昇格/マージ/デイリーステージングで取り込み
-- `/obsidian-sync` — 決定論的なファイルシステム同期を強制実行し、ヘルパーノートを更新
-- `/obsidian-link` — 正規ノート間のwikilinkを修復または強化
-- `/obsidian-review` — プロジェクトノートから文献合成を生成
-- `/obsidian-notes` — 論文ノートを正規化し、プロジェクトコンテキストに接続
-- `/obsidian-note` — 単一の正規ノートをアーカイブ/パージ/リネーム
-- `/obsidian-project` — デタッチ/アーカイブ/パージ/再構築
-- `/obsidian-views` — オプションの`.base`ビュー（および追加キャンバス）を明示的に生成
+## オプション: Obsidian CLI のインストール
 
-## バインド済みリポジトリの最低限のメンテナンス
+公式 Obsidian CLI は新しいデスクトップインストーラーに内蔵されています。`obsidian ...` を使うには：
 
-リポジトリが`.claude/project-memory/registry.yaml`を通じて既にバインドされている場合、Claude Scholarは自動メンテナンスを控えめに行います:
-
-- ターンが研究状態を変更した場合、常に`Daily/YYYY-MM-DD.md`を確認
-- `00-Hub.md`はトップレベルのプロジェクトステータスが実際に変わった場合にのみ更新
-- プロジェクト状態が変わるたびに`.claude/project-memory/<project_id>.md`を更新
-- `Knowledge/`、`Experiments/`、`Results/`、`Writing/`はエージェントファーストとし、毎ターン自動的に書き換えない
-
-## オプション: Obsidian CLIのインストール
-
-公式Obsidian CLIは新しいデスクトップインストーラーに内蔵されています。`obsidian ...`コマンドを使用するには:
-
-1. CLI登録をサポートするObsidian Desktopビルドを使用
-2. Obsidian Desktopで`Settings -> General -> Advanced`を開く
-3. **Command line interface**を有効にする
-4. macOSでは`/Applications/Obsidian.app/Contents/MacOS`が`PATH`に含まれていることを確認（例: `~/.zprofile`で設定）
-5. ターミナルを再起動し、確認:
+1. CLI 登録をサポートする Obsidian Desktop を使う
+2. Obsidian Desktop で `Settings -> General -> Advanced` を開く
+3. **Command line interface** を有効にする
+4. macOS では `/Applications/Obsidian.app/Contents/MacOS` を `PATH` に追加する（例: `~/.zprofile`）
+5. ターミナルを再起動して次で確認する
 
 ```bash
 obsidian help
 obsidian search query="diffusion" limit=5
 ```
 
-`Command line interface is not enabled`と表示される場合、シェルパスは正しいがObsidianアプリ内のトグルがまだオフです。
+`Command line interface is not enabled` と出る場合、シェル側の PATH は正しいが Obsidian アプリ内のトグルがまだオフです。
 
-## ライフサイクルアクション
+## Lifecycle actions
 
-### デタッチ
-- 自動同期を停止
-- Vaultコンテンツを保持
-- プロジェクトメモリファイルを保持
+### Detach
+- 自動同期を停止する
+- vault 内容は残す
+- project memory file も残す
 
-### アーカイブ（「このプロジェクトの知識を削除」のデフォルト）
-- プロジェクトを`Archive/`配下に移動
-- 同期を無効化
-- 将来の再アクティベーション用にプロジェクトメモリを保持
+### Archive
+- **note archive** は canonical note を `Research/{project-slug}/Archive/` に移動する
+- **project archive** はプロジェクト全体を `Research/_archived/{project-slug}-{date}/` に移動する
+- archive は履歴を保持し、project archive では同期も無効化する
 
-### パージ
-- バインディング、プロジェクトメモリ、Vaultプロジェクトフォルダを完全に削除
-- ユーザーが明示的に永久削除を求めた場合にのみ使用
-
-## オプション: CLIとURIの使用
-
-Claude Scholarはオプションで公式Obsidian CLIとURIスキームを使用できます:
-
-- CLIドキュメント: <https://help.obsidian.md/cli>
-- URIドキュメント: <https://help.obsidian.md/uri>
-
-例:
-
-```bash
-obsidian help
-obsidian search query="diffusion" limit=10
-obsidian daily:append content="- [ ] Follow up on experiment"
-```
-
-```text
-obsidian://open?vault=My%20Vault&file=Research%2Fproject-slug%2F00-Hub
-obsidian://search?vault=My%20Vault&query=%23experiment
-```
-
-## トラブルシューティング
-
-| 問題 | 解決方法 |
-|------|---------|
-| Vaultパスが見つからずブートストラップが失敗 | `OBSIDIAN_VAULT_PATH`を設定するか、Vaultパスを明示的に指定 |
-| プロジェクトが再インポートされ続ける | `.claude/project-memory/registry.yaml`が存在し、正しいリポジトリルートを指しているか確認 |
-| Vaultにまだ`Views/`、`Concepts/`、`Datasets/`がデフォルトとして表示される | それらは古いドキュメントや古いプロジェクト生成によるもの。現在のデフォルトワークフローは上記のコンパクト構造を使用し、デフォルトでは`Maps/literature.canvas`のみを保持 |
-| CLIコマンドが失敗する | `Settings -> General -> Advanced -> Command line interface`が有効か確認。そうでなければファイルシステムのみの同期を継続 |
-| 「プロジェクト知識を削除」が破壊的すぎる | アーカイブまたはデタッチを使用。パージは永久削除専用 |
-
-## WSL → Windowsミラーワークフロー
-
-Claude ScholarをWSL内で実行しながら、より安定したウィンドウ動作のためにネイティブWindowsでObsidianを開きたい場合は、2コピーセットアップを使用します:
-
-- WSL Vaultを信頼できるソースとして維持（例: `<repo-root>/obsidian-vault`）
-- WSLにマウントされたWindows側ローカルミラーディレクトリを維持（例: `<wsl-mounted-windows-vault-path>`）
-- ミラーされたWindows側ローカルディレクトリをWindows Obsidianで開く
-
-同期方法:
-
-```bash
-bash scripts/sync_obsidian_to_windows.sh \
-  --windows-path <wsl-mounted-windows-vault-path>
-```
-
-必要に応じてプレビュー:
-
-```bash
-bash scripts/sync_obsidian_to_windows.sh \
-  --windows-path <wsl-mounted-windows-vault-path> \
-  --dry-run
-```
-
-デフォルトでは、WSLソースに存在しなくなったミラー側のみのファイルは削除されます。Windowsミラーに追加ファイルを残したい場合は`--no-delete`を追加してください。
+### Purge
+- binding、project memory、vault 内の project folder を永久削除する
+- 明示的に永久削除を求められた場合のみ使う

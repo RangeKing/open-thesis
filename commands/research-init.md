@@ -1,6 +1,6 @@
 ---
 name: research-init
-description: Initialize a research project with Zotero-integrated literature review. Creates Zotero collections, searches and imports papers, analyzes content, and generates literature review and research proposal.
+description: Initialize a research project with Zotero-integrated literature review. Creates or audits project-scoped sources, generates research question cards, and only writes a research proposal when the evidence gate passes.
 args:
   - name: topic
     description: Research topic or keywords
@@ -10,7 +10,7 @@ args:
     required: false
     default: focused
   - name: output_type
-    description: Output type (review/proposal/both)
+    description: Output type (review/proposal/both). All modes produce research-question-card.md; references.bib is produced only when reliable citation metadata exists; review adds literature-review.md only when evidence is sufficient; proposal adds research-proposal.md only when the selected card passes the proposal readiness gate.
     required: false
     default: both
 tags: [Research, Literature Review, Zotero, Paper Search]
@@ -18,7 +18,9 @@ tags: [Research, Literature Review, Zotero, Paper Search]
 
 # /research-init - Zotero-Integrated Research Startup Workflow
 
-Launch a complete literature survey workflow for the research topic "$topic", with scope "$scope" and output type "$output_type".
+Launch a project-scoped literature startup workflow for the research topic "$topic", with scope "$scope" and output type "$output_type".
+
+Default behavior is evidence-first: if Zotero is unavailable, if full-paper evidence is insufficient, or if the selected Research Question Card is not ready, produce an intake/audit result instead of forcing a polished proposal.
 
 ## Usage
 
@@ -43,6 +45,20 @@ Launch a complete literature survey workflow for the research topic "$topic", wi
 ## Workflow
 
 Execute the following steps in order:
+
+### Step 0: Intake and Capability Gate
+
+Before creating collections or writing files:
+
+1. Confirm the practical purpose: new project intake, literature review, proposal draft, or source audit.
+2. Check whether Zotero MCP is configured and writable.
+3. If Zotero MCP is unavailable, read-only, or the user asks for dry-run mode:
+   - do **not** create collections,
+   - do **not** import papers,
+   - produce `research-question-card.md` and a source candidate/audit section,
+   - either skip `references.bib` or create a stub that clearly says canonical BibTeX is unavailable unless reliable BibTeX can be generated from existing sources,
+   - stop before `literature-review.md` or `research-proposal.md` unless the user explicitly provides sufficient local evidence.
+4. If the topic, target venue/audience, or project boundary is ambiguous enough to change the search strategy, ask a short clarifying question before acting.
 
 ### Step 1: Create Zotero Research Collection
 
@@ -157,15 +173,47 @@ When in doubt between a full-paper source and an abstract-only page for the same
    - Unexplored application domains
    - Contradictions in research findings
 2. Identify 2-3 concrete research gaps
-3. Formulate potential research questions
+3. Formulate 2-3 potential research questions as Research Question Cards:
+
+   ```md
+   ## Research Question Card
+
+   Question:
+   Type: exploratory | confirmatory | applied
+   Hypothesis:
+   Why it matters:
+   Current evidence:
+   Missing evidence:
+   What would support it:
+   What would falsify it:
+   Minimal next action:
+   Decision: explore | read more | run experiment | stop
+   ```
+
+4. Apply the **Proposal Readiness Gate** from `skills/research-ideation/references/research-contract.md`:
+   - at least one full-paper/preprint/dataset/experiment-artifact Evidence Record supports the selected direction,
+   - weak sources such as webpage placeholders or abstract-only notes are labeled as weak support,
+   - current evidence, missing evidence, support criteria, falsification criteria, and minimal next action are explicit.
+5. Select one card as the default direction for `research-proposal.md` only if it passes this gate. If none is ready for a proposal, state that the next action is `read more` or `explore` instead of forcing a proposal narrative.
 
 ### Step 5: Generate Outputs
 
 Generate corresponding files based on output_type "$output_type":
 
-1. **literature-review.md** - Structured literature review with real citations from Zotero
-2. **research-proposal.md** - Research proposal (generated when output_type is "proposal" or "both")
-3. **references.bib** - BibTeX references from Zotero data
+Output matrix:
+
+| output_type | Always generated | Additional generated files |
+|---|---|---|
+| `review` | `research-question-card.md` | `references.bib` when reliable citation metadata exists; `literature-review.md` when evidence is sufficient |
+| `proposal` | `research-question-card.md` | `references.bib` when reliable citation metadata exists; `research-proposal.md` if a selected card passes the gate |
+| `both` | `research-question-card.md` | `references.bib` when reliable citation metadata exists; `literature-review.md` when evidence is sufficient; `research-proposal.md` if a selected card passes the gate |
+
+File contracts:
+
+1. **research-question-card.md** - 2-3 candidate Research Question Cards plus the selected default card and minimal next action
+2. **literature-review.md** - Structured literature review with real citations from Zotero (generated for `review` and `both` only when the evidence base is sufficient)
+3. **research-proposal.md** - Research proposal derived from the selected Research Question Card (generated for `proposal` and `both` only when the selected card passes the Proposal Readiness Gate)
+4. **references.bib** - BibTeX references from Zotero data, generated only when reliable citation metadata exists
    - **Primary method**: Use Zotero REST API with `?format=bibtex` to export accurate, complete BibTeX entries
      ```
      GET https://api.zotero.org/users/{user_id}/collections/{collection_key}/items?format=bibtex
@@ -175,39 +223,51 @@ Generate corresponding files based on output_type "$output_type":
 
 Use TodoWrite to track progress throughout the workflow.
 
+At the end, summarize:
+- selected question,
+- current evidence,
+- missing evidence,
+- minimal next action,
+- whether the next decision is `explore`, `read more`, `run experiment`, or `stop`.
+
 ## Error Handling
 
 If the default Zotero MCP path fails during execution, use these workflow fallbacks:
 
-1. **`zotero_create_collection` fails** → Create via Zotero REST API directly
-2. **`zotero_add_items_by_identifier` fails** → Retry with a narrower identifier (explicit DOI or arXiv ID). If the source is a publisher landing page or direct PDF, allow the smart importer to use connector/browser-session rescue and optional Playwright-assisted PDF rescue first. If smart import still fails, use an out-of-band fallback such as CrossRef metadata lookup (`https://api.crossref.org/works/{DOI}`) and retry the DOI-specific path or save the page as a manual `webpage`.
-3. **`zotero_get_item_fulltext` fails** → Use `WebFetch` on the paper's DOI URL to scrape abstract → fall back to `abstractNote` from `zotero_get_item_metadata` + domain knowledge
-4. **`zotero_find_and_attach_pdfs` fails** → Log and continue; PDFs are not required for analysis. If a needed paper still lacks a PDF, ask the user to attach it manually in Zotero Desktop and rerun analysis later.
-5. **`zotero_reconcile_collection_duplicates` fails** → Keep the import results, log that postpass dedupe failed, and continue with analysis. In debug mode, inspect the tool's summary and consider rerunning with `local_db_fallback=true` only if local-only duplicates remain and the user explicitly wants aggressive cleanup.
-6. **Single paper fails** → Log error, skip, and continue to next paper
-7. **API rate limit** → Wait 5 seconds and retry, up to 3 attempts
+1. **Zotero MCP unavailable or read-only** → Switch to dry-run/intake mode; do not create collections, import papers, or pretend references were saved.
+2. **`zotero_create_collection` fails** → If REST credentials are configured and the user intended write mode, create via Zotero REST API directly; otherwise switch to dry-run/intake mode.
+3. **`zotero_add_items_by_identifier` fails** → Retry with a narrower identifier (explicit DOI or arXiv ID). If the source is a publisher landing page or direct PDF, allow the smart importer to use connector/browser-session rescue and optional Playwright-assisted PDF rescue first. If smart import still fails, use an out-of-band fallback such as CrossRef metadata lookup (`https://api.crossref.org/works/{DOI}`) and retry the DOI-specific path or save the page as a manual `webpage`.
+4. **`zotero_get_item_fulltext` fails** → Use `WebFetch` on the paper's DOI URL to scrape abstract → fall back to `abstractNote` from `zotero_get_item_metadata` + domain knowledge
+5. **`zotero_find_and_attach_pdfs` fails** → Log and continue; PDFs are not required for analysis. If a needed paper still lacks a PDF, ask the user to attach it manually in Zotero Desktop and rerun analysis later.
+6. **`zotero_reconcile_collection_duplicates` fails** → Keep the import results, log that postpass dedupe failed, and continue with analysis. In debug mode, inspect the tool's summary and consider rerunning with `local_db_fallback=true` only if local-only duplicates remain and the user explicitly wants aggressive cleanup.
+7. **Single paper fails** → Log error, skip, and continue to next paper
+8. **API rate limit** → Wait 5 seconds and retry, up to 3 attempts
 
 ## Completion Checklist
 
 Before finishing, verify:
 
-- [ ] Zotero collection `Research-{Topic}-{YYYY-MM}` created with sub-collections
-- [ ] Papers imported and organized into sub-collections (target: 20-50 focused / 50-100 broad)
-- [ ] PDFs attached for available open-access papers
-- [ ] Full-text analysis completed for core papers
+- [ ] Zotero write mode or dry-run/intake mode explicitly stated
+- [ ] In write mode, Zotero collection `Research-{Topic}-{YYYY-MM}` created with sub-collections
+- [ ] In write mode, papers imported and organized into sub-collections (target: 20-50 focused / 50-100 broad)
+- [ ] In write mode, PDFs attached for available open-access papers
+- [ ] Full-text analysis completed for core papers when available; otherwise source limitations are explicit
 - [ ] Gap analysis identifies at least 2-3 concrete research gaps
-- [ ] Output files generated: `literature-review.md`, `references.bib`, and optionally `research-proposal.md`
+- [ ] Research Question Cards generated with support criteria, falsification criteria, and minimal next action
+- [ ] Proposal Readiness Gate applied before generating `research-proposal.md`
+- [ ] Output files generated according to the output matrix for `review`, `proposal`, or `both`
 - [ ] All citations in review correspond to actual Zotero library entries
 
-## Output Files
+## Possible Output Files
 
-The command generates the following files:
+The command may generate the following files according to the output matrix and evidence gates:
 
 ```
 {project_dir}/
-├── literature-review.md      # Structured literature review (with Zotero citations)
-├── research-proposal.md      # Research proposal (if requested)
-└── references.bib            # BibTeX references
+├── research-question-card.md # Candidate questions, hypotheses, evidence needs, and selected next action
+├── literature-review.md      # Structured literature review when evidence is sufficient
+├── research-proposal.md      # Research proposal (if requested and evidence gate passes)
+└── references.bib            # BibTeX references when reliable citation metadata exists
 ```
 
 ## Integration Notes

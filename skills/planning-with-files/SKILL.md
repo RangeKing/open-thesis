@@ -1,12 +1,22 @@
 ---
 name: planning-with-files
-description: Transforms workflow to use Manus-style persistent markdown files for planning, progress tracking, and knowledge storage. Use when starting complex tasks, multi-step projects, research tasks, or when the user mentions planning, organizing work, tracking progress, or wants structured output.
+description: Use this by default for non-trivial multi-step work that needs persistent planning, progress tracking, or durable notes on disk. Trigger when a task will likely span multiple tool calls, research steps, verification loops, or enough context that the plan should not live only in transient chat memory.
 version: 0.1.0
 ---
 
 # Planning with Files
 
-Work like Manus: Use persistent markdown files as your "working memory on disk."
+Work like Manus: use persistent markdown files as your working memory on disk.
+
+This is not just an optional planning style. It should be the default persistence layer for complex Codex work.
+
+Use it proactively when:
+
+- the task will likely take more than a few tool calls
+- progress needs to be tracked across phases
+- findings or evidence must be preserved while working
+- the task may branch, pause, or resume later
+- relying on chat context alone would be fragile
 
 ## Quick Start
 

@@ -16,12 +16,12 @@ Preferred read path per paper:
 
 Use metadata + abstract as the minimum fallback when PDF full text is unavailable.
 If the MCP transport path is broken but a local `zotero-mcp` source checkout is available, use the local Python fallback to call the same metadata/fulltext functions instead of aborting.
-Treat some Zotero `webpage` items as valid literature entries when they still expose meaningful metadata or fulltext.
+Treat Zotero `webpage` items as weak-source entries unless they clearly expose full paper metadata and useful fulltext. Abstract-only pages and webpage placeholders may be kept for discovery, but they must remain `To-Read` or `weak-source` and cannot support `Knowledge` or manuscript claims until replaced by a full paper, preprint, or verified artifact.
 
 ## 3. Create/update the canonical paper note
 
 Canonical destination:
-- `Papers/{normalized-title-or-citekey}.md`
+- `Sources/Papers/{normalized-title-or-citekey}.md`
 
 Update instead of duplicating when the note already exists.
 
@@ -40,14 +40,20 @@ Each durable paper note should contain:
 ## 5. Synthesize the stable literature knowledge
 
 After a batch import, prefer agent-first synthesis into `Knowledge/`:
-1. update `Knowledge/Literature-Overview.md` when the batch yields a stable overview
-2. update `Knowledge/Method-Families.md` when method clusters are clear
-3. update `Knowledge/Research-Gaps.md` when open problems or tensions are stable enough to keep
+1. update `Knowledge/Literature Overview.md` when the batch yields a stable overview
+2. update `Knowledge/Method Taxonomy.md` when method clusters are clear
+3. update `Knowledge/Research Gaps.md` when open problems or tensions are stable enough to keep
 4. if the source is a named Zotero collection, update a durable inventory note that records:
    - collection size,
    - triage buckets,
    - collection item -> canonical note mapping,
    - current coverage such as `16 / 16`
+
+Apply the Claim Promotion Gate before creating or updating `Knowledge/`:
+- every stable claim must cite a canonical paper note and an Evidence Record ID,
+- `speculative` and `observed` claims stay as hypotheses, motivations, or open gaps,
+- abstract-only or webpage-placeholder items can appear in coverage notes but not as support for durable conclusions,
+- if the batch lacks enough evidence records, produce a warning/claim map instead of a polished synthesis.
 
 ## 6. Refresh the default literature canvas
 
@@ -58,11 +64,12 @@ After batch note creation or major note updates:
 4. prefer semantic filtering and edge thinning over dense all-to-all paper links
 5. prefer `paper + claim + method + gap` argument-map structure for the main graph
 6. add `Maps/literature-main.canvas` only when a second lightweight display graph is genuinely useful
+7. preserve edge evidence strength where possible; do not create all-to-all paper links or stable-looking claim edges without source-note support
 
 ## 7. Push downstream only when justified
 
-- during Zotero ingestion, default to `Papers/` plus `Knowledge/`
-- update `Writing/` only when the user asks for a review, comparison, or draft-facing synthesis
+- during Zotero ingestion, default to `Sources/Papers/` plus `Knowledge/`
+- update `Writing/` only when the user asks for a review, comparison, or draft-facing synthesis and the promoted claims pass the Claim Promotion Gate
 - treat `Experiments/` and `Results/` as later project workflows, not default Zotero-import targets
 
 ## 8. Verify before closing
@@ -77,7 +84,7 @@ Recommended verification command:
 
 ```bash
 python3 "${CLAUDE_PLUGIN_ROOT}/skills/zotero-obsidian-bridge/scripts/verify_paper_notes.py" \
-  --papers-dir "/absolute/path/to/Papers" \
+  --papers-dir "/absolute/path/to/Sources/Papers" \
   --expected-zotero-keys "KEY1,KEY2,KEY3" \
   --inventory-note "/absolute/path/to/Knowledge/Zotero-Collection-collection-slug-Inventory.md"
 ```

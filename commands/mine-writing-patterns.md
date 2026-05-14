@@ -1,6 +1,6 @@
 ---
 name: mine-writing-patterns
-description: Read one or more papers and update the global paper-miner writing memory with reusable writing patterns, structure signals, reusable phrasing, venue-specific signals, and rebuttal-friendly language.
+description: Read one or more papers and update the active installed paper-miner writing memory with reusable writing patterns, structure signals, reusable phrasing, venue-specific signals, and rebuttal-friendly language.
 args:
   - name: source
     description: Paper source path, URL, arXiv link, or a short description of the target papers
@@ -12,19 +12,19 @@ args:
 tags: [Research, Writing, Paper Mining, Knowledge Extraction]
 ---
 
-# /mine-writing-patterns - Global Writing Memory Mining
+# /mine-writing-patterns - Installed Writing Memory Mining
 
-Read the paper source "$source" and update the **global paper-miner writing memory**.
+Read the paper source "$source" and update the active installed **paper-miner writing memory**.
 
 ## Default target
 
-Always write mined knowledge into:
+Always write mined knowledge into the active installed skill memory, not the repository checkout copy:
 
 ```text
 ~/.claude/skills/ml-paper-writing/references/knowledge/paper-miner-writing-memory.md
 ```
 
-This command does **not** create project-specific writing memory.
+This command does **not** create project-specific writing memory unless the user explicitly asks for a project-local writing memory.
 
 ## When to use
 
@@ -32,7 +32,7 @@ Use this command when you want to:
 - learn reusable writing patterns from a strong paper,
 - study how a venue frames introductions, methods, results, or rebuttals,
 - mine phrasing and structure signals before drafting,
-- enrich the global writing memory that powers `ml-paper-writing` and `review-response`.
+- enrich the writing memory that powers `ml-paper-writing` and `review-response`.
 
 ## Usage
 
@@ -73,7 +73,7 @@ If the source is ambiguous, narrow it before mining.
 Use the `paper-miner` agent to:
 - extract paper content,
 - identify reusable writing knowledge,
-- merge it into the global writing memory,
+- merge it into the active installed writing memory,
 - avoid duplicate entries,
 - preserve source attribution.
 
@@ -92,7 +92,7 @@ Interpret `$focus` as follows:
 
 ### Step 4: Update the canonical memory only
 
-The canonical write target is:
+The canonical write target is the active installed skill memory:
 
 ```text
 ~/.claude/skills/ml-paper-writing/references/knowledge/paper-miner-writing-memory.md
@@ -105,6 +105,8 @@ Update one or more of these sections:
 - `Venue-specific signals`
 - `How this helps our writing`
 - `Source index`
+
+If that file is unavailable in the current runtime, use the configured installed skill home for the active runtime and state the exact path in the final summary. Do not silently fall back to the repository checkout.
 
 Do not create project-local writing memory.
 Do not scatter the mined result across multiple maintained knowledge files.
@@ -120,8 +122,8 @@ The final response should follow the `paper-miner` standardized output format:
 
 ## Related integrations
 
-- `ml-paper-writing` reads this global memory before drafting or revising sections.
-- `review-response` reads this global memory when tone, phrasing, and rebuttal structure matter.
+- `ml-paper-writing` reads this active installed memory before drafting or revising sections.
+- `review-response` reads this active installed memory when tone, phrasing, and rebuttal structure matter.
 - `paper-miner` is the agent that performs the actual mining work.
 
 ## Success criteria
