@@ -22,15 +22,16 @@
 
 ## 最新动态
 
+- **2026-05-14**: **公开表达 skill 与 Nature 写作技能已接入** — 新增 [`expression-skill`](./skills/expression-skill/README.md) 作为可复用的结论先行表达层，将 [`nature-polishing`](./skills/nature-polishing/README.md)、[`nature-response`](./skills/nature-response/README.md) 和 [`nature-data`](./skills/nature-data/README.md) 接入写作栈，并让论文写作、结果汇报和回应工作流更明确地指向这些技能。
 - **2026-05-13**: **证据门槛研究工作流与 `Sources/Papers` 路由完成收紧** — 新增共享的 `research-contract.md`，统一 Evidence Records、claim strength 和 Claim Promotion Gate；将研究构思、Zotero 导入、文献综合、结果报告、论文写作与 rebuttal 工作流接入同一证据契约；并明确项目论文源笔记先放在 `Sources/Papers`，通过证据门槛后再进入 `Knowledge` 或 `Writing`。
 - **2026-04-24**: **项目级 Obsidian KB 工作流完成合并** — 将 Obsidian 项目知识管理重构为以 vault 为中心的工作流，把旧的重叠记忆技能合并为四个核心技能，保留仓库本地的项目绑定元数据作为运行时层，并把项目导航改成人类优先，而不是机器注册表清单。
 - **2026-04-22**: **精简核心指令、裁剪默认 agents、安全安装生命周期与通用论文发现流程** — 将大型常驻 `CLAUDE.md` / `AGENTS.md` 改为紧凑核心指令，裁剪默认 agent 集合并保留主链路所需的核心 agents，新增基于安装状态的安全卸载支持，将 `daily-paper-generator` 扩展为面向通用主题的 arXiv / bioRxiv 检索与 Top 10 -> Top 3 -> Top 1 固定筛选流程，并删除低使用率的 `planning-with-files` skill。
-- **2026-04-15**: **提出 pubfig 与 pubtab 两个 Python 包** — 推出了 [`pubfig`](https://github.com/Galaxy-Dawn/pubfig)（用于论文级科研图）和 [`pubtab`](https://github.com/Galaxy-Dawn/pubtab)（用于可发表表格与 Excel↔LaTeX 转换流程）两个独立 Python 包，为研究者提供更清晰的论文图、基准表、导出控制与最终 QA 生产路径。
-- **2026-04-15**: **将 publication-chart-skill 融入 Claude Scholar** — 把 [`pubfig`](https://github.com/Galaxy-Dawn/pubfig) + [`pubtab`](https://github.com/Galaxy-Dawn/pubtab) 封装成 `publication-chart-skill`，加入仓库，并接到 Claude Scholar 的分析/写作边界里，让论文级图表工作有了明确的交接路径，而不是继续混在通用分析或文本写作技能里。
+- **2026-04-15**: **提出 pubfig 与 pubtab 两个 Python package** — 推出了 [`pubfig`](https://github.com/Galaxy-Dawn/pubfig)（用于论文级 scientific figures）和 [`pubtab`](https://github.com/Galaxy-Dawn/pubtab)（用于 publication-ready tables 与 Excel↔LaTeX workflows）两个独立 Python package，为研究者提供更清晰的论文图、benchmark 表、导出控制与最终 QA 生产路径。
 
 <details>
 <summary>查看历史更新日志</summary>
 
+- **2026-04-15**: **将 [`publication-chart-skill`](./skills/publication-chart-skill/SKILL.md) 融入 Claude Scholar** — 把 [`pubfig`](https://github.com/Galaxy-Dawn/pubfig) + [`pubtab`](https://github.com/Galaxy-Dawn/pubtab) 封装成 [`publication-chart-skill`](./skills/publication-chart-skill/SKILL.md)，加入仓库，并接到 Claude Scholar 的分析/写作边界里，让论文级图表工作有了明确的交接路径，而不是继续混在通用分析或文本写作技能里。
 - **2026-03-31**: **Zotero smart-import 工作流文档完成对齐** — 围绕最新 `zotero-mcp` 的公开能力，系统更新了 Claude Scholar 的研究工作流文档：将 `zotero_add_items_by_identifier` 明确为默认论文导入入口，把 `zotero_reconcile_collection_duplicates` 设为标准导入后清理步骤，更准确地说明了来源感知 PDF cascade，同时把公开工具与内部诊断能力的边界重新讲清楚了。
 - **2026-03-31**: **README 上手路径完成刷新** — 明确了 Claude Scholar 尤其适合计算机科学与 AI 研究者，在安装说明后补充了更贴近真实使用的上手场景，进一步收紧了前置条件和分支说明，并把“如果用户本地已有 md 文件，需要手动合并”这件事写得更明确。
 - **2026-03-31**: **安装器与 hooks 行为进一步收口** — 安装器现在会保留已有的本地 `CLAUDE.md`，并把仓库版本作为 `CLAUDE.scholar.md` 旁路文件安装；同时默认 hooks 的摘要输出进一步降噪，减少临时文件和未提交文件提示的噪声，同时保留更安全的写入守卫边界。
@@ -394,9 +395,9 @@ Claude Scholar 目前面向以下 CLI 工作流：
 | 类型 | 名字 | 一句话解释 |
 |---|---|---|
 | Skill | `ml-paper-writing` | 基于 repo、实验结果和文献上下文撰写投稿导向的 ML/AI 论文。 |
-| Skill | `nature-polishing` | 将稿件内容润色、重组或翻译为更接近 Nature 风格的精炼英文。 |
-| Skill | `nature-response` | 为 Nature 系修回撰写、审查或重写逐点 reviewer response。 |
-| Skill | `nature-data` | 准备 Nature 风格的 Data Availability、repository plan 和 FAIR 元数据检查。 |
+| Skill | [`nature-polishing`](./skills/nature-polishing/README.md) | 将稿件内容润色、重组或翻译为更接近 Nature 风格的精炼英文。 |
+| Skill | [`nature-response`](./skills/nature-response/README.md) | 为 Nature 系修回撰写、审查或重写逐点 reviewer response。 |
+| Skill | [`nature-data`](./skills/nature-data/README.md) | 准备 Nature 风格的 Data Availability、repository plan 和 FAIR 元数据检查。 |
 | Skill | `citation-verification` | 检查参考文献、元数据和论断-引用对齐，避免引用错误。 |
 | Skill | `writing-anti-ai` | 减少机械化表述，提升清晰度、节奏和更自然的学术语气。 |
 | Skill | `latex-conference-template-organizer` | 把混乱的会议模板整理成 Overleaf-ready 写作结构。 |
@@ -539,6 +540,21 @@ Claude Scholar 目前面向以下 CLI 工作流：
 - **会话结束或停止时**：总结工作内容，并提醒最小维护动作。
 - **安全防护**：拦截灾难性命令，并对危险但合理的操作要求确认。
 
+### 表达与汇报约束层
+
+当任务需要结论先行汇报、具体证据、可见风险或紧凑下一步时，使用可复用的沟通表达层。
+
+| 类型 | 名字 | 一句话解释 |
+|---|---|---|
+| Skill | [`expression-skill`](./skills/expression-skill/README.md) | 为技术工作、写作、文档、文件操作和多步骤任务提供结论先行、具体、可核查的表达约束。 |
+
+**工作方式**
+- 先给结论，不先叙述过程，
+- 优先使用命令、路径、数量、检查结果和可观察行为，而不是抽象过程词，
+- 只有在歧义会改变结果时才追问，
+- 尽早暴露风险、不确定性和破坏性边界，
+- 对长任务持续给出 step / checkpoint 形式的可见路标。
+
 ### 知识提炼工作流
 
 专门的 agents 可持续提炼论文和竞赛中的可复用知识。
@@ -624,6 +640,7 @@ MIT 许可证。
 
 - **[everything-claude-code](https://github.com/anthropics/everything-claude-code)** - Claude Code CLI 的综合资源
 - **[AI-research-SKILLs](https://github.com/zechenzhangAGI/AI-research-SKILLs)** - 研究导向的技能和配置
+- **[expression-skill](https://github.com/Galaxy-Dawn/expression-skill)** - 这里复用了其公开的结论先行表达 skill，用于汇报和回应约束
 - **[nature-skills / nature-polishing](https://github.com/Yuan1z0825/nature-skills/tree/main/skills/nature-polishing)** - 这里复用了其 Nature 风格学术润色 skill，并保留来源引用
 - **[nature-skills / nature-response](https://github.com/Yuan1z0825/nature-skills/tree/main/skills/nature-response)** - 这里复用了其 Nature 系期刊审稿回复 skill，并保留来源引用
 - **[nature-skills / nature-data](https://github.com/Yuan1z0825/nature-skills/tree/main/skills/nature-data)** - 这里复用了其 Nature 风格数据可用性 skill，并保留来源引用

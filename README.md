@@ -23,15 +23,16 @@
 
 ## Recent News
 
+- **2026-05-14**: **Public communication skill and Nature-oriented writing skills added** — added [`expression-skill`](./skills/expression-skill/README.md) as a reusable conclusion-first communication layer, integrated [`nature-polishing`](./skills/nature-polishing/README.md), [`nature-response`](./skills/nature-response/README.md), and [`nature-data`](./skills/nature-data/README.md) into the writing stack, and made paper-writing, reporting, and response workflows point to these skills more explicitly.
 - **2026-05-13**: **Evidence-gated research workflow and `Sources/Papers` routing tightened** — added a shared `research-contract.md` for Evidence Records, claim strength, and Claim Promotion Gates; connected research ideation, Zotero ingestion, literature synthesis, results reporting, writing, and rebuttal workflows to that contract; and clarified that project paper notes live under `Sources/Papers` before promoted claims move into `Knowledge` or `Writing`.
 - **2026-04-24**: **Project-scoped Obsidian KB workflow consolidated** — rebuilt Obsidian project knowledge management into a vault-first workflow, consolidated the older overlapping memory skills into four focused skills, kept repo-local project binding metadata as a runtime layer, and made project navigation human-first instead of a machine registry dump.
 - **2026-04-22**: **Lean core, pruned default agents, safer install lifecycle, and cleaner paper discovery** — replaced large always-on `CLAUDE.md` / `AGENTS.md` files with compact core instructions, pruned the default agent set to the retained core agents, added safe install-state based uninstall support, generalized `daily-paper-generator` to broader topics with arXiv / bioRxiv support and a fixed Top 10 -> Top 3 -> Top 1 selection flow, and removed the low-use `planning-with-files` skill.
 - **2026-04-15**: **pubfig and pubtab introduced** — introduced [`pubfig`](https://github.com/Galaxy-Dawn/pubfig), a Python package for publication-grade scientific figures, and [`pubtab`](https://github.com/Galaxy-Dawn/pubtab), a Python package for publication-ready tables and Excel↔LaTeX workflows. Together they provide a cleaner production stack for paper figures, benchmark tables, export control, and final artifact QA.
-- **2026-04-15**: **publication-chart-skill integrated into Claude Scholar** — wrapped [`pubfig`](https://github.com/Galaxy-Dawn/pubfig) + [`pubtab`](https://github.com/Galaxy-Dawn/pubtab) into `publication-chart-skill`, added the skill to the repository, and connected it to Claude Scholar's analysis and writing boundaries so publication-grade figure/table work now has an explicit handoff route instead of being mixed into general analysis or prose skills.
 
 <details>
 <summary>View older changelog</summary>
 
+- **2026-04-15**: **[`publication-chart-skill`](./skills/publication-chart-skill/SKILL.md) integrated into Claude Scholar** — wrapped [`pubfig`](https://github.com/Galaxy-Dawn/pubfig) + [`pubtab`](https://github.com/Galaxy-Dawn/pubtab) into [`publication-chart-skill`](./skills/publication-chart-skill/SKILL.md), added the skill to the repository, and connected it to Claude Scholar's analysis and writing boundaries so publication-grade figure/table work now has an explicit handoff route instead of being mixed into general analysis or prose skills.
 - **2026-03-31**: **Zotero smart-import workflow docs aligned** — updated Claude Scholar's research-facing docs around the latest `zotero-mcp` public surface: `zotero_add_items_by_identifier` is now the default paper-import path, `zotero_reconcile_collection_duplicates` is the standard post-import cleanup step, source-aware PDF cascade behavior is documented more accurately, and public vs internal diagnostics are now clearly separated.
 - **2026-03-31**: **README onboarding refreshed** — clarified that Claude Scholar is especially well-suited to computer science and AI researchers, added practical getting-started scenarios after installation, improved prerequisite and branch guidance, and made the “existing local md files must be manually merged” expectation much more explicit.
 - **2026-03-31**: **Installer and hook behavior tightened** — the installer now preserves existing local `CLAUDE.md` while installing the repo-managed version as `CLAUDE.scholar.md`, and the default hook summaries were trimmed to reduce noisy temp-file / uncommitted-file output while keeping safer write-guard behavior.
@@ -398,9 +399,9 @@ Systematic academic writing from structure setup to draft refinement.
 | Type | Name | One-line explanation |
 |---|---|---|
 | Skill | `ml-paper-writing` | Draft publication-oriented ML/AI papers from repo context, evidence, and literature. |
-| Skill | `nature-polishing` | Polish, restructure, or translate manuscript prose into concise Nature-leaning English. |
-| Skill | `nature-response` | Draft, audit, or revise point-by-point reviewer response letters for Nature-family revisions. |
-| Skill | `nature-data` | Prepare Nature-ready Data Availability statements, repository plans, and FAIR metadata checks. |
+| Skill | [`nature-polishing`](./skills/nature-polishing/README.md) | Polish, restructure, or translate manuscript prose into concise Nature-leaning English. |
+| Skill | [`nature-response`](./skills/nature-response/README.md) | Draft, audit, or revise point-by-point reviewer response letters for Nature-family revisions. |
+| Skill | [`nature-data`](./skills/nature-data/README.md) | Prepare Nature-ready Data Availability statements, repository plans, and FAIR metadata checks. |
 | Skill | `citation-verification` | Check references, metadata, and claim-citation alignment to prevent citation mistakes. |
 | Skill | `writing-anti-ai` | Reduce robotic phrasing and improve clarity, rhythm, and human academic tone. |
 | Skill | `latex-conference-template-organizer` | Clean messy conference templates into an Overleaf-ready writing structure. |
@@ -543,6 +544,21 @@ Cross-platform hooks automate routine workflow checks and reminders.
 - **At session end/stop**: summarize work and remind the user about minimum maintenance tasks.
 - **Security**: block catastrophic commands and require confirmation for dangerous but legitimate ones.
 
+### Communication and Reporting Discipline
+
+Use a reusable communication layer when the task needs conclusion-first reporting, concrete evidence, visible risk, or compact next-step guidance.
+
+| Type | Name | One-line explanation |
+|---|---|---|
+| Skill | [`expression-skill`](./skills/expression-skill/README.md) | Enforces conclusion-first, concrete, checkable communication for technical work, writing, documentation, file operations, and multi-step tasks. |
+
+**How it works**
+- lead with the conclusion instead of narration,
+- prefer commands, paths, counts, checks, and observable behavior over abstract process language,
+- ask clarifying questions only when ambiguity changes the outcome,
+- surface risk, uncertainty, and destructive boundaries early,
+- keep long-running work visible with step / checkpoint style roadmarks.
+
 ### Knowledge Extraction Workflow
 
 Specialized agents can mine reusable knowledge from papers and competitions.
@@ -628,6 +644,7 @@ This project is inspired by and builds upon excellent work from the community:
 
 - **[everything-claude-code](https://github.com/anthropics/everything-claude-code)** - Comprehensive resource for Claude Code CLI
 - **[AI-research-SKILLs](https://github.com/zechenzhangAGI/AI-research-SKILLs)** - Research-focused skills and configurations
+- **[expression-skill](https://github.com/Galaxy-Dawn/expression-skill)** - Public conclusion-first communication skill reused here for reporting and response discipline
 - **[nature-skills / nature-polishing](https://github.com/Yuan1z0825/nature-skills/tree/main/skills/nature-polishing)** - Nature-leaning academic polishing skill reused here with attribution
 - **[nature-skills / nature-response](https://github.com/Yuan1z0825/nature-skills/tree/main/skills/nature-response)** - Nature-family reviewer response skill reused here with attribution
 - **[nature-skills / nature-data](https://github.com/Yuan1z0825/nature-skills/tree/main/skills/nature-data)** - Nature-style data availability skill reused here with attribution
