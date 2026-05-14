@@ -394,6 +394,9 @@ Claude Scholar 目前面向以下 CLI 工作流：
 | 类型 | 名字 | 一句话解释 |
 |---|---|---|
 | Skill | `ml-paper-writing` | 基于 repo、实验结果和文献上下文撰写投稿导向的 ML/AI 论文。 |
+| Skill | `nature-polishing` | 将稿件内容润色、重组或翻译为更接近 Nature 风格的精炼英文。 |
+| Skill | `nature-response` | 为 Nature 系修回撰写、审查或重写逐点 reviewer response。 |
+| Skill | `nature-data` | 准备 Nature 风格的 Data Availability、repository plan 和 FAIR 元数据检查。 |
 | Skill | `citation-verification` | 检查参考文献、元数据和论断-引用对齐，避免引用错误。 |
 | Skill | `writing-anti-ai` | 减少机械化表述，提升清晰度、节奏和更自然的学术语气。 |
 | Skill | `latex-conference-template-organizer` | 把混乱的会议模板整理成 Overleaf-ready 写作结构。 |
@@ -402,6 +405,9 @@ Claude Scholar 目前面向以下 CLI 工作流：
 
 **工作方式**
 - **模板准备**：把会议模板清理成 Overleaf-ready 结构。
+- **期刊风格润色**：在需要时加强段落逻辑、hedging 和 section moves，使表达更接近 Nature 风格。
+- **审稿回复**：把大修/小修意见组织成可审计的逐点 response package。
+- **数据可用性**：准备 Nature 风格的数据仓库方案、dataset citation 和 availability statement。
 - **引用核验**：检查参考文献、元数据和论断-引用对齐。
 - **系统化写作**：基于 repo、实验结果和文献上下文逐节写作，但未被证据支持的论断必须显式标记。
 - **论断台账**：贡献、结果和相关工作对比都应能追溯到证据；否则保留为推测性表述。
@@ -620,6 +626,9 @@ MIT 许可证。
 
 - **[everything-claude-code](https://github.com/anthropics/everything-claude-code)** - Claude Code CLI 的综合资源
 - **[AI-research-SKILLs](https://github.com/zechenzhangAGI/AI-research-SKILLs)** - 研究导向的技能和配置
+- **[nature-skills / nature-polishing](https://github.com/Yuan1z0825/nature-skills/tree/main/skills/nature-polishing)** - 这里复用了其 Nature 风格学术润色 skill，并保留来源引用
+- **[nature-skills / nature-response](https://github.com/Yuan1z0825/nature-skills/tree/main/skills/nature-response)** - 这里复用了其 Nature 系期刊审稿回复 skill，并保留来源引用
+- **[nature-skills / nature-data](https://github.com/Yuan1z0825/nature-skills/tree/main/skills/nature-data)** - 这里复用了其 Nature 风格数据可用性 skill，并保留来源引用
 
 这些项目为 Claude Scholar 的研究导向功能提供了宝贵的见解和基础。
 

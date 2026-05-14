@@ -398,6 +398,9 @@ Systematic academic writing from structure setup to draft refinement.
 | Type | Name | One-line explanation |
 |---|---|---|
 | Skill | `ml-paper-writing` | Draft publication-oriented ML/AI papers from repo context, evidence, and literature. |
+| Skill | `nature-polishing` | Polish, restructure, or translate manuscript prose into concise Nature-leaning English. |
+| Skill | `nature-response` | Draft, audit, or revise point-by-point reviewer response letters for Nature-family revisions. |
+| Skill | `nature-data` | Prepare Nature-ready Data Availability statements, repository plans, and FAIR metadata checks. |
 | Skill | `citation-verification` | Check references, metadata, and claim-citation alignment to prevent citation mistakes. |
 | Skill | `writing-anti-ai` | Reduce robotic phrasing and improve clarity, rhythm, and human academic tone. |
 | Skill | `latex-conference-template-organizer` | Clean messy conference templates into an Overleaf-ready writing structure. |
@@ -406,6 +409,9 @@ Systematic academic writing from structure setup to draft refinement.
 
 **How it works**
 - **Template Preparation**: clean conference templates into an Overleaf-ready structure.
+- **Journal-Style Polishing**: tighten paragraph logic, hedging, and section moves for Nature-leaning prose when needed.
+- **Reviewer Response**: structure major/minor revision comments into an auditable point-by-point response package.
+- **Data Availability**: prepare Nature-ready repository plans, dataset citations, and availability statements.
 - **Citation Verification**: verify references, metadata, and claim-citation alignment.
 - **Systematic Writing**: draft sections from repo context, experiment evidence, and literature notes, while keeping unsupported claims marked instead of polished.
 - **Claim Ledger**: every contribution, result, and contrast should trace to evidence or remain explicitly speculative.
@@ -624,6 +630,9 @@ This project is inspired by and builds upon excellent work from the community:
 
 - **[everything-claude-code](https://github.com/anthropics/everything-claude-code)** - Comprehensive resource for Claude Code CLI
 - **[AI-research-SKILLs](https://github.com/zechenzhangAGI/AI-research-SKILLs)** - Research-focused skills and configurations
+- **[nature-skills / nature-polishing](https://github.com/Yuan1z0825/nature-skills/tree/main/skills/nature-polishing)** - Nature-leaning academic polishing skill reused here with attribution
+- **[nature-skills / nature-response](https://github.com/Yuan1z0825/nature-skills/tree/main/skills/nature-response)** - Nature-family reviewer response skill reused here with attribution
+- **[nature-skills / nature-data](https://github.com/Yuan1z0825/nature-skills/tree/main/skills/nature-data)** - Nature-style data availability skill reused here with attribution
 
 These projects provided valuable insights and foundations for the research-oriented features in Claude Scholar.
 
