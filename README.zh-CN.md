@@ -22,7 +22,7 @@
 
 ## 最新动态
 
-- **2026-05-14**: **公开表达 skill 与 Nature 写作技能已接入** — 新增 [`expression-skill`](./skills/expression-skill/README.md) 作为可复用的结论先行表达层，将 [`nature-polishing`](./skills/nature-polishing/README.md)、[`nature-response`](./skills/nature-response/README.md) 和 [`nature-data`](./skills/nature-data/README.md) 接入写作栈，并让论文写作、结果汇报和回应工作流更明确地指向这些技能。
+- **2026-05-14**: **将 `expression-skill` 提升为核心表达层，并围绕它扩展 Nature 写作栈** — 把 [`expression-skill`](./skills/expression-skill/README.md) 明确为汇报、规划、文件操作和多步骤技术任务的结论先行表达纪律；引入用于章节起草与论证构建的 [`nature-writing`](./skills/nature-writing/README.md)；将 [`nature-polishing`](./skills/nature-polishing/README.md) 刷新到上游最新 article-pattern 版本；并继续保留 [`nature-response`](./skills/nature-response/README.md) 与 [`nature-data`](./skills/nature-data/README.md) 作为 journal-writing 栈的一部分。
 - **2026-05-13**: **证据门槛研究工作流与 `Sources/Papers` 路由完成收紧** — 新增共享的 `research-contract.md`，统一 Evidence Records、claim strength 和 Claim Promotion Gate；将研究构思、Zotero 导入、文献综合、结果报告、论文写作与 rebuttal 工作流接入同一证据契约；并明确项目论文源笔记先放在 `Sources/Papers`，通过证据门槛后再进入 `Knowledge` 或 `Writing`。
 - **2026-04-24**: **项目级 Obsidian KB 工作流完成合并** — 将 Obsidian 项目知识管理重构为以 vault 为中心的工作流，把旧的重叠记忆技能合并为四个核心技能，保留仓库本地的项目绑定元数据作为运行时层，并把项目导航改成人类优先，而不是机器注册表清单。
 - **2026-04-22**: **精简核心指令、裁剪默认 agents、安全安装生命周期与通用论文发现流程** — 将大型常驻 `CLAUDE.md` / `AGENTS.md` 改为紧凑核心指令，裁剪默认 agent 集合并保留主链路所需的核心 agents，新增基于安装状态的安全卸载支持，将 `daily-paper-generator` 扩展为面向通用主题的 arXiv / bioRxiv 检索与 Top 10 -> Top 3 -> Top 1 固定筛选流程，并删除低使用率的 `planning-with-files` skill。
@@ -395,6 +395,7 @@ Claude Scholar 目前面向以下 CLI 工作流：
 | 类型 | 名字 | 一句话解释 |
 |---|---|---|
 | Skill | `ml-paper-writing` | 基于 repo、实验结果和文献上下文撰写投稿导向的 ML/AI 论文。 |
+| Skill | [`nature-writing`](./skills/nature-writing/README.md) | 根据 claims、figures、results、notes 或中文草稿起草或重建 Nature 风格的论文章节。 |
 | Skill | [`nature-polishing`](./skills/nature-polishing/README.md) | 将稿件内容润色、重组或翻译为更接近 Nature 风格的精炼英文。 |
 | Skill | [`nature-response`](./skills/nature-response/README.md) | 为 Nature 系修回撰写、审查或重写逐点 reviewer response。 |
 | Skill | [`nature-data`](./skills/nature-data/README.md) | 准备 Nature 风格的 Data Availability、repository plan 和 FAIR 元数据检查。 |
@@ -641,9 +642,7 @@ MIT 许可证。
 - **[everything-claude-code](https://github.com/anthropics/everything-claude-code)** - Claude Code CLI 的综合资源
 - **[AI-research-SKILLs](https://github.com/zechenzhangAGI/AI-research-SKILLs)** - 研究导向的技能和配置
 - **[expression-skill](https://github.com/Galaxy-Dawn/expression-skill)** - 这里复用了其公开的结论先行表达 skill，用于汇报和回应约束
-- **[nature-skills / nature-polishing](https://github.com/Yuan1z0825/nature-skills/tree/main/skills/nature-polishing)** - 这里复用了其 Nature 风格学术润色 skill，并保留来源引用
-- **[nature-skills / nature-response](https://github.com/Yuan1z0825/nature-skills/tree/main/skills/nature-response)** - 这里复用了其 Nature 系期刊审稿回复 skill，并保留来源引用
-- **[nature-skills / nature-data](https://github.com/Yuan1z0825/nature-skills/tree/main/skills/nature-data)** - 这里复用了其 Nature 风格数据可用性 skill，并保留来源引用
+- **[nature-skills](https://github.com/Yuan1z0825/nature-skills)** - 这里统一复用了其 Nature 风格的章节起草、学术润色、审稿回复和数据可用性 skills，并保留来源引用
 
 这些项目为 Claude Scholar 的研究导向功能提供了宝贵的见解和基础。
 

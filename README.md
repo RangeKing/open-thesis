@@ -23,7 +23,7 @@
 
 ## Recent News
 
-- **2026-05-14**: **Public communication skill and Nature-oriented writing skills added** — added [`expression-skill`](./skills/expression-skill/README.md) as a reusable conclusion-first communication layer, integrated [`nature-polishing`](./skills/nature-polishing/README.md), [`nature-response`](./skills/nature-response/README.md), and [`nature-data`](./skills/nature-data/README.md) into the writing stack, and made paper-writing, reporting, and response workflows point to these skills more explicitly.
+- **2026-05-14**: **`expression-skill` promoted as the core communication layer, with the Nature writing stack expanded around it** — made [`expression-skill`](./skills/expression-skill/README.md) the explicit conclusion-first communication discipline for reporting, planning, file operations, and multi-step technical work; introduced [`nature-writing`](./skills/nature-writing/README.md) for section drafting and argument construction; refreshed [`nature-polishing`](./skills/nature-polishing/README.md) to the latest upstream article-pattern release; and kept [`nature-response`](./skills/nature-response/README.md) plus [`nature-data`](./skills/nature-data/README.md) in the journal-writing stack.
 - **2026-05-13**: **Evidence-gated research workflow and `Sources/Papers` routing tightened** — added a shared `research-contract.md` for Evidence Records, claim strength, and Claim Promotion Gates; connected research ideation, Zotero ingestion, literature synthesis, results reporting, writing, and rebuttal workflows to that contract; and clarified that project paper notes live under `Sources/Papers` before promoted claims move into `Knowledge` or `Writing`.
 - **2026-04-24**: **Project-scoped Obsidian KB workflow consolidated** — rebuilt Obsidian project knowledge management into a vault-first workflow, consolidated the older overlapping memory skills into four focused skills, kept repo-local project binding metadata as a runtime layer, and made project navigation human-first instead of a machine registry dump.
 - **2026-04-22**: **Lean core, pruned default agents, safer install lifecycle, and cleaner paper discovery** — replaced large always-on `CLAUDE.md` / `AGENTS.md` files with compact core instructions, pruned the default agent set to the retained core agents, added safe install-state based uninstall support, generalized `daily-paper-generator` to broader topics with arXiv / bioRxiv support and a fixed Top 10 -> Top 3 -> Top 1 selection flow, and removed the low-use `planning-with-files` skill.
@@ -399,6 +399,7 @@ Systematic academic writing from structure setup to draft refinement.
 | Type | Name | One-line explanation |
 |---|---|---|
 | Skill | `ml-paper-writing` | Draft publication-oriented ML/AI papers from repo context, evidence, and literature. |
+| Skill | [`nature-writing`](./skills/nature-writing/README.md) | Draft or rebuild Nature-style manuscript sections from claims, figures, results, notes, or Chinese drafts. |
 | Skill | [`nature-polishing`](./skills/nature-polishing/README.md) | Polish, restructure, or translate manuscript prose into concise Nature-leaning English. |
 | Skill | [`nature-response`](./skills/nature-response/README.md) | Draft, audit, or revise point-by-point reviewer response letters for Nature-family revisions. |
 | Skill | [`nature-data`](./skills/nature-data/README.md) | Prepare Nature-ready Data Availability statements, repository plans, and FAIR metadata checks. |
@@ -645,9 +646,7 @@ This project is inspired by and builds upon excellent work from the community:
 - **[everything-claude-code](https://github.com/anthropics/everything-claude-code)** - Comprehensive resource for Claude Code CLI
 - **[AI-research-SKILLs](https://github.com/zechenzhangAGI/AI-research-SKILLs)** - Research-focused skills and configurations
 - **[expression-skill](https://github.com/Galaxy-Dawn/expression-skill)** - Public conclusion-first communication skill reused here for reporting and response discipline
-- **[nature-skills / nature-polishing](https://github.com/Yuan1z0825/nature-skills/tree/main/skills/nature-polishing)** - Nature-leaning academic polishing skill reused here with attribution
-- **[nature-skills / nature-response](https://github.com/Yuan1z0825/nature-skills/tree/main/skills/nature-response)** - Nature-family reviewer response skill reused here with attribution
-- **[nature-skills / nature-data](https://github.com/Yuan1z0825/nature-skills/tree/main/skills/nature-data)** - Nature-style data availability skill reused here with attribution
+- **[nature-skills](https://github.com/Yuan1z0825/nature-skills)** - Nature-oriented writing, polishing, reviewer-response, and data-availability skills reused here with attribution
 
 These projects provided valuable insights and foundations for the research-oriented features in Claude Scholar.
 
