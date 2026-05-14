@@ -488,8 +488,6 @@ Claude Scholar 目前面向以下 CLI 工作流：
 | Command | `/kb-map` | 在默认 literature canvas 之外，按需生成或修复显式请求的 KB 产物。 |
 | Command | `/kb-literature-review` | 从 `Sources/Papers` 生成经过证据门槛的文献综合，并写入 `Knowledge`、可选 `Writing` 和 `Maps/literature.canvas`。 |
 
-旧的 `/obsidian-*` 命令会在一个过渡窗口内保留为弃用别名。它们只转发到 `/kb-*`，不会恢复旧目录语义。
-
 **工作方式**
 - 将已有 repo 绑定到 Obsidian vault
 - 把稳定知识路由进 `Sources / Knowledge / Experiments / Results / Results/Reports / Writing / Daily / Maps`
